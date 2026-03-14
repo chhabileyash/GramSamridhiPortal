@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import VillageGlimpses from "@/components/VillageGlimpses";
+import PopulationCharts from "@/components/PopulationCharts";
 import {
   Bus,
   CalendarDays,
@@ -393,6 +394,7 @@ export default function VillagePage() {
       "+",
     );
   const mapSearchUrl = `https://www.google.com/maps?q=${mapSearchPath}&output=embed`;
+  const mapurl = `https://www.google.com/maps/search/?api=1&query=${mapSearchPath}`;
 
   const extractPercent = (value?: string) => {
     const match = (value || "").match(/(\d+(?:\.\d+)?)\s*%/);
@@ -815,7 +817,7 @@ export default function VillagePage() {
                   />
                   <a
                     className="absolute inset-0 flex items-center justify-center bg-[#082b57]/70 font-bold uppercase tracking-wide text-white opacity-0 transition-opacity group-hover:opacity-100"
-                    href={mapSearchUrl}
+                    href={mapurl}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -826,6 +828,8 @@ export default function VillagePage() {
             </div>
           </div>
         </section>
+
+        <PopulationCharts population={population} />
 
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 animate-[fadeUp_1100ms_ease-out] [animation-fill-mode:both]">
           <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
