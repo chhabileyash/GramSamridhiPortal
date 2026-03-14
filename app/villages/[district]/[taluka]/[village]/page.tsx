@@ -520,14 +520,14 @@ export default function VillagePage() {
             }}
           />
           <div className="absolute inset-0 bg-linear-to-r from-[#071f40] via-[#082b57]/85 to-[#082b57]/30" />
-          <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-6 py-16 md:py-24">
+          <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-4 py-14 sm:px-6 md:py-24">
             <div className="max-w-3xl space-y-4 animate-[fadeUp_700ms_ease-out] [animation-fill-mode:both]">
               <div className="inline-flex items-center gap-2 border border-[#f58320]/50 bg-[#f58320]/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[#ffd4a6]">
                 <MapPin className="size-4" />
                 {trimValue(basicInfo["Taluka Name"])},{" "}
                 {trimValue(basicInfo.District)}
               </div>
-              <h1 className="text-4xl font-black uppercase leading-tight text-white md:text-6xl">
+              <h1 className="text-3xl font-black uppercase leading-tight text-white sm:text-4xl md:text-6xl">
                 Welcome to <span className="text-primary">{villageName}</span>
               </h1>
               <p className="max-w-2xl text-base leading-relaxed text-slate-200 md:text-lg">
@@ -537,11 +537,11 @@ export default function VillagePage() {
                 <b>{trimValue(basicInfo["Parliament MP "])}</b>.
               </p>
             </div>
-            <div className="flex flex-wrap gap-4 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
-              <button className="flex items-center gap-2 border border-[#f58320] bg-[#f58320] px-7 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#e3720f]">
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-4 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
+              <button className="flex w-full items-center justify-center gap-2 border border-[#f58320] bg-[#f58320] px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#e3720f] sm:w-auto sm:px-7">
                 <IndianRupee className="size-4" /> Pay Village Tax
               </button>
-              <button className="flex items-center gap-2 border border-white/30 bg-[#082b57]/60 px-7 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#0a356b]">
+              <button className="flex w-full items-center justify-center gap-2 border border-white/30 bg-[#082b57]/60 px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#0a356b] sm:w-auto sm:px-7">
                 <TriangleAlert className="size-4" />
                 Lodge Complaint
               </button>
@@ -549,7 +549,7 @@ export default function VillagePage() {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-6 py-10 lg:grid-cols-3 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-10 sm:px-6 lg:grid-cols-3 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
           <div className="space-y-5 lg:col-span-2">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
@@ -567,7 +567,7 @@ export default function VillagePage() {
                 <b>{trimValue(basicInfo["Time zone"])}</b>
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
               <div className="border border-slate-200 bg-white p-4 shadow-sm">
                 <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
                   Taluka
@@ -716,8 +716,8 @@ export default function VillagePage() {
         </section>
 
         <section className="border-y border-slate-200 bg-white py-12 animate-[fadeUp_1000ms_ease-out] [animation-fill-mode:both]">
-          <div className="mx-auto max-w-7xl px-6">
-            <div className="mb-7 flex items-end justify-between gap-3">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="mb-7 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
                   Essential Access
@@ -726,7 +726,7 @@ export default function VillagePage() {
                   Village Directory
                 </h2>
               </div>
-              <button className="border border-[#082b57] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#082b57] hover:bg-[#082b57] hover:text-white">
+              <button className="w-full border border-[#082b57] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#082b57] hover:bg-[#082b57] hover:text-white sm:w-auto">
                 Explore All
               </button>
             </div>
@@ -781,8 +781,8 @@ export default function VillagePage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-12 animate-[fadeUp_1100ms_ease-out] [animation-fill-mode:both]">
-          <div className="mb-8 flex items-end justify-between">
+        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 animate-[fadeUp_1100ms_ease-out] [animation-fill-mode:both]">
+          <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
             <div className="space-y-1">
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
                 Village Newsroom
@@ -794,7 +794,7 @@ export default function VillagePage() {
                 Latest news and announcements from the Gram Panchayat
               </p>
             </div>
-            <button className="border border-[#082b57] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#082b57] hover:bg-[#082b57] hover:text-white">
+            <button className="w-full border border-[#082b57] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#082b57] hover:bg-[#082b57] hover:text-white sm:w-auto">
               View All News
             </button>
           </div>
@@ -833,7 +833,7 @@ export default function VillagePage() {
         </section>
 
         <section className="border-t-4 border-[#f58320] bg-[#082b57] py-10 text-white animate-[fadeUp_1200ms_ease-out] [animation-fill-mode:both]">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-6 md:grid-cols-4 lg:grid-cols-5">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 sm:px-6 md:grid-cols-4 lg:grid-cols-5">
             {footerStats.map(({ label, end, suffix, decimals }) => (
               <div
                 key={label}

@@ -57,11 +57,11 @@ export default function Carousel() {
               src={slide.image}
             />
             <div className="absolute right-0 bottom-0 left-0 border-t-4 border-[#e67e22] bg-[#fffffff]/80 p-6 text-white backdrop-blur-sm">
-              <div className="w-full max-w-300 mx-auto px-8">
-                <h3 className="text-xl font-black tracking-tight uppercase">
+              <div className="mx-auto w-full max-w-300 px-3 sm:px-6 lg:px-8">
+                <h3 className="text-lg font-black tracking-tight uppercase sm:text-xl">
                   {slide.title}
                 </h3>
-                <p className="text-sm font-medium text-slate-300">
+                <p className="text-xs font-medium text-slate-300 sm:text-sm">
                   {slide.description}
                 </p>
               </div>
@@ -72,13 +72,13 @@ export default function Carousel() {
 
       <button
         onClick={prevSlide}
-        className="absolute top-1/2 left-4 z-20 flex size-12 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#002147] shadow-lg transition-all hover:border-[#002147] hover:bg-[#002147] hover:text-white"
+        className="absolute left-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#002147] shadow-lg transition-all hover:border-[#002147] hover:bg-[#002147] hover:text-white sm:left-4 sm:size-12"
       >
         <ChevronLeft />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute top-1/2 right-4 z-20 flex size-12 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#002147] shadow-lg transition-all hover:border-[#002147] hover:bg-[#002147] hover:text-white"
+        className="absolute right-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#002147] shadow-lg transition-all hover:border-[#002147] hover:bg-[#002147] hover:text-white sm:right-4 sm:size-12"
       >
         <ChevronRight />
       </button>

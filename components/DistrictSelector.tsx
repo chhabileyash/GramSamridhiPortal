@@ -38,13 +38,13 @@ export default function DistrictSelector() {
     : [];
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
       <div>
         <label className="mb-2 block text-[10px] font-black text-slate-500 uppercase">
           District Selection
         </label>
         <select
-          className="h-12 w-full border border-slate-300 bg-slate-50 text-slate-900 text-sm font-bold focus:border-[#002147] focus:ring-1 focus:ring-[#002147] px-3 transition-colors hover:border-slate-400"
+          className="h-12 w-full border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-900 transition-colors hover:border-slate-400 focus:border-[#002147] focus:ring-1 focus:ring-[#002147]"
           value={district}
           onChange={(e) => {
             setDistrict(e.target.value);
@@ -68,7 +68,7 @@ export default function DistrictSelector() {
           Taluka Selection
         </label>
         <select
-          className="h-12 w-full border border-slate-300 bg-slate-50 text-slate-900 text-sm font-bold focus:border-[#002147] focus:ring-1 focus:ring-[#002147] px-3 transition-colors hover:border-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-12 w-full border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-900 transition-colors hover:border-slate-400 focus:border-[#002147] focus:ring-1 focus:ring-[#002147] disabled:cursor-not-allowed disabled:opacity-50"
           value={taluka}
           onChange={(e) => {
             setTaluka(e.target.value);
@@ -92,7 +92,7 @@ export default function DistrictSelector() {
           Village Selection
         </label>
         <select
-          className="h-12 w-full border border-slate-300 bg-slate-50 text-slate-900 text-sm font-bold focus:border-[#002147] focus:ring-1 focus:ring-[#002147] px-3 transition-colors hover:border-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-12 w-full border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-900 transition-colors hover:border-slate-400 focus:border-[#002147] focus:ring-1 focus:ring-[#002147] disabled:cursor-not-allowed disabled:opacity-50"
           value={village}
           onChange={(e) => setVillage(e.target.value)}
           disabled={!taluka}
@@ -108,7 +108,7 @@ export default function DistrictSelector() {
         </select>
       </div>
 
-      <div className="flex items-end">
+      <div className="flex items-end sm:col-span-2 lg:col-span-1">
         <button
           className="group flex h-12 w-full items-center justify-center gap-2 bg-[#002147] text-sm font-bold text-white uppercase transition-all duration-300 hover:bg-slate-800 hover:shadow-md"
           onClick={() => {
@@ -125,7 +125,7 @@ export default function DistrictSelector() {
           }}
         >
           <Search className="text-xl transition-transform duration-300 group-hover:scale-110 group-hover:text-[#e67e22]" />
-          Access Portal
+          Find Village
         </button>
       </div>
     </div>

@@ -17,7 +17,7 @@ import LatestUpdates from "@/components/LatestUpdates";
 export default function Home() {
   return (
     <>
-      <div className="bg-[#f2f4f7] text-lg md:text-xl text-slate-900 dark:bg-[#0a111a] dark:text-slate-100">
+      <div className="bg-[#f2f4f7] text-base md:text-lg text-slate-900 dark:bg-[#0a111a] dark:text-slate-100">
         <FloatingSupport />
 
         <Header />
