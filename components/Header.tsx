@@ -23,25 +23,25 @@ export default function Header() {
             <nav className="hidden items-center gap-8 xl:flex">
               <a
                 className="border-b-2 border-transparent py-1 text-[15px] font-black text-[#1e293b] transition-all hover:border-[#e67e22] hover:text-[#e67e22]"
-                href="#"
+                href="/"
               >
                 HOME
               </a>
               <a
                 className="border-b-2 border-transparent py-1 text-[15px] font-black leading-tight text-[#1e293b] transition-all hover:border-[#e67e22] hover:text-[#e67e22] uppercase text-center"
-                href="#"
+                href="/about"
               >
                 About Us
               </a>
               <a
                 className="border-b-2 border-transparent py-1 text-[15px] font-black text-[#1e293b] transition-all hover:border-[#e67e22] hover:text-[#e67e22] uppercase text-center"
-                href="#"
+                href="/services"
               >
                 Services
               </a>
               <a
                 className="border-b-2 border-transparent py-1 text-[15px] font-black leading-tight text-[#1e293b] transition-all hover:border-[#e67e22] hover:text-[#e67e22] uppercase text-center"
-                href="#"
+                href="/village-directory"
               >
                 Village Directory
               </a>
@@ -49,7 +49,7 @@ export default function Header() {
               <div className="flex items-center gap-1 group cursor-pointer relative">
                 <a
                   className="border-b-2 border-transparent py-1 text-[15px] font-black text-[#1e293b] transition-all group-hover:border-[#e67e22] group-hover:text-[#e67e22] uppercase"
-                  href="#"
+                  href="/schemes"
                 >
                   Schemes
                 </a>

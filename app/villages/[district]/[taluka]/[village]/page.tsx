@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import AnimatedCounter from "@/components/AnimatedCounter";
 import {
   Bus,
   CalendarDays,
@@ -9,7 +10,6 @@ import {
   House,
   IndianRupee,
   Landmark,
-  Map,
   MapPin,
   TriangleAlert,
   Users,
@@ -398,12 +398,44 @@ export default function VillagePage() {
     return Number(match?.[1] || 0);
   };
 
+  const extractNumber = (value?: string) => {
+    const sanitized = (value || "").replace(/,/g, "");
+    const match = sanitized.match(/(\d+(?:\.\d+)?)/);
+    return Number(match?.[1] || 0);
+  };
+
   const femalePopulationPercent = extractPercent(
     population["Female Population %"],
   );
   const workingPopulationPercent = extractPercent(
     population["Working Population %"],
   );
+  const totalPopulation = extractNumber(population["Total Population"]);
+  const totalHouses = extractNumber(population["Total No of Houses"]);
+  const literacyRate = extractPercent(population["Total Literacy rate %"]);
+
+  const footerStats = [
+    { label: "Citizens", end: totalPopulation, suffix: "", decimals: 0 },
+    { label: "Households", end: totalHouses, suffix: "", decimals: 0 },
+    {
+      label: "Scheduled Tribes",
+      end: extractPercent(population["Scheduled Tribes Population %"]),
+      suffix: "%",
+      decimals: 1,
+    },
+    {
+      label: "Scheduled Caste",
+      end: extractPercent(population["Scheduled Caste Population %"]),
+      suffix: "%",
+      decimals: 1,
+    },
+    {
+      label: "Girl Child (0-6)",
+      end: extractPercent(population["Girl Child(0 -6) Population % by 2011"]),
+      suffix: "%",
+      decimals: 1,
+    },
+  ];
 
   const villageDirectory = [
     {
@@ -487,9 +519,9 @@ export default function VillagePage() {
                 "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBA8ffot2Bzp9fB14SkExI3j1qBAYYMgi5kD_Z_e1PcLfytPQkxiCvUlow27imbPg_IWWQ5S8GcPDMschZpFEOEoMcxZ4R73kDUiRHLb_KcZuNOCG0BWcNZ8ZmLow_NbTW_axUguQRg75emMJDcRYgssTCUmNcbCO6xRv8QRpuVd54NgpBDNzP5_cWfFPUpCtbfasRahKyxbWkQAgs-uHSDQJNpy360G5o_7vaXoF46MJe2ldpDcApXs43y3oB9i2mMDnzMHvDpFqCU')",
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#071f40] via-[#082b57]/85 to-[#082b57]/30" />
+          <div className="absolute inset-0 bg-linear-to-r from-[#071f40] via-[#082b57]/85 to-[#082b57]/30" />
           <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-6 py-16 md:py-24">
-            <div className="max-w-3xl space-y-4">
+            <div className="max-w-3xl space-y-4 animate-[fadeUp_700ms_ease-out] [animation-fill-mode:both]">
               <div className="inline-flex items-center gap-2 border border-[#f58320]/50 bg-[#f58320]/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[#ffd4a6]">
                 <MapPin className="size-4" />
                 {trimValue(basicInfo["Taluka Name"])},{" "}
@@ -505,11 +537,11 @@ export default function VillagePage() {
                 <b>{trimValue(basicInfo["Parliament MP "])}</b>.
               </p>
             </div>
-            <div className="flex flex-wrap gap-4">
-              <button className="flex items-center gap-2 border border-[#f58320] bg-[#f58320] px-7 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#e3720f]">
+            <div className="flex flex-wrap gap-4 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
+              <button className="flex items-center gap-2 border border-[#f58320] bg-[#f58320] px-7 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#e3720f]">
                 <IndianRupee className="size-4" /> Pay Village Tax
               </button>
-              <button className="flex items-center gap-2 border border-white/30 bg-[#082b57]/60 px-7 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#0a356b]">
+              <button className="flex items-center gap-2 border border-white/30 bg-[#082b57]/60 px-7 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#0a356b]">
                 <TriangleAlert className="size-4" />
                 Lodge Complaint
               </button>
@@ -517,7 +549,7 @@ export default function VillagePage() {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-6 py-10 lg:grid-cols-3">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-6 py-10 lg:grid-cols-3 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
           <div className="space-y-5 lg:col-span-2">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
@@ -586,7 +618,7 @@ export default function VillagePage() {
               </div>
             </div>
           </div>
-          <div className="border border-[#082b57] bg-[#082b57] p-6 text-white shadow-sm">
+          <div className="border border-[#082b57] bg-[#082b57] p-6 text-white shadow-sm transition-transform duration-300 hover:-translate-y-1">
             <h3 className="text-xl font-bold uppercase tracking-wide">
               Population Stats
             </h3>
@@ -597,7 +629,7 @@ export default function VillagePage() {
                 </div>
                 <div>
                   <p className="text-2xl font-extrabold">
-                    {trimValue(population["Total Population"])}
+                    <AnimatedCounter end={totalPopulation} duration={1600} />
                   </p>
                   <p className="text-xs uppercase tracking-wide text-slate-300">
                     Total Population
@@ -610,7 +642,7 @@ export default function VillagePage() {
                 </div>
                 <div>
                   <p className="text-2xl font-extrabold">
-                    {trimValue(population["Total No of Houses"])}
+                    <AnimatedCounter end={totalHouses} duration={1600} />
                   </p>
                   <p className="text-xs uppercase tracking-wide text-slate-300">
                     Total Households
@@ -623,7 +655,12 @@ export default function VillagePage() {
                 </div>
                 <div>
                   <p className="text-2xl font-extrabold">
-                    {trimValue(population["Total Literacy rate %"])}
+                    <AnimatedCounter
+                      end={literacyRate}
+                      duration={1800}
+                      decimals={1}
+                      suffix="%"
+                    />
                   </p>
                   <p className="text-xs uppercase tracking-wide text-slate-300">
                     Literacy Rate
@@ -634,13 +671,21 @@ export default function VillagePage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-300">Female Population</span>
                   <span className="font-bold">
-                    {trimValue(population["Female Population %"])}
+                    <AnimatedCounter
+                      end={femalePopulationPercent}
+                      duration={1800}
+                      decimals={1}
+                      suffix="%"
+                    />
                   </span>
                 </div>
                 <div className="h-2 w-full overflow-hidden bg-white/20">
                   <div
-                    className="h-full bg-[#f58320]"
-                    style={{ width: `${femalePopulationPercent}%` }}
+                    className="h-full origin-left bg-[#f58320] animate-[growIn_1200ms_ease-out_forwards]"
+                    style={{
+                      width: `${femalePopulationPercent}%`,
+                      animationDelay: "120ms",
+                    }}
                   />
                 </div>
               </div>
@@ -648,13 +693,21 @@ export default function VillagePage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-300">Working Population</span>
                   <span className="font-bold">
-                    {trimValue(population["Working Population %"])}
+                    <AnimatedCounter
+                      end={workingPopulationPercent}
+                      duration={1800}
+                      decimals={1}
+                      suffix="%"
+                    />
                   </span>
                 </div>
                 <div className="h-2 w-full overflow-hidden bg-white/20">
                   <div
-                    className="h-full bg-emerald-400"
-                    style={{ width: `${workingPopulationPercent}%` }}
+                    className="h-full origin-left bg-emerald-400 animate-[growIn_1200ms_ease-out_forwards]"
+                    style={{
+                      width: `${workingPopulationPercent}%`,
+                      animationDelay: "240ms",
+                    }}
                   />
                 </div>
               </div>
@@ -662,7 +715,7 @@ export default function VillagePage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-white py-12">
+        <section className="border-y border-slate-200 bg-white py-12 animate-[fadeUp_1000ms_ease-out] [animation-fill-mode:both]">
           <div className="mx-auto max-w-7xl px-6">
             <div className="mb-7 flex items-end justify-between gap-3">
               <div>
@@ -681,7 +734,7 @@ export default function VillagePage() {
               {villageDirectory.map((block) => (
                 <div
                   key={block.title}
-                  className="border border-slate-200 bg-[#f8f9fb] p-5 shadow-sm"
+                  className="border border-slate-200 bg-[#f8f9fb] p-5 shadow-sm transition-transform duration-300 hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-3 border-b border-slate-200 pb-3 text-[#082b57]">
                     {renderDirectoryIcon(block.icon)}
@@ -696,7 +749,7 @@ export default function VillagePage() {
                   </ul>
                 </div>
               ))}
-              <div className="border border-slate-200 bg-[#f8f9fb] p-5 shadow-sm">
+              <div className="border border-slate-200 bg-[#f8f9fb] p-5 shadow-sm transition-transform duration-300 hover:-translate-y-1">
                 <div className="flex items-center gap-3 border-b border-slate-200 pb-3 text-[#082b57]">
                   <Globe className="size-5" />
                   <h3 className="text-lg font-bold uppercase">
@@ -728,7 +781,7 @@ export default function VillagePage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-12">
+        <section className="mx-auto max-w-7xl px-6 py-12 animate-[fadeUp_1100ms_ease-out] [animation-fill-mode:both]">
           <div className="mb-8 flex items-end justify-between">
             <div className="space-y-1">
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
@@ -749,7 +802,7 @@ export default function VillagePage() {
             {talks.map((talk) => (
               <article
                 key={talk.title}
-                className="overflow-hidden border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+                className="overflow-hidden border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
               >
                 <div
                   className="h-48 w-full bg-slate-200"
@@ -779,30 +832,20 @@ export default function VillagePage() {
           </div>
         </section>
 
-        <section className="border-t-4 border-[#f58320] bg-[#082b57] py-10 text-white">
+        <section className="border-t-4 border-[#f58320] bg-[#082b57] py-10 text-white animate-[fadeUp_1200ms_ease-out] [animation-fill-mode:both]">
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-6 md:grid-cols-4 lg:grid-cols-5">
-            {[
-              [trimValue(population["Total Population"]), "Citizens"],
-              [trimValue(population["Total No of Houses"]), "Households"],
-              [
-                trimValue(population["Scheduled Tribes Population %"]),
-                "Scheduled Tribes",
-              ],
-              [
-                trimValue(population["Scheduled Caste Population %"]),
-                "Scheduled Caste",
-              ],
-              [
-                trimValue(population["Girl Child(0 -6) Population % by 2011"]),
-                "Girl Child (0-6)",
-              ],
-            ].map(([value, label]) => (
+            {footerStats.map(({ label, end, suffix, decimals }) => (
               <div
                 key={label}
-                className="border border-white/20 bg-[#0a356b] p-4 text-center"
+                className="border border-white/20 bg-[#0a356b] p-4 text-center transition-transform duration-300 hover:-translate-y-0.5"
               >
                 <p className="text-2xl font-extrabold text-[#f58320]">
-                  {value}
+                  <AnimatedCounter
+                    end={end}
+                    duration={1800}
+                    suffix={suffix}
+                    decimals={decimals}
+                  />
                 </p>
                 <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-200">
                   {label}
