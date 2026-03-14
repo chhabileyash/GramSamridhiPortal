@@ -1,4 +1,5 @@
 import { Landmark, Languages } from "lucide-react";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -64,9 +65,12 @@ export default function Header() {
             <Languages className="size-5" strokeWidth={2.5} />
             <span className="hidden sm:inline">MARATHI</span>
           </button>
-          <button className="bg-[#002147] px-3 py-2 text-[11px] leading-tight font-black text-white uppercase shadow-sm transition-all hover:bg-slate-800 sm:px-5 sm:py-2.5 sm:text-[13px] md:px-8 md:py-3 md:text-[15px] text-center">
+          <Link
+            href="/auth/signup"
+            className="bg-[#002147] px-3 py-2 text-[11px] leading-tight font-black text-white uppercase shadow-sm transition-all hover:bg-slate-800 sm:px-5 sm:py-2.5 sm:text-[13px] md:px-8 md:py-3 md:text-[15px] text-center"
+          >
             Login
-          </button>
+          </Link>
         </div>
       </div>
     </header>

@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AnimatedCounter from "@/components/AnimatedCounter";
+import VillageGlimpses from "@/components/VillageGlimpses";
 import {
   Bus,
   CalendarDays,
@@ -489,6 +490,45 @@ export default function VillagePage() {
     description: "Latest update from the Gram Panchayat portal.",
   }));
 
+  const villagePhotos = [
+    {
+      title: "Village Entrance",
+      description: "Main road and entrance area of the village.",
+      image:
+        "https://images.unsplash.com/photo-1591189826135-cb47a5fca5c6?q=80&w=1400&auto=format&fit=crop",
+    },
+    {
+      title: "Farming Landscape",
+      description: "Agricultural fields surrounding the village.",
+      image:
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1400&auto=format&fit=crop",
+    },
+    {
+      title: "Village Temple",
+      description: "A prominent local temple in the village area.",
+      image:
+        "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=1400&auto=format&fit=crop",
+    },
+    {
+      title: "Community Gathering",
+      description: "Local community activity and meetings.",
+      image:
+        "https://images.unsplash.com/photo-1560790671-b76ca4de55ef?q=80&w=1400&auto=format&fit=crop",
+    },
+    {
+      title: "Water Body",
+      description: "Local pond and water resource area.",
+      image:
+        "https://images.unsplash.com/photo-1455218873509-8097305ee378?q=80&w=1400&auto=format&fit=crop",
+    },
+    {
+      title: "Sunset View",
+      description: "Evening view from nearby farmland.",
+      image:
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1400&auto=format&fit=crop",
+    },
+  ];
+
   const renderDirectoryIcon = (icon: string) => {
     switch (icon) {
       case "directions_bus":
@@ -548,6 +588,8 @@ export default function VillagePage() {
             </div>
           </div>
         </section>
+
+        <VillageGlimpses villageName={villageName} photos={villagePhotos} />
 
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-10 sm:px-6 lg:grid-cols-3 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
           <div className="space-y-5 lg:col-span-2">
@@ -618,39 +660,39 @@ export default function VillagePage() {
               </div>
             </div>
           </div>
-          <div className="border border-[#082b57] bg-[#082b57] p-6 text-white shadow-sm transition-transform duration-300 hover:-translate-y-1">
-            <h3 className="text-xl font-bold uppercase tracking-wide">
+          <div className="border border-[#082b57] border-t-4 border-t-[#f58320] bg-[#082b57] p-6 text-white shadow-sm transition-transform duration-300 hover:-translate-y-1">
+            <h3 className="text-2xl font-extrabold uppercase tracking-wide">
               Population Stats
             </h3>
             <div className="mt-5 space-y-5">
               <div className="flex items-center gap-4">
-                <div className="flex size-12 items-center justify-center bg-white text-[#082b57]">
+                <div className="flex size-12 items-center justify-center bg-[#f58320] text-white">
                   <Users className="size-5" />
                 </div>
                 <div>
-                  <p className="text-2xl font-extrabold">
+                  <p className="text-2xl font-extrabold text-[#f58320]">
                     <AnimatedCounter end={totalPopulation} duration={1600} />
                   </p>
-                  <p className="text-xs uppercase tracking-wide text-slate-300">
+                  <p className="text-xs uppercase tracking-[0.12em] text-slate-300">
                     Total Population
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="flex size-12 items-center justify-center bg-white text-[#082b57]">
+                <div className="flex size-12 items-center justify-center bg-[#1b4878] text-white">
                   <House className="size-5" />
                 </div>
                 <div>
                   <p className="text-2xl font-extrabold">
                     <AnimatedCounter end={totalHouses} duration={1600} />
                   </p>
-                  <p className="text-xs uppercase tracking-wide text-slate-300">
+                  <p className="text-xs uppercase tracking-[0.12em] text-slate-300">
                     Total Households
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="flex size-12 items-center justify-center bg-white text-[#082b57]">
+                <div className="flex size-12 items-center justify-center bg-[#1b4878] text-white">
                   <GraduationCap className="size-5" />
                 </div>
                 <div>
@@ -662,14 +704,16 @@ export default function VillagePage() {
                       suffix="%"
                     />
                   </p>
-                  <p className="text-xs uppercase tracking-wide text-slate-300">
+                  <p className="text-xs uppercase tracking-[0.12em] text-slate-300">
                     Literacy Rate
                   </p>
                 </div>
               </div>
               <div className="space-y-2 pt-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-300">Female Population</span>
+                  <span className="font-semibold tracking-wide text-slate-300">
+                    Female Population
+                  </span>
                   <span className="font-bold">
                     <AnimatedCounter
                       end={femalePopulationPercent}
@@ -679,9 +723,9 @@ export default function VillagePage() {
                     />
                   </span>
                 </div>
-                <div className="h-2 w-full overflow-hidden bg-white/20">
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/20">
                   <div
-                    className="h-full origin-left bg-[#f58320] animate-[growIn_1200ms_ease-out_forwards]"
+                    className="h-full origin-left rounded-full bg-[#f58320] animate-[growIn_1200ms_ease-out_forwards]"
                     style={{
                       width: `${femalePopulationPercent}%`,
                       animationDelay: "120ms",
@@ -691,7 +735,9 @@ export default function VillagePage() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-300">Working Population</span>
+                  <span className="font-semibold tracking-wide text-slate-300">
+                    Working Population
+                  </span>
                   <span className="font-bold">
                     <AnimatedCounter
                       end={workingPopulationPercent}
@@ -701,9 +747,9 @@ export default function VillagePage() {
                     />
                   </span>
                 </div>
-                <div className="h-2 w-full overflow-hidden bg-white/20">
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/20">
                   <div
-                    className="h-full origin-left bg-emerald-400 animate-[growIn_1200ms_ease-out_forwards]"
+                    className="h-full origin-left rounded-full bg-[#22c55e] animate-[growIn_1200ms_ease-out_forwards]"
                     style={{
                       width: `${workingPopulationPercent}%`,
                       animationDelay: "240ms",
