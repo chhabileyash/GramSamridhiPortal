@@ -47,8 +47,8 @@ export default function Home() {
           className="bg-[#1F4E79] text-white py-4"
           data-purpose="main-header"
         >
-          <div className="max-w-300 mx-auto flex justify-between items-center px-4">
-            <div className="flex items-center space-x-4">
+          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center px-4 gap-4 md:gap-0">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
               <div
                 className="w-12 h-12 flex items-center justify-center text-xs"
                 data-purpose="logo-placeholder"
@@ -64,7 +64,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-6 text-sm">
+            <div className="flex flex-wrap justify-center items-center gap-4 text-sm">
               <div className="flex items-center bg-white/10 rounded-sm border border-white/20 px-2 py-1 h-8">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -114,8 +114,8 @@ export default function Home() {
           className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50"
           data-purpose="primary-navigation"
         >
-          <div className="max-w-300 mx-auto flex items-center justify-between px-4">
-            <ul className="flex items-center m-0 p-0 list-none divide-x divide-gray-200">
+          <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center justify-between px-4 overflow-x-auto gap-4 py-2 lg:py-0 w-full whitespace-nowrap">
+            <ul className="flex items-center m-0 p-0 list-none divide-x divide-gray-200 shrink-0">
               <li className="bg-[#1F4E79] text-white font-semibold cursor-pointer">
                 <Link href="/" className="block px-6 py-4">
                   Home
@@ -157,7 +157,7 @@ export default function Home() {
               action="https://www.google.com/search"
               method="GET"
               target="_blank"
-              className="relative w-64"
+              className="relative w-full lg:w-64 max-w-sm mb-2 lg:mb-0 shrink-0 mt-4 lg:mt-0"
             >
               <input
                 className="w-full border border-gray-200 bg-gray-50 rounded-full py-2 px-4 text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
@@ -192,7 +192,7 @@ export default function Home() {
           className="bg-[#FFF8F0] border-b border-orange-100 py-2"
           data-purpose="alert-information"
         >
-          <div className="max-w-[1200px] mx-auto px-4 flex items-center space-x-3 text-sm">
+          <div className="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row justify-center sm:justify-start items-center space-y-2 sm:space-y-0 sm:space-x-3 text-sm text-center sm:text-left">
             <span className="text-[#F28C28] text-lg"></span>
             <p className="m-0 text-gray-700">
               <strong>Covid-19 Information:</strong> Latest guidelines and
@@ -220,9 +220,9 @@ export default function Home() {
           >
             {/* <div className="absolute inset-0 bg-linear-to-r from-white/95 via-white/80 to-transparent"></div> */}
           </div>
-          <div className="max-w-300 mx-auto px-4 relative z-10 grid grid-cols-12 h-full items-center">
-            <div className="col-span-8 md:col-span-7 pl-8">
-              <h1 className="text-[#1F4E79] mb-4">
+          <div className="max-w-[1200px] mx-auto px-4 relative z-10 grid grid-cols-1 md:grid-cols-12 h-full items-center">
+            <div className="col-span-1 md:col-span-8 lg:col-span-7 text-center md:text-left pl-0 md:pl-8 pt-10 md:pt-0">
+              <h1 className="text-[#1F4E79] text-3xl mb-4">
                 Welcome to Gram Samriddhi Portal!
               </h1>
               <p className="mt-2 text-xl text-gray-800 mb-8 font-medium">
@@ -232,7 +232,7 @@ export default function Home() {
                 Learn More
               </button>
             </div>
-            <div className="col-span-4 md:col-span-5 flex justify-end items-end h-full"></div>
+            <div className="hidden md:flex col-span-4 md:col-span-5 justify-end items-end h-full"></div>
           </div>
         </section>
 
@@ -242,7 +242,7 @@ export default function Home() {
           data-purpose="service-cards"
         >
           <div className="max-w-[1200px] mx-auto px-4">
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Card 1 */}
               <div className="bg-white p-6 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col h-[320px] relative overflow-hidden group">
                 <div className="absolute bottom-0 left-0 w-full h-[80px] z-0 overflow-hidden pointer-events-none">
@@ -587,10 +587,10 @@ export default function Home() {
 
         {/* BEGIN: Main Content Section */}
         <main className="py-6">
-          <div className="max-w-300 mx-auto px-4">
+          <div className="max-w-[1200px] mx-auto px-4">
             {/* Top Row */}
-            <div className="grid grid-cols-12 gap-8 mb-10 items-stretch">
-              <div className="col-span-8 flex flex-col h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10 items-stretch">
+              <div className="col-span-1 lg:col-span-8 flex flex-col h-full">
                 {/* Key Initiatives 3 Mini Cards */}
                 <section
                   data-purpose="key-initiatives"
@@ -603,7 +603,7 @@ export default function Home() {
                     <div className="h-[1px] bg-gray-200 flex-grow mt-1"></div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-6 flex-grow">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-grow">
                     {/* Initiative 1 */}
                     <div className="bg-[#F4F6F0] rounded-sm overflow-hidden shadow-sm flex flex-col h-full border border-[rgba(0,0,0,0.05)] shadow-[inset_0_0_20px_rgba(255,255,255,0.5)]">
                       <div className="p-5 flex-grow">
@@ -776,7 +776,7 @@ export default function Home() {
                   </div>
                 </section>
               </div>
-              <div className="col-span-4 flex flex-col h-full">
+              <div className="col-span-1 lg:col-span-4 flex flex-col h-full mt-8 lg:mt-0">
                 {/* Gram Panchayat at a Glance */}
                 <div className="bg-white rounded-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-[#EAECEA] flex flex-col overflow-hidden h-full">
                   <div className="bg-gradient-to-b from-[#FAF9F5] to-[#F1F0EB] px-5 py-4 border-b border-[#EAECEA] shrink-0">
@@ -939,8 +939,8 @@ export default function Home() {
             <div className="w-full h-[1px] bg-[#EAECEA] mb-10"></div>
 
             {/* Bottom Row */}
-            <div className="grid grid-cols-12 gap-8 items-stretch">
-              <div className="col-span-8 flex flex-col h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+              <div className="col-span-1 lg:col-span-8 flex flex-col h-full">
                 {/* Feature Banner - Agriculture Development */}
                 <section
                   className="bg-white rounded-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-[#EAECEA] overflow-hidden flex h-full min-h-[320px] relative items-center"
@@ -1019,7 +1019,7 @@ export default function Home() {
                   </button>
                 </section>
               </div>
-              <div className="col-span-4 flex flex-col h-full">
+              <div className="col-span-1 lg:col-span-4 flex flex-col h-full mt-8 lg:mt-0">
                 {/* News & Announcements */}
                 <div className="bg-[#FAF9F5] rounded-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-[#EAECEA] flex flex-col overflow-hidden h-full min-h-[320px]">
                   <div className="bg-gradient-to-b from-[#FAF9F5] to-[#F1F0EB] px-5 py-4 border-b border-[#EAECEA] shrink-0">
@@ -1061,7 +1061,7 @@ export default function Home() {
           data-purpose="main-footer"
         >
           <div className="max-w-[1200px] mx-auto px-4">
-            <div className="grid grid-cols-4 gap-8 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
               <div>
                 <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
                   Quick Links
