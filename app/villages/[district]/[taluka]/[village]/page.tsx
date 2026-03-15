@@ -551,7 +551,7 @@ export default function VillagePage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-[#f2f4f7] text-[#0f172a]">
+      <main className="min-h-screen bg-[#f9f9f9] text-[#0f172a]">
         <section className="relative overflow-hidden border-b-4 border-[#f58320] bg-[#082b57]">
           <div
             className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -562,28 +562,28 @@ export default function VillagePage() {
             }}
           />
           <div className="absolute inset-0 bg-linear-to-r from-[#071f40] via-[#082b57]/85 to-[#082b57]/30" />
-          <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-8 px-4 py-14 sm:px-6 md:py-24">
+          <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-[24px] px-4 py-14 sm:px-6 md:py-24">
             <div className="max-w-3xl space-y-4 animate-[fadeUp_700ms_ease-out] [animation-fill-mode:both]">
               <div className="inline-flex items-center gap-2 border border-[#f58320]/50 bg-[#f58320]/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[#ffd4a6]">
                 <MapPin className="size-4" />
                 {trimValue(basicInfo["Taluka Name"])},{" "}
                 {trimValue(basicInfo.District)}
               </div>
-              <h1 className="text-3xl font-black uppercase leading-tight text-white sm:text-4xl md:text-6xl">
+              <h1 className="text-[36px] font-[700] leading-[1.2] uppercase leading-tight text-white sm:text-4xl md:text-6xl">
                 Welcome to <span className="text-primary">{villageName}</span>
               </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-slate-200 md:text-lg">
+              <p className="max-w-2xl text-base leading-relaxed text-green-200 md:text-lg">
                 Dedicated to the progress and welfare of our citizens.
                 Represented by Hon. MLA{" "}
                 <b>{trimValue(basicInfo["Assembly MLA "])}</b> &amp; Hon. MP{" "}
                 <b>{trimValue(basicInfo["Parliament MP "])}</b>.
               </p>
             </div>
-            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-4 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
-              <button className="flex w-full items-center justify-center gap-2 border border-[#f58320] bg-[#f58320] px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#e3720f] sm:w-auto sm:px-7">
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-[16px] animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
+              <button className="flex w-full items-center justify-center gap-2 border border-[#f58320] bg-[#f58320] px-5 py-3 text-[14px] font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#e3720f] sm:w-auto sm:px-7">
                 <IndianRupee className="size-4" /> Pay Village Tax
               </button>
-              <button className="flex w-full items-center justify-center gap-2 border border-white/30 bg-[#082b57]/60 px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#0a356b] sm:w-auto sm:px-7">
+              <button className="flex w-full items-center justify-center gap-2 border border-white/30 bg-[#082b57]/60 px-5 py-3 text-[14px] font-bold uppercase tracking-wide text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#0a356b] sm:w-auto sm:px-7">
                 <TriangleAlert className="size-4" />
                 Lodge Complaint
               </button>
@@ -593,7 +593,7 @@ export default function VillagePage() {
 
         <VillageGlimpses villageName={villageName} photos={villagePhotos} />
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-10 sm:px-6 lg:grid-cols-3 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-[16px] px-4 py-10 sm:px-6 lg:grid-cols-3 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
           <div className="space-y-5 lg:col-span-2">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
@@ -603,7 +603,7 @@ export default function VillagePage() {
                 About the Digital Portal
               </h2>
             </div>
-            <div className="border border-slate-200 bg-white p-6 text-slate-700 shadow-sm">
+            <div className="border border-border bg-surface p-[16px] text-green-700 shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
               <p className="text-base leading-relaxed">{villageData.about}</p>
               <p className="mt-3 leading-relaxed">
                 Date: <b>{trimValue(basicInfo.Date)}</b> | Time:{" "}
@@ -612,48 +612,48 @@ export default function VillagePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-              <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              <div className="border border-border bg-surface p-4 shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
+                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   Taluka
                 </p>
                 <p className="text-lg font-semibold text-[#082b57]">
                   {trimValue(basicInfo["Taluka Name"])}
                 </p>
               </div>
-              <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              <div className="border border-border bg-surface p-4 shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
+                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   District
                 </p>
                 <p className="text-lg font-semibold text-[#082b57]">
                   {trimValue(basicInfo.District)}
                 </p>
               </div>
-              <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              <div className="border border-border bg-surface p-4 shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
+                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   Region
                 </p>
                 <p className="text-lg font-semibold text-[#082b57]">
                   {trimValue(basicInfo["Region "])}
                 </p>
               </div>
-              <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              <div className="border border-border bg-surface p-4 shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
+                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   Language
                 </p>
                 <p className="text-lg font-semibold text-[#082b57]">
                   {trimValue(basicInfo["Language "])}
                 </p>
               </div>
-              <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              <div className="border border-border bg-surface p-4 shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
+                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   Elevation
                 </p>
                 <p className="text-lg font-semibold text-[#082b57]">
                   {trimValue(basicInfo["Elevation / Altitude"])}
                 </p>
               </div>
-              <div className="border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              <div className="border border-border bg-surface p-4 shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
+                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   STD Code
                 </p>
                 <p className="text-lg font-semibold text-[#082b57]">
@@ -662,12 +662,12 @@ export default function VillagePage() {
               </div>
             </div>
           </div>
-          <div className="border border-[#082b57] border-t-4 border-t-[#f58320] bg-[#082b57] p-6 text-white shadow-sm transition-transform duration-300 hover:-translate-y-1">
+          <div className="border border-[#082b57] border-t-4 border-t-[#f58320] bg-[#082b57] p-[16px] text-white shadow-[0px_2px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1">
             <h3 className="text-2xl font-extrabold uppercase tracking-wide">
               Population Stats
             </h3>
             <div className="mt-5 space-y-5">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-[16px]">
                 <div className="flex size-12 items-center justify-center bg-[#f58320] text-white">
                   <Users className="size-5" />
                 </div>
@@ -675,12 +675,12 @@ export default function VillagePage() {
                   <p className="text-2xl font-extrabold text-[#f58320]">
                     <AnimatedCounter end={totalPopulation} duration={1600} />
                   </p>
-                  <p className="text-xs uppercase tracking-[0.12em] text-slate-300">
+                  <p className="text-xs uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
                     Total Population
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-[16px]">
                 <div className="flex size-12 items-center justify-center bg-[#1b4878] text-white">
                   <House className="size-5" />
                 </div>
@@ -688,12 +688,12 @@ export default function VillagePage() {
                   <p className="text-2xl font-extrabold">
                     <AnimatedCounter end={totalHouses} duration={1600} />
                   </p>
-                  <p className="text-xs uppercase tracking-[0.12em] text-slate-300">
+                  <p className="text-xs uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
                     Total Households
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-[16px]">
                 <div className="flex size-12 items-center justify-center bg-[#1b4878] text-white">
                   <GraduationCap className="size-5" />
                 </div>
@@ -706,14 +706,14 @@ export default function VillagePage() {
                       suffix="%"
                     />
                   </p>
-                  <p className="text-xs uppercase tracking-[0.12em] text-slate-300">
+                  <p className="text-xs uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
                     Literacy Rate
                   </p>
                 </div>
               </div>
               <div className="space-y-2 pt-4">
-                <div className="flex justify-between text-sm">
-                  <span className="font-semibold tracking-wide text-slate-300">
+                <div className="flex justify-between text-[14px]">
+                  <span className="font-semibold tracking-wide text-[var(--color-text-muted)]">
                     Female Population
                   </span>
                   <span className="font-bold">
@@ -725,9 +725,9 @@ export default function VillagePage() {
                     />
                   </span>
                 </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/20">
+                <div className="h-2.5 w-full overflow-hidden rounded-[999px] bg-surface/20">
                   <div
-                    className="h-full origin-left rounded-full bg-[#f58320] animate-[growIn_1200ms_ease-out_forwards]"
+                    className="h-full origin-left rounded-[999px] bg-[#f58320] animate-[growIn_1200ms_ease-out_forwards]"
                     style={{
                       width: `${femalePopulationPercent}%`,
                       animationDelay: "120ms",
@@ -736,8 +736,8 @@ export default function VillagePage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="font-semibold tracking-wide text-slate-300">
+                <div className="flex justify-between text-[14px]">
+                  <span className="font-semibold tracking-wide text-[var(--color-text-muted)]">
                     Working Population
                   </span>
                   <span className="font-bold">
@@ -749,9 +749,9 @@ export default function VillagePage() {
                     />
                   </span>
                 </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/20">
+                <div className="h-2.5 w-full overflow-hidden rounded-[999px] bg-surface/20">
                   <div
-                    className="h-full origin-left rounded-full bg-[#22c55e] animate-[growIn_1200ms_ease-out_forwards]"
+                    className="h-full origin-left rounded-[999px] bg-[#22c55e] animate-[growIn_1200ms_ease-out_forwards]"
                     style={{
                       width: `${workingPopulationPercent}%`,
                       animationDelay: "240ms",
@@ -763,8 +763,8 @@ export default function VillagePage() {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-white py-12 animate-[fadeUp_1000ms_ease-out] [animation-fill-mode:both]">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <section className="border-y border-border bg-surface py-12 animate-[fadeUp_1000ms_ease-out] [animation-fill-mode:both]">
+          <div className="mx-auto max-w-7xl px-[24px]">
             <div className="mb-7 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
@@ -778,35 +778,35 @@ export default function VillagePage() {
                 Explore All
               </button>
             </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-[24px] md:grid-cols-2 lg:grid-cols-3">
               {villageDirectory.map((block) => (
                 <div
                   key={block.title}
-                  className="border border-slate-200 bg-[#f8f9fb] p-5 shadow-sm transition-transform duration-300 hover:-translate-y-1"
+                  className="border border-border bg-[#f8f9fb] p-5 shadow-[0px_2px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1"
                 >
-                  <div className="flex items-center gap-3 border-b border-slate-200 pb-3 text-[#082b57]">
+                  <div className="flex items-center gap-3 border-b border-border pb-3 text-[#082b57]">
                     {renderDirectoryIcon(block.icon)}
-                    <h3 className="text-lg font-bold uppercase">
+                    <h3 className="text-[18px] font-[600] leading-[1.2] uppercase">
                       {block.title}
                     </h3>
                   </div>
-                  <ul className="mt-4 space-y-3 text-sm text-slate-700">
+                  <ul className="mt-4 space-y-3 text-[14px] text-green-700">
                     {block.items.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
                 </div>
               ))}
-              <div className="border border-slate-200 bg-[#f8f9fb] p-5 shadow-sm transition-transform duration-300 hover:-translate-y-1">
-                <div className="flex items-center gap-3 border-b border-slate-200 pb-3 text-[#082b57]">
+              <div className="border border-border bg-[#f8f9fb] p-5 shadow-[0px_2px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1">
+                <div className="flex items-center gap-3 border-b border-border pb-3 text-[#082b57]">
                   <Globe className="size-5" />
-                  <h3 className="text-lg font-bold uppercase">
+                  <h3 className="text-[18px] font-[600] leading-[1.2] uppercase">
                     Village Location
                   </h3>
                 </div>
-                <div className="group relative mt-4 h-40 w-full overflow-hidden border border-slate-300 bg-slate-100">
-                  {/* <div className="absolute inset-0 flex items-center justify-center bg-slate-300">
-                    <Map className="size-10 text-slate-400" />
+                <div className="group relative mt-4 h-40 w-full overflow-hidden border border-border bg-green-100">
+                  {/* <div className="absolute inset-0 flex items-center justify-center bg-[#f4f7fb]">
+                    <Map className="size-10 text-[var(--color-text-muted)]" />
                   </div> */}
                   <iframe
                     title="Village location map"
@@ -832,7 +832,7 @@ export default function VillagePage() {
         <PopulationCharts population={population} />
 
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 animate-[fadeUp_1100ms_ease-out] [animation-fill-mode:both]">
-          <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
+          <div className="mb-[32px] flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
             <div className="space-y-1">
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f58320]">
                 Village Newsroom
@@ -840,7 +840,7 @@ export default function VillagePage() {
               <h2 className="text-3xl font-extrabold uppercase text-[#082b57]">
                 Village Talks
               </h2>
-              <p className="text-slate-600">
+              <p className="text-[var(--color-text-secondary)]">
                 Latest news and announcements from the Gram Panchayat
               </p>
             </div>
@@ -848,31 +848,31 @@ export default function VillagePage() {
               View All News
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-[24px] md:grid-cols-2 lg:grid-cols-3">
             {talks.map((talk) => (
               <article
                 key={talk.title}
-                className="overflow-hidden border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
+                className="overflow-hidden border border-border bg-primary shadow-[0px_2px_6px_rgba(0,0,0,0.08)] text-white transition duration-300 hover:-translate-y-1 hover:shadow-[0px_4px_12px_rgba(0,0,0,0.12)]"
               >
                 <div
-                  className="h-48 w-full bg-slate-200"
+                  className="h-48 w-full bg-green-200"
                   style={{
                     backgroundImage: `url('${talk.image}')`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
                 />
-                <div className="space-y-3 p-6">
+                <div className="space-y-3 p-[16px]">
                   <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#f58320]">
                     {talk.category}
                   </span>
-                  <h3 className="text-lg font-bold text-[#082b57]">
+                  <h3 className="text-[18px] font-[600] leading-[1.2] text-[#082b57]">
                     {talk.title}
                   </h3>
-                  <p className="line-clamp-2 text-sm text-slate-600">
+                  <p className="line-clamp-2 text-[14px] text-[var(--color-text-secondary)]">
                     {talk.description}
                   </p>
-                  <div className="flex items-center gap-2 pt-3 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 pt-3 text-xs text-[var(--color-text-secondary)]">
                     <CalendarDays className="size-4" />
                     {talk.date}
                   </div>
@@ -883,7 +883,7 @@ export default function VillagePage() {
         </section>
 
         <section className="border-t-4 border-[#f58320] bg-[#082b57] py-10 text-white animate-[fadeUp_1200ms_ease-out] [animation-fill-mode:both]">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 sm:px-6 md:grid-cols-4 lg:grid-cols-5">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-[16px] px-4 sm:grid-cols-2 sm:px-6 md:grid-cols-4 lg:grid-cols-5">
             {footerStats.map(({ label, end, suffix, decimals }) => (
               <div
                 key={label}
@@ -897,7 +897,7 @@ export default function VillagePage() {
                     decimals={decimals}
                   />
                 </p>
-                <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-200">
+                <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-green-200">
                   {label}
                 </p>
               </div>

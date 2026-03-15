@@ -40,7 +40,11 @@ export default function PopulationCharts({
   const generalPercent = Math.max(0, 100 - (scPercent + stPercent));
 
   const genderData = [
-    { name: "Male", value: malePercent, fill: "#082b57" }, // Navy Blue
+    {
+      name: "Male",
+      value: malePercent,
+      fill: "#374151",
+    }, // Navy Blue
     { name: "Female", value: femalePercent, fill: "#f58320" }, // Orange
   ];
 
@@ -50,7 +54,7 @@ export default function PopulationCharts({
   ];
 
   const categoryData = [
-    { name: "General", value: 2100, fill: "#082b57" }, // Using dummy data for scale matching image approx
+    { name: "General", value: 2100, fill: "#374151" }, // Using dummy data for scale matching image approx
     { name: "SC", value: 850, fill: "#f58320" },
     { name: "ST", value: 500, fill: "#64748b" }, // Slate-500
   ];
@@ -67,7 +71,7 @@ export default function PopulationCharts({
               style={{ backgroundColor: entry.color }}
             />
             {entry.value}{" "}
-            <span className="text-slate-900">
+            <span className="text-green-950">
               ({entry.payload.value.toFixed(1)}%)
             </span>
           </li>
@@ -77,18 +81,18 @@ export default function PopulationCharts({
   };
 
   return (
-    <section className="bg-slate-50 py-16 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
+    <section className="bg-green-50 py-16 animate-[fadeUp_900ms_ease-out] [animation-fill-mode:both]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-10 w-fit border-b-4 border-[#f58320] pb-2">
-          <h2 className="text-3xl font-black uppercase text-slate-900">
+          <h2 className="text-3xl font-black uppercase text-green-950">
             Demographic Overview
           </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* Gender Chart */}
-          <div className="flex flex-col items-center border border-slate-100 bg-white p-8 shadow-sm">
-            <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-900">
+          <div className="flex flex-col items-center border border-green-100 bg-white p-8 shadow-sm">
+            <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-green-950">
               <Users className="size-4 text-[#f58320]" /> Gender Distribution
             </h3>
             <div className="h-64 w-full">
@@ -112,9 +116,11 @@ export default function PopulationCharts({
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => `${value.toFixed(1)}%`}
+                    formatter={(value: any) =>
+                      `${(typeof value === "number" ? value : 0).toFixed(1)}%`
+                    }
                     contentStyle={{
-                      backgroundColor: "#082b57",
+                      backgroundColor: "#374151",
                       color: "#fff",
                       border: "none",
                       fontSize: "12px",
@@ -129,8 +135,8 @@ export default function PopulationCharts({
           </div>
 
           {/* Literacy Rate */}
-          <div className="flex flex-col items-center border border-slate-100 bg-white p-8 shadow-sm">
-            <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-900">
+          <div className="flex flex-col items-center border border-green-100 bg-white p-8 shadow-sm">
+            <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-green-950">
               <BookOpen className="size-4 text-[#f58320]" /> Literacy Rate
             </h3>
             <div className="relative h-64 w-full">
@@ -156,9 +162,11 @@ export default function PopulationCharts({
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => `${value.toFixed(1)}%`}
+                    formatter={(value: any) =>
+                      `${(typeof value === "number" ? value : 0).toFixed(1)}%`
+                    }
                     contentStyle={{
-                      backgroundColor: "#082b57",
+                      backgroundColor: "#374151",
                       color: "#fff",
                       border: "none",
                       fontSize: "12px",
@@ -173,7 +181,7 @@ export default function PopulationCharts({
           </div>
 
           {/* Population Categories */}
-          <div className="flex flex-col items-center border border-slate-100 bg-white p-8 shadow-sm">
+          <div className="flex flex-col items-center border border-green-100 bg-white p-8 shadow-sm">
             <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#082b57]">
               <Layers className="size-4 text-[#f58320]" /> Population Categories
             </h3>
@@ -199,7 +207,7 @@ export default function PopulationCharts({
                   <Tooltip
                     cursor={{ fill: "transparent" }}
                     contentStyle={{
-                      backgroundColor: "#082b57",
+                      backgroundColor: "#374151",
                       color: "#fff",
                       border: "none",
                       fontSize: "12px",
@@ -216,7 +224,7 @@ export default function PopulationCharts({
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <p className="mt-4 text-[9px] font-bold uppercase tracking-widest text-slate-400">
+            <p className="mt-4 text-[9px] font-bold uppercase tracking-widest text-[#1a365d]">
               Based on local administrative records
             </p>
           </div>

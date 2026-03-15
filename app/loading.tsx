@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-[#f2f4f7] text-[#082b57]">
+    <main className="min-h-screen bg-[#f9f9f9] text-[#082b57]">
       <div className="fixed inset-x-0 top-0 z-50 h-1 overflow-hidden bg-[#082b57]/15">
         <div className="h-full w-1/3 animate-[pulse_1s_ease-in-out_infinite] bg-[#f58320]" />
       </div>
@@ -13,7 +13,7 @@ export default function Loading() {
           <h2 className="text-2xl font-extrabold uppercase text-[#082b57]">
             Loading Page
           </h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-green-700">
             Please wait while we fetch the latest data.
           </p>
         </div>

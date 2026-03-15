@@ -60,7 +60,7 @@ export default function VillageGlimpses({
           <h2 className="text-3xl font-extrabold uppercase text-[#082b57]">
             Life Around {villageName}
           </h2>
-          <p className="text-sm text-slate-600 md:text-base">
+          <p className="text-sm text-green-700 md:text-base">
             A visual overview of landmarks, landscapes, and day-to-day life.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function VillageGlimpses({
           <button
             type="button"
             onClick={() => openPreview(0)}
-            className="group relative overflow-hidden border border-slate-200 bg-white text-left shadow-sm lg:col-span-7"
+            className="group relative overflow-hidden border border-green-200 bg-white text-left shadow-sm lg:col-span-7"
           >
             <img
               src={photos[0].image}
@@ -78,13 +78,13 @@ export default function VillageGlimpses({
               className="h-80 w-full object-cover transition duration-500 group-hover:scale-[1.03] md:h-105"
             />
             <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 via-black/30 to-transparent p-5 text-white md:p-6">
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-200">
+              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-green-200">
                 Featured
               </p>
               <h3 className="mt-1 text-xl font-bold uppercase md:text-2xl">
                 {photos[0].title}
               </h3>
-              <p className="mt-1 text-sm text-slate-100/90">
+              <p className="mt-1 text-sm text-green-100/90">
                 {photos[0].description}
               </p>
             </div>
@@ -99,7 +99,7 @@ export default function VillageGlimpses({
                   key={photo.title}
                   type="button"
                   onClick={() => openPreview(actualIndex)}
-                  className="group relative overflow-hidden border border-slate-200 bg-white text-left shadow-sm"
+                  className="group relative overflow-hidden border border-green-200 bg-white text-left shadow-sm"
                 >
                   <img
                     src={photo.image}
@@ -168,7 +168,7 @@ export default function VillageGlimpses({
               <p className="text-sm font-bold uppercase tracking-wide">
                 {activePhoto.title}
               </p>
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-stone-100">
                 {activePhoto.description}
               </p>
             </div>
