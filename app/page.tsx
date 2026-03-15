@@ -220,7 +220,7 @@ export default function Home() {
           >
             {/* <div className="absolute inset-0 bg-linear-to-r from-white/95 via-white/80 to-transparent"></div> */}
           </div>
-          <div className="max-w-[1200px] mx-auto px-4 relative z-10 grid grid-cols-1 md:grid-cols-12 h-full items-center">
+          <div className="max-w-300 mx-auto px-4 relative z-10 grid grid-cols-1 md:grid-cols-12 h-full items-center">
             <div className="col-span-1 md:col-span-8 lg:col-span-7 text-center md:text-left pl-0 md:pl-8 pt-10 md:pt-0">
               <h1 className="text-[#1F4E79] text-3xl mb-4">
                 Welcome to Gram Samriddhi Portal!
@@ -228,7 +228,7 @@ export default function Home() {
               <p className="mt-2 text-xl text-gray-800 mb-8 font-medium">
                 Empowering our villages with information and services
               </p>
-              <button className="bg-[#F28C28] text-white px-[28px] py-[14px] rounded-sm font-semibold hover:brightness-110 transition shadow-md">
+              <button className="bg-[#F28C28] text-white px-7 py-[14px] rounded-sm font-semibold hover:brightness-110 transition shadow-md">
                 Learn More
               </button>
             </div>
