@@ -1,816 +1,1234 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Search, Gavel, ShieldCheck, CheckCircle, Leaf, Sun, Droplet, ChevronLeft, ChevronRight, TrendingUp, ArrowRight, MapPin, ExternalLink, ClipboardList, CreditCard, Info, BadgeHelpIcon } from "lucide-react";
-import data from "./data.json";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import AnimatedCounter from "@/components/AnimatedCounter";
-interface District {
-  district: string;
-  subDistricts: SubDistrict[];
-}
-interface SubDistrict {
-  subDistrict: string;
-  villages: string[];
-}
+import Link from "next/link";
 
-const slides = [
-  {
-    image: "https://images.unsplash.com/photo-1634874706682-3468a6e421ba?q=80&w=1457&auto=format&fit=crop",
-    title: "Vibrant Rural Ecosystems",
-    description: "Modern infrastructure meeting traditional values in the heart of Maharashtra."
-  },
-  {
-    image: "https://images.unsplash.com/photo-1643474004591-35d044e959ea?q=80&w=1470&auto=format&fit=crop",
-    title: "Digital Empowerment",
-    description: "Connecting every village to the global digital economy through accessible services."
-  },
-  {
-    image: "https://images.unsplash.com/photo-1647184223407-ef8273a6822c?q=80&w=1374&auto=format&fit=crop",
-    title: "Sustainable Agriculture",
-    description: "Promoting eco-friendly farming practices and robust water management."
+declare global {
+  interface Window {
+    googleTranslateElementInit: () => void;
+    google: any;
   }
-];
+}
 
 export default function Home() {
-  const router = useRouter();
-  const [district, setDistrict] = useState("");
-  const [taluka, setTaluka] = useState("");
-  const [village, setVillage] = useState("");
-  const districts: District[] = data.districts || [];
-  const selectedDistrictData = districts.find((d: District) => d.district === district);
-  const talukas: SubDistrict[] = selectedDistrictData ? selectedDistrictData.subDistricts : [];
-  const selectedTalukaData = talukas.find((t: SubDistrict) => t.subDistrict === taluka);
-  const villages: string[] = selectedTalukaData ? selectedTalukaData.villages : [];
-  const [current, setCurrent] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(1);
+
+  const zoomOut = () => setZoomLevel((prev) => Math.max(0.8, prev - 0.1));
+  const zoomIn = () => setZoomLevel((prev) => Math.min(1.2, prev + 0.1));
+  const zoomReset = () => setZoomLevel(1);
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent(prev => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    // Add Google Translate script
+    const script = document.createElement("script");
+    script.src =
+      "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    script.async = true;
+    document.body.appendChild(script);
+
+    // Add initialization function
+    window.googleTranslateElementInit = () => {
+      new (window as any).google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+        },
+        "google_translate_element",
+      );
+    };
   }, []);
-  const nextSlide = () => setCurrent(prev => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrent(prev => (prev - 1 + slides.length) % slides.length);
-  return <>
-      <div className="bg-[#f9f9f9] text-base md:text-lg text-slate-900  ">
-        <div className="fixed bottom-3 right-3 z-100 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8">
-      <button className="flex items-center gap-2 rounded-sm border border-white bg-[#0f766e] px-3 py-2 text-xs font-bold text-white shadow-md transition-all hover:bg-slate-800 sm:gap-3 sm:px-5 sm:py-3 sm:text-sm">
-        <BadgeHelpIcon />
-        <span className="hidden sm:inline">Citizen Support</span>
-      </button>
-    </div>
-        <Header />
-        <div className="flex items-center overflow-hidden border-b border-slate-200 bg-white py-2">
-      <div className="z-10 ml-3 whitespace-nowrap bg-[#f57b20] px-3 py-1 text-[10px] font-black tracking-[0.15em] text-white uppercase sm:ml-4 sm:px-4 sm:text-xs sm:tracking-widest">
-        LATEST UPDATES:
-      </div>
-      <div className="w-full overflow-hidden bg-white pl-[100%] box-content flex-1">
-        <div className="inline-block whitespace-nowrap pr-[100%] box-content animate-[ticker_30s_linear_infinite]">
-          <span className="mx-5 text-[10px] font-bold text-[#0f766e] uppercase sm:mx-8 sm:text-xs">
-            ● Circular 442/2024: New guidelines for Rural Water Management
-            implementation
-          </span>
-          <span className="mx-5 text-[10px] font-bold text-[#0f766e] uppercase sm:mx-8 sm:text-xs">
-            ● Applications open for Maha-Krushi Samrudhi Yojana 2024-25
-          </span>
-          <span className="mx-5 text-[10px] font-bold text-[#0f766e] uppercase sm:mx-8 sm:text-xs">
-            ● Important: Digital Signature mandatory for all Sarpanch
-            administrative approvals from June 1st
-          </span>
-          <span className="mx-5 text-[10px] font-bold text-[#0f766e] uppercase sm:mx-8 sm:text-xs">
-            ● E-Tendering process for Grade B Village Pavements now live on
-            state portal
-          </span>
-        </div>
-      </div>
-    </div>
-        <section className="relative flex min-h-[70vh] w-full items-center justify-center overflow-hidden border-b border-slate-200 py-12 md:min-h-125 md:py-16">
-      <div className="absolute inset-0 z-0 bg-cover bg-center" style={{
-          backgroundImage: "linear-gradient(rgba(0, 33, 71, 0.85), rgba(0, 33, 71, 0.95)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDE2AIfo1s1gN4TWz6BFu1Hgx8d2yB6SvIC7v8fhsy4_ElrdgN6fM3CGAerBp1usnm5AoYpJ8MXn_iWTLOf1X_Xjfgc2CHJjq5WRhdrWGEmVta1CDsYouxyQfas_XAxF-yQ4DeBjQ0mp8pGemJ1wGgAgMhvRNjHeIAbbwyx1ClBtG3JTE5a91kG2gvzOM_evj6G2xV7PjSwoBWEwYuzkTvjrR1vq3lJlrCCFRg-PG4pZEzJIdTCOiEsV66L9lof6o8iom0rGukyIz7E')"
-        }} />
-      <div className="relative z-10 mx-auto w-full max-w-300 px-4 text-center text-white sm:px-6 lg:px-8">
-        <span className="mb-6 inline-block border border-white/30 px-4 py-1 text-xs font-bold tracking-[0.2em] text-white uppercase">
-          Rural Development Department
-        </span>
-        <h2 className="mb-6 text-3xl font-black leading-tight tracking-tight uppercase sm:text-4xl md:text-6xl">
-          Digital Panchayat Services
-        </h2>
-        <p className="mx-auto mb-8 max-w-2xl border-l-4 border-[#f57b20] px-4 text-left text-base font-normal text-slate-300 sm:px-6 md:mb-10 md:text-center md:text-xl">
-          Empowering rural Maharashtra through transparent digital governance
-          and accessible citizen services.
-        </p>
-        <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
-          <button className="flex w-full items-center justify-center gap-3 border border-[#4cae4c] bg-[#f57b20] px-6 py-3 text-base font-bold text-white transition-colors hover:bg-[#449d44] sm:w-auto sm:px-8 sm:py-4 sm:text-lg">
-            <Search />
-            Village Directory
-          </button>
-          <button className="flex w-full items-center justify-center gap-3 border-2 border-white bg-transparent px-6 py-3 text-base font-bold text-white transition-all hover:bg-white/10 sm:w-auto sm:px-8 sm:py-4 sm:text-lg">
-            <Gavel />
-            Lodge Complaint
-          </button>
-        </div>
-      </div>
-    </section>
-        <section className="border-b border-slate-200 bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-10 md:gap-16 lg:grid-cols-2">
-          <div className="space-y-6">
-            <h2 className="inline-block border-b-4 border-[#f57b20] pb-2 text-3xl font-black tracking-tight text-[#0f766e] uppercase">
-              About the Digital Portal
-            </h2>
-            <p className="font-medium leading-relaxed text-slate-600">
-              The Gram Panchayat Digital Portal is a flagship initiative by the
-              Government of Maharashtra to bridge the digital divide in rural
-              areas. We provide a single-window interface for over 27,000 local
-              bodies.
-            </p>
-            <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
-              <div className="border-l-4 border-[#0f766e] bg-slate-50 p-6">
-                <h4 className="mb-3 text-sm font-black text-[#0f766e] uppercase">
-                  Our Mission
-                </h4>
-                <p className="text-sm leading-relaxed text-slate-500">
-                  To digitize 100% of village-level administrative functions and
-                  financial transactions by 2026, ensuring accountability at
-                  every step.
-                </p>
+
+  return (
+    <>
+      <div
+        className="font-sans bg-[#F5F6F7] text-[#2B2B2B] min-h-screen"
+        style={{ zoom: zoomLevel } as any}
+      >
+        {/* BEGIN: Top Header */}
+        <header
+          className="bg-[#1F4E79] text-white py-4"
+          data-purpose="main-header"
+        >
+          <div className="max-w-300 mx-auto flex justify-between items-center px-4">
+            <div className="flex items-center space-x-4">
+              <div
+                className="w-12 h-12 flex items-center justify-center text-xs"
+                data-purpose="logo-placeholder"
+              >
+                <img src="./logo.svg" alt="Logo" className="w-14 h-14 " />
               </div>
-              <div className="border-l-4 border-[#f57b20] bg-slate-50 p-6">
-                <h4 className="mb-3 text-sm font-black text-[#0f766e] uppercase">
-                  Our Vision
-                </h4>
-                <p className="text-sm leading-relaxed text-slate-500">
-                  Creating a &apos;Digital Swaraj&apos; where every citizen in
-                  rural Maharashtra has paperless access to government services
-                  at their doorstep.
+              <div>
+                <h2 className="text-xl font-bold leading-tight text-white mb-0">
+                  Gram Samriddhi Portal
+                </h2>
+                <p className="text-sm opacity-80 mb-0">
+                  Empowering Rural India
                 </p>
               </div>
             </div>
+            <div className="flex items-center space-x-6 text-sm">
+              <div className="flex items-center bg-white/10 rounded-sm border border-white/20 px-2 py-1 h-8">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white opacity-80 mr-2 shrink-0"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  <path d="M2 12h20"></path>
+                </svg>
+                <div id="google_translate_element"></div>
+              </div>
+              <div className="flex items-center space-x-4 opacity-80">
+                <span className="flex items-center gap-2">
+                  <span className="cursor-pointer" onClick={zoomOut}>
+                    A-
+                  </span>{" "}
+                  |{" "}
+                  <span
+                    className="cursor-pointer font-bold bg-white text-black px-1"
+                    onClick={zoomReset}
+                  >
+                    A
+                  </span>{" "}
+                  |{" "}
+                  <span className="cursor-pointer" onClick={zoomIn}>
+                    A+
+                  </span>
+                </span>
+              </div>
+                <Link href="/auth/signup" className="bg-[#F28C28] px-6 py-2 rounded-sm font-bold hover:brightness-110 transition">
+            Register
+          </Link>
+            </div>
           </div>
+        </header>
 
-          <div className="relative bg-[#0f766e] p-6 text-white sm:p-8 md:p-10">
-            <div className="-z-10 absolute -top-4 -right-4 h-24 w-24 bg-[#f57b20]/20" />
-            <h3 className="mb-6 flex items-center gap-3 text-xl font-bold">
-              <ShieldCheck className="text-[#f57b20]" />
-              Core Objectives
-            </h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <CheckCircle className="text-xl text-[#f57b20]" />
-                <span className="text-sm font-medium">
-                  Reduction in administrative processing time by 60%
-                </span>
+        {/* BEGIN: Navigation Bar */}
+        <nav
+          className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50"
+          data-purpose="primary-navigation"
+        >
+          <div className="max-w-300 mx-auto flex items-center justify-between px-4">
+            <ul className="flex items-center m-0 p-0 list-none divide-x divide-gray-200">
+              <li className="bg-[#1F4E79] text-white font-semibold cursor-pointer">
+                <Link href="/" className="block px-6 py-4">
+                  Home
+                </Link>
               </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="text-xl text-[#f57b20]" />
-                <span className="text-sm font-medium">
-                  Real-time public tracking of development funds
-                </span>
+              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
+                <Link href="/about" className="block px-6 py-4">
+                  About Us
+                </Link>
               </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="text-xl text-[#f57b20]" />
-                <span className="text-sm font-medium">
-                  Integration with State and Central Welfare Portals
-                </span>
+              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
+                <Link
+                  href="/schemes"
+                  className="block px-6 py-4 flex items-center gap-1"
+                >
+                  Schemes <span className="text-[10px]"></span>
+                </Link>
               </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="text-xl text-[#f57b20]" />
-                <span className="text-sm font-medium">
-                  Direct Benefit Transfer (DBT) security verification
-                </span>
+              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
+                <Link
+                  href="/services"
+                  className="block px-6 py-4 flex items-center gap-1"
+                >
+                  Services <span className="text-[10px]"></span>
+                </Link>
+              </li>
+              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
+                <Link href="/gallery" className="block px-6 py-4">
+                  Gallery
+                </Link>
+              </li>
+              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
+                <Link href="/contact" className="block px-6 py-4">
+                  Contact Us
+                </Link>
               </li>
             </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-        <section className="overflow-hidden border-b border-slate-200 bg-slate-50 py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center md:mb-16">
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-[#0f766e] uppercase">
-            Glimpses of Rural Maharashtra
-          </h2>
-          <p className="text-xs font-bold tracking-[0.3em] text-slate-500 uppercase">
-            Showcasing Progress &amp; Heritage across Villages
-          </p>
-          <div className="mx-auto mt-4 h-1 w-24 bg-[#f57b20]" />
-        </div>
-
-        <div className="group relative">
-      <div className="relative aspect-video w-full overflow-hidden border border-slate-300 bg-white">
-        {slides.map((slide: any, index: number) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === current ? "opacity-100 z-10" : "opacity-0 z-0"}`}>
-            <img alt={slide.title} className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0" src={slide.image} />
-            <div className="absolute right-0 bottom-0 left-0 border-t-4 border-[#f57b20] bg-[#fffffff]/80 p-6 text-white backdrop-blur-sm">
-              <div className="mx-auto w-full max-w-300 px-3 sm:px-6 lg:px-8">
-                <h3 className="text-lg font-black tracking-tight uppercase sm:text-xl">
-                  {slide.title}
-                </h3>
-                <p className="text-xs font-medium text-slate-300 sm:text-sm">
-                  {slide.description}
-                </p>
-              </div>
-            </div>
-          </div>)}
-      </div>
-
-      <button onClick={prevSlide} className="absolute left-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#0f766e] shadow-lg transition-all hover:border-[#0f766e] hover:bg-[#0f766e] hover:text-white sm:left-4 sm:size-12">
-        <ChevronLeft />
-      </button>
-      <button onClick={nextSlide} className="absolute right-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#0f766e] shadow-lg transition-all hover:border-[#0f766e] hover:bg-[#0f766e] hover:text-white sm:right-4 sm:size-12">
-        <ChevronRight />
-      </button>
-    </div>
-
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="flex items-center gap-4 border border-slate-200 bg-white p-6 shadow-sm">
-            <Leaf size={36} className=" text-[#f57b20]" />
-            <div>
-              <h4 className="text-sm font-black text-[#0f766e] uppercase">
-                Smart Infrastructure
-              </h4>
-              <p className="mt-1 text-xs font-medium text-slate-500">
-                Digitally connected community centers and modern amenities.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 border border-slate-200 bg-white p-6 shadow-sm">
-            <Sun size={36} className=" text-[#f57b20]" />
-            <div>
-              <h4 className="text-sm font-black text-[#0f766e] uppercase">
-                Sustainable Energy
-              </h4>
-              <p className="mt-1 text-xs font-medium text-slate-500">
-                Solar-powered street lighting and eco-friendly village grids.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 border border-slate-200 bg-white p-6 shadow-sm">
-            <Droplet size={36} className=" text-[#f57b20]" />
-            <div>
-              <h4 className="text-sm font-black text-[#0f766e] uppercase">
-                Water Management
-              </h4>
-              <p className="mt-1 text-xs font-medium text-slate-500">
-                Exemplary watershed management and piped water for all.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-        <section className="border-b border-slate-200 bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
-          <div>
-            <h2 className="text-3xl font-black tracking-tight text-[#0f766e] uppercase">
-              Model Village Spotlights
-            </h2>
-            <p className="mt-2 text-lg font-medium text-slate-500">
-              Showcasing excellence in rural administration and development
-            </p>
-          </div>
-          <button className="group flex w-full items-center justify-center gap-2 border-2 border-[#0f766e] px-5 py-2 text-xs font-bold text-[#0f766e] transition-all duration-300 hover:bg-[#0f766e] hover:text-white sm:w-auto sm:px-6 sm:text-sm">
-            CASE STUDIES
-            <TrendingUp className="text-sm transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-          <div className="group flex flex-col gap-6 border border-slate-100 p-4 transition-all hover:border-[#f57b20] md:flex-row">
-            <div className="aspect-video bg-cover bg-center shadow-md transition-all group-hover:grayscale-0 md:w-1/2 grayscale" style={{
-                backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCXAGavzmlpZw5esy2lzmIzekc0x-HDHTu1VFdcdIQYTVxwbpnhvBppA0EKASCE1_le1sjDr9cJ6L4Dk6m37Vd3guYmImFYDOGQbw4JmmUWIR7sZJp4aseoz_NVKl_zeqNguvYCy3st3xbv_dnbH18ApHyp4c9_KrRcMm13udwAXOrhGHk6w4Ep7MkeBWrcB2-AChZRUqm4HaOdm1KO7YwndQ3CrnuP35Vr_h0FF_d8TxcaRSovK22hmJKuTQC4P-oeOFL0550pW_N')"
-              }} />
-            <div className="flex flex-col justify-center md:w-1/2">
-              <span className="mb-1 text-[10px] font-black tracking-widest text-[#f57b20] uppercase">
-                Sanitation &amp; Ecology
-              </span>
-              <h4 className="mb-3 text-xl font-black text-[#0f766e] transition-colors group-hover:text-[#f57b20]">
-                Kharadi: Zero-Waste Pioneer
-              </h4>
-              <p className="mb-4 text-sm leading-relaxed text-slate-500">
-                Implementing 100% waste segregation and a local bio-gas plant
-                that powers streetlights for the entire village.
-              </p>
-              <a className="flex items-center gap-2 text-xs font-bold text-[#0f766e] uppercase transition-transform group-hover:translate-x-2" href="#">
-                Read Success Story
-                <ArrowRight className="text-sm" />
-              </a>
-            </div>
-          </div>
-
-          <div className="group flex flex-col gap-6 border border-slate-100 p-4 transition-all hover:border-[#f57b20] md:flex-row">
-            <div className="aspect-video bg-cover bg-center shadow-md transition-all group-hover:grayscale-0 md:w-1/2 grayscale" style={{
-                backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWOAZULjffZQm6xdQbirErIl-J-6mWscmHOX9E8CCAJRwspUR2P9YprjvZ5o3HDIVVwYnrmaSgsL3rXPqLH3NbZzLYrv-GWUEQPWO2lmcZMxtFMkT8eKFsLP2L9EPvjDwxUs12r4MeuqYZ3H8d7wnGRKoZ4F2fG7TenMClPk4Za9mlRoJybccFEQh1pwbWIl-KQTQnTx7lluL7eQeFxWfqu_UHNneVoh5AJGUx1FKfR9i2n9bDrsyNR45I7nsbbZ7-K-ajPRCBt7uU')"
-              }} />
-            <div className="flex flex-col justify-center md:w-1/2">
-              <span className="mb-1 text-[10px] font-black tracking-widest text-[#f57b20] uppercase">
-                Education &amp; Digitization
-              </span>
-              <h4 className="mb-3 text-xl font-black text-[#0f766e] transition-colors group-hover:text-[#f57b20]">
-                Ralegan: 100% Literacy
-              </h4>
-              <p className="mb-4 text-sm leading-relaxed text-slate-500">
-                Achieved complete adult literacy and established a digital
-                learning lab that serves 5 neighboring villages.
-              </p>
-              <a className="flex items-center gap-2 text-xs font-bold text-[#0f766e] uppercase transition-transform group-hover:translate-x-2" href="#">
-                Read Success Story
-                <ArrowRight className="text-sm" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-        <section className="border-b border-slate-200 bg-white py-14 md:py-20 ">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center md:mb-16">
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-[#0f766e] uppercase">
-            Citizen Journey Guide
-          </h2>
-          <div className="mx-auto h-1 w-24 bg-[#f57b20]" />
-        </div>
-
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div className="group relative border border-slate-200 bg-slate-50 p-6 text-center transition-all duration-500 hover:-translate-y-2 hover:border-[#0f766e]/30 hover:bg-white hover:shadow-xl sm:p-8">
-            <div className="mx-auto mb-6 flex size-16 items-center justify-center bg-[#0f766e] text-2xl font-black text-white transition-all duration-500 group-hover:-translate-y-2 group-hover:scale-110 group-hover:bg-[#f57b20]">
-              01
-            </div>
-            <h3 className="mb-4 text-xl font-bold text-[#0f766e] transition-colors duration-300 group-hover:text-[#f57b20]">
-              Identify Location
-            </h3>
-            <p className="text-base leading-relaxed text-slate-600 transition-colors duration-300 group-hover:text-slate-800">
-              Select your Administrative District and Taluka to locate your
-              specific Gram Panchayat office.
-            </p>
-          </div>
-          <div className="group relative border border-slate-200 bg-slate-50 p-6 text-center transition-all duration-500 hover:-translate-y-2 hover:border-[#0f766e]/30 hover:bg-white hover:shadow-xl sm:p-8">
-            <div className="mx-auto mb-6 flex size-16 items-center justify-center bg-[#0f766e] text-2xl font-black text-white transition-all duration-500 group-hover:-translate-y-2 group-hover:scale-110 group-hover:bg-[#f57b20]">
-              02
-            </div>
-            <h3 className="mb-4 text-xl font-bold text-[#0f766e] transition-colors duration-300 group-hover:text-[#f57b20]">
-              Select Service
-            </h3>
-            <p className="text-base leading-relaxed text-slate-600 transition-colors duration-300 group-hover:text-slate-800">
-              Access official services including tax payments, certificate
-              applications, or scheme enrollment.
-            </p>
-          </div>
-          <div className="group relative border border-slate-200 bg-slate-50 p-6 text-center transition-all duration-500 hover:-translate-y-2 hover:border-[#0f766e]/30 hover:bg-white hover:shadow-xl sm:p-8">
-            <div className="mx-auto mb-6 flex size-16 items-center justify-center bg-[#0f766e] text-2xl font-black text-white transition-all duration-500 group-hover:-translate-y-2 group-hover:scale-110 group-hover:bg-[#f57b20]">
-              03
-            </div>
-            <h3 className="mb-4 text-xl font-bold text-[#0f766e] transition-colors duration-300 group-hover:text-[#f57b20]">
-              Online Fulfillment
-            </h3>
-            <p className="text-base leading-relaxed text-slate-600 transition-colors duration-300 group-hover:text-slate-800">
-              Provide necessary documentation and complete the application
-              process through our secure portal.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-        <section className="border-y-8 border-[#f57b20] bg-[#0f766e] py-14 text-white md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-10 md:gap-16 lg:gap-20 lg:grid-cols-2">
-          <div className="space-y-8">
-            <h2 className="text-3xl font-black leading-tight uppercase md:text-4xl">
-              Citizen Charter &amp; <br />
-              Complaint Registration
-            </h2>
-            <p className="font-medium text-slate-400">
-              Our commitment to time-bound service delivery. If services are not
-              rendered within the stipulated period, citizens have the right to
-              appeal through our transparent complaint mechanism.
-            </p>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 border border-white/10 bg-white/5 p-4">
-                <span className="flex size-12 items-center justify-center rounded-sm bg-[#f57b20] font-black text-white">
-                  24h
-                </span>
-                <div>
-                  <h4 className="text-sm font-bold uppercase">
-                    Acknowledgement
-                  </h4>
-                  <p className="text-xs text-slate-400">
-                    Receive tracking ID via Email within 24 hours of filing.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 border border-white/10 bg-white/5 p-4">
-                <span className="flex size-12 items-center justify-center rounded-sm bg-slate-700 font-black text-white">
-                  7d
-                </span>
-                <div>
-                  <h4 className="text-sm font-bold uppercase">
-                    Initial Review
-                  </h4>
-                  <p className="text-xs text-slate-400">
-                    Assignment to relevant department and preliminary check.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 border border-white/10 bg-white/5 p-4">
-                <span className="flex size-12 items-center justify-center rounded-sm bg-slate-700 font-black text-white">
-                  15d
-                </span>
-                <div>
-                  <h4 className="text-sm font-bold uppercase">
-                    Final Resolution
-                  </h4>
-                  <p className="text-xs text-slate-400">
-                    Closing the complaint with proof of resolution.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t-8 border-[#f57b20] bg-white p-5 text-[#0f766e] sm:p-8">
-            <h3 className="mb-6 text-xl font-black uppercase">
-              Quick Complaint Filing
-            </h3>
-            <form className="space-y-4">
-              <div>
-                <label className="mb-2 block text-[10px] font-black tracking-widest text-slate-500 uppercase">
-                  Full Name (As per Aadhar)
-                </label>
-                <input className="h-12 w-full pl-2 border border-slate-300 text-sm font-bold focus:border-[#0f766e] focus:ring-[#0f766e]" placeholder="Enter name" type="text" />
-              </div>
-              <div>
-                <label className="mb-2 block text-[10px] font-black tracking-widest text-slate-500 uppercase">
-                  Complaint Category
-                </label>
-                <select className="h-12 w-full border border-slate-300 text-sm font-bold focus:border-[#0f766e] focus:ring-[#0f766e]">
-                  <option>-- Select Category --</option>
-                  <option>Public Works (Roads/Drains)</option>
-                  <option>Water Supply Issues</option>
-                  <option>Sanitation &amp; Waste</option>
-                  <option>Welfare Scheme Disbursement</option>
-                </select>
-              </div>
-              <div>
-                <label className="mb-2 block text-[10px] font-black tracking-widest text-slate-500 uppercase">
-                  Brief Description
-                </label>
-                <textarea className="h-24 w-full border border-slate-300 p-3 text-sm font-bold focus:border-[#0f766e] focus:ring-[#0f766e]" placeholder="Describe your issue..." />
-              </div>
-              <button className="w-full bg-[#0f766e] py-4 text-sm font-black text-white uppercase shadow-md transition-all hover:bg-slate-800">
-                Submit Formal Complaint
+            <form
+              action="https://www.google.com/search"
+              method="GET"
+              target="_blank"
+              className="relative w-64"
+            >
+              <input
+                className="w-full border border-gray-200 bg-gray-50 rounded-full py-2 px-4 text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
+                placeholder="Search with Google..."
+                name="q"
+                type="text"
+              />
+              <button
+                type="submit"
+                className="absolute right-4 top-2 text-gray-400 font-bold"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
               </button>
             </form>
           </div>
-        </div>
-      </div>
-    </section>
-        <section className="border-b border-slate-200 bg-slate-100 py-12">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="border border-slate-300 bg-white p-5 shadow-sm sm:p-8">
-          <h3 className="mb-6 flex items-center gap-2 text-base font-bold tracking-wider text-[#0f766e] uppercase sm:text-lg">
-            <MapPin className="text-[#f57b20]" />
-            Panchayat Selection Portal
-          </h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-      <div>
-        <label className="mb-2 block text-[10px] font-black text-slate-500 uppercase">
-          District Selection
-        </label>
-        <select className="h-12 w-full border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-900 transition-colors hover:border-slate-400 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e]" value={district} onChange={e => {
-                  setDistrict(e.target.value);
-                  setTaluka("");
-                  setVillage("");
-                }}>
-          <option value="" disabled className="text-slate-400">
-            -- Select District --
-          </option>
-          {districts.map((d: District) => <option key={d.district} value={d.district}>
-              {d.district}
-            </option>)}
-        </select>
-      </div>
+        </nav>
 
-      <div>
-        <label className="mb-2 block text-[10px] font-black text-slate-500 uppercase">
-          Taluka Selection
-        </label>
-        <select className="h-12 w-full border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-900 transition-colors hover:border-slate-400 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] disabled:cursor-not-allowed disabled:opacity-50" value={taluka} onChange={e => {
-                  setTaluka(e.target.value);
-                  setVillage("");
-                }} disabled={!district}>
-          <option value="" disabled className="text-slate-400">
-            -- Select Taluka --
-          </option>
-          {talukas.map((t: SubDistrict) => <option key={t.subDistrict} value={t.subDistrict}>
-              {t.subDistrict}
-            </option>)}
-        </select>
-      </div>
-
-      <div>
-        <label className="mb-2 block text-[10px] font-black text-slate-500 uppercase">
-          Village Selection
-        </label>
-        <select className="h-12 w-full border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-900 transition-colors hover:border-slate-400 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] disabled:cursor-not-allowed disabled:opacity-50" value={village} onChange={e => setVillage(e.target.value)} disabled={!taluka}>
-          <option value="" disabled className="text-slate-400">
-            -- Select Village --
-          </option>
-          {villages.map((v: string) => <option key={v} value={v}>
-              {v}
-            </option>)}
-        </select>
-      </div>
-
-      <div className="flex items-end sm:col-span-2 lg:col-span-1">
-        <button className="group flex h-12 w-full items-center justify-center gap-2 bg-[#0f766e] text-sm font-bold text-white uppercase transition-all duration-300 hover:bg-slate-800 hover:shadow-md" onClick={() => {
-                  if (district && taluka && village) {
-                    const formattedDistrict = encodeURIComponent(district);
-                    const formattedTaluka = encodeURIComponent(taluka);
-                    const formattedVillage = encodeURIComponent(village);
-                    router.push(`/villages/${formattedDistrict}/${formattedTaluka}/${formattedVillage}`);
-                  } else {
-                    alert("Please select District, Taluka, and Village.");
-                  }
-                }}>
-          <Search className="text-xl transition-transform duration-300 group-hover:scale-110 group-hover:text-[#f57b20]" />
-          Find Village
-        </button>
-      </div>
-    </div>
-        </div>
-      </div>
-    </section>
-        <section className="bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 flex flex-col items-end justify-between gap-6 border-b-2 border-slate-100 pb-8 md:flex-row">
-          <div>
-            <h2 className="text-3xl font-black tracking-tight text-[#0f766e] uppercase">
-              Citizen Service Center
-            </h2>
-            <p className="mt-2 text-lg font-medium text-slate-500 italic">
-              Direct access to statutory and non-statutory rural services
-            </p>
-          </div>
-          <button className="group flex w-full items-center justify-center gap-2 border-2 border-[#0f766e] px-5 py-2 text-xs font-bold text-[#0f766e] transition-all duration-300 hover:bg-[#0f766e] hover:text-white sm:w-auto sm:px-6 sm:text-sm">
-            VIEW ALL SERVICES
-            <ExternalLink className="text-sm transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 border border-slate-200 md:grid-cols-3">
-          <div className="group relative flex flex-col overflow-hidden border-b border-slate-200 bg-white p-6 transition-colors duration-500 hover:bg-slate-50 sm:p-8 md:border-b-0 md:border-r md:p-10">
-            <div className="absolute left-0 top-0 h-1 w-0 bg-[#f57b20] transition-all duration-500 ease-out group-hover:w-full" />
-            <div className="mb-6 flex size-16 items-center justify-center bg-slate-100 text-[#0f766e] transition-all duration-500 group-hover:scale-110 group-hover:bg-[#f57b20] group-hover:text-white">
-              <ClipboardList className="text-4xl" />
-            </div>
-            <h3 className="mb-4 text-xl font-bold text-[#0f766e]">
-              Complaint Registration
-            </h3>
-            <p className="mb-8 flex-1 text-sm leading-relaxed text-slate-600">
-              Formal registration of civic issues related to sanitation, water
-              supply, and street lighting.
-            </p>
-            <button className="flex w-full items-center justify-center gap-2 border border-[#0f766e] py-3 text-xs font-bold text-[#0f766e] uppercase transition-all duration-300 hover:bg-[#0f766e] hover:text-white">
-              <span>Lodge Complaint</span>
-              <ArrowRight className="size-4 -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
-            </button>
-          </div>
-
-          <div className="group relative flex flex-col overflow-hidden border-b border-slate-200 bg-white p-6 transition-colors duration-500 hover:bg-slate-50 sm:p-8 md:border-b-0 md:border-r md:p-10">
-            <div className="absolute left-0 top-0 h-1 w-0 bg-[#0f766e] transition-all duration-500 ease-out group-hover:w-full" />
-            <div className="mb-6 flex size-16 items-center justify-center bg-slate-100 text-[#0f766e] transition-all duration-500 group-hover:scale-110 group-hover:bg-[#0f766e] group-hover:text-white">
-              <CreditCard className="text-4xl" />
-            </div>
-            <h3 className="mb-4 text-xl font-bold text-[#0f766e]">
-              Revenue &amp; Taxation
-            </h3>
-            <p className="mb-8 flex-1 text-sm leading-relaxed text-slate-600">
-              Secure online gateway for payment of property tax, professional
-              tax, and other local cess.
-            </p>
-            <button className="flex w-full items-center justify-center gap-2 bg-[#0f766e] py-3 text-xs font-bold text-white uppercase transition-all duration-300 hover:bg-slate-800">
-              <span>Proceed to Payment</span>
-              <ArrowRight className="size-4 -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
-            </button>
-          </div>
-
-          <div className="group relative flex flex-col overflow-hidden bg-white p-6 transition-colors duration-500 hover:bg-slate-50 sm:p-8 md:p-10">
-            <div className="absolute left-0 top-0 h-1 w-0 bg-[#f57b20] transition-all duration-500 ease-out group-hover:w-full" />
-            <div className="mb-6 flex size-16 items-center justify-center bg-slate-100 text-[#0f766e] transition-all duration-500 group-hover:scale-110 group-hover:bg-[#f57b20] group-hover:text-white">
-              <Info className="text-4xl" />
-            </div>
-            <h3 className="mb-4 text-xl font-bold text-[#0f766e]">
-              Panchayat Information
-            </h3>
-            <p className="mb-8 flex-1 text-sm leading-relaxed text-slate-600">
-              Detailed administrative reports, official gazettes, and member
-              directory of the local body.
-            </p>
-            <button className="flex w-full items-center justify-center gap-2 border border-[#0f766e] py-3 text-xs font-bold text-[#0f766e] uppercase transition-all duration-300 hover:bg-[#0f766e] hover:text-white">
-              <span>View Details</span>
-              <ArrowRight className="size-4 -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-        <section className="bg-[#0f766e] py-16 text-white">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-5">
-          <div className="border border-white/10 p-4 text-center sm:p-6">
-            <h3 className="mb-2 text-3xl font-black text-[#f57b20] sm:text-4xl">
-              <AnimatedCounter end={36} />
-            </h3>
-            <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
-              Districts
-            </p>
-          </div>
-          <div className="border border-white/10 p-4 text-center sm:p-6">
-            <h3 className="mb-2 text-3xl font-black text-[#f57b20] sm:text-4xl">
-              <AnimatedCounter end={27854} />
-            </h3>
-            <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
-              Panchayats
-            </p>
-          </div>
-          <div className="border border-white/10 p-4 text-center sm:p-6">
-            <h3 className="mb-2 text-3xl font-black text-[#f57b20] sm:text-4xl">
-              <AnimatedCounter end={40000} suffix="+" />
-            </h3>
-            <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
-              Villages
-            </p>
-          </div>
-          <div className="border border-white/10 p-4 text-center sm:p-6">
-            <h3 className="mb-2 text-3xl font-black text-[#f57b20] sm:text-4xl">
-              <AnimatedCounter end={12.5} decimals={1} suffix=" Cr" />
-            </h3>
-            <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
-              Population
-            </p>
-          </div>
-          <div className="border border-white/10 p-4 text-center sm:p-6">
-            <h3 className="mb-2 text-3xl font-black text-[#f57b20] sm:text-4xl">
-              <AnimatedCounter end={82.3} decimals={1} suffix="%" />
-            </h3>
-            <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
-              Literacy Rate
+        {/* BEGIN: Alert Bar */}
+        <div
+          className="bg-[#FFF8F0] border-b border-orange-100 py-2"
+          data-purpose="alert-information"
+        >
+          <div className="max-w-[1200px] mx-auto px-4 flex items-center space-x-3 text-sm">
+            <span className="text-[#F28C28] text-lg"></span>
+            <p className="m-0 text-gray-700">
+              <strong>Covid-19 Information:</strong> Latest guidelines and
+              vaccination details here.{" "}
+              <span className="mx-2 text-gray-300">|</span>
+              <span className="text-[#F28C28] font-semibold cursor-pointer hover:underline">
+                Read More
+              </span>
             </p>
           </div>
         </div>
-      </div>
-    </section>
-        <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <h2 className="mb-10 text-center text-3xl font-black tracking-tight text-[#0f766e] uppercase md:mb-12">
-          Public Welfare Schemes
-        </h2>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div className="group border border-slate-200 bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-lg">
-            <div className="h-56 bg-cover bg-center grayscale transition-all duration-700 group-hover:grayscale-0" data-alt="Pradhan Mantri Awas Yojana" style={{
-                backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWOAZULjffZQm6xdQbirErIl-J-6mWscmHOX9E8CCAJRwspUR2P9YprjvZ5o3HDIVVwYnrmaSgsL3rXPqLH3NbZzLYrv-GWUEQPWO2lmcZMxtFMkT8eKFsLP2L9EPvjDwxUs12r4MeuqYZ3H8d7wnGRKoZ4F2fG7TenMClPk4Za9mlRoJybccFEQh1pwbWIl-KQTQnTx7lluL7eQeFxWfqu_UHNneVoh5AJGUx1FKfR9i2n9bDrsyNR45I7nsbbZ7-K-ajPRCBt7uU')"
-              }} />
-            <div className="p-6">
-              <h4 className="mb-3 text-lg font-bold text-[#0f766e]">
-                PM Awas Yojana (Gramin)
-              </h4>
-              <p className="mb-6 text-sm leading-relaxed text-slate-600">
-                Financial assistance for construction of pucca houses for rural
-                homeless families.
+
+        {/* BEGIN: Hero Section */}
+        <section
+          className="relative bg-white overflow-hidden border-b border-gray-200 h-[450px]"
+          data-purpose="hero-section"
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "url('./bg.png')",
+              backgroundSize: "cover",
+              // backgroundPosition: "center 60%",
+            }}
+          >
+            {/* <div className="absolute inset-0 bg-linear-to-r from-white/95 via-white/80 to-transparent"></div> */}
+          </div>
+          <div className="max-w-300 mx-auto px-4 relative z-10 grid grid-cols-12 h-full items-center">
+            <div className="col-span-8 md:col-span-7 pl-8">
+              <h1 className="text-[#1F4E79] mb-4">
+                Welcome to Gram Samriddhi Portal!
+              </h1>
+              <p className="mt-2 text-xl text-gray-800 mb-8 font-medium">
+                Empowering our villages with information and services
               </p>
-              <button className="flex w-full items-center justify-center gap-2 border border-slate-300 bg-slate-100 py-3 text-xs font-bold text-[#0f766e] uppercase transition-all duration-300 hover:bg-[#f57b20] hover:text-white group-hover:border-[#f57b20]">
-                <span>Enrollment Details</span>
-                <ArrowRight className="size-4 -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
+              <button className="bg-[#F28C28] text-white px-[28px] py-[14px] rounded-sm font-semibold hover:brightness-110 transition shadow-md">
+                Learn More
               </button>
             </div>
+            <div className="col-span-4 md:col-span-5 flex justify-end items-end h-full"></div>
           </div>
+        </section>
 
-          <div className="group border border-slate-200 bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-lg">
-            <div className="h-56 bg-cover bg-center grayscale transition-all duration-700 group-hover:grayscale-0" data-alt="MGNREGA" style={{
-                backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0TeB0tP5FUL2JElm2ktfeeaX4M47Z8JsIg63J2OIleXttaYPVGcJzMPvBmKUcnnlbqbu2sWL3kdnjEp3bLdQKz1jQuiKuAR4u1gvTXAg__5JNjpL_laYCraygIDP6PBjQjs3j-soFn7KGLAZ7ZAj3moqIVEVCA9QQQXpdhrSOOSLIHnaVBdgMxQJazSvSzm4IFCYjVFu5m29sbo8xRp5reMy6a8qfrNG8iM_H10jJjc96Y34d4vK3zIYJf_sVvslKiigZx9AzGofj')"
-              }} />
-            <div className="p-6">
-              <h4 className="mb-3 text-lg font-bold text-[#0f766e]">
-                MGNREGA Employment
-              </h4>
-              <p className="mb-6 text-sm leading-relaxed text-slate-600">
-                Guaranteed wage employment for 100 days to adult members of
-                rural households.
-              </p>
-              <button className="flex w-full items-center justify-center gap-2 border border-slate-300 bg-slate-100 py-3 text-xs font-bold text-[#0f766e] uppercase transition-all duration-300 hover:bg-[#f57b20] hover:text-white group-hover:border-[#f57b20]">
-                <span>Apply for Job Card</span>
-                <ArrowRight className="size-4 -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
-              </button>
-            </div>
-          </div>
-
-          <div className="group border border-slate-200 bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-lg">
-            <div className="h-56 bg-cover bg-center grayscale transition-all duration-700 group-hover:grayscale-0" data-alt="Jal Jeevan Mission" style={{
-                backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUmhIXyJpB5-K_9GwN2HM0sggy8w8ARRo4SyUDgP2zKtXOTOTKIGFskGU5QClHH3bkf5ljoQhp-37da23Pjrk_WMa9vnvV9yDpvtzQBWgAtaGCL7BNbF5hGcMwsqT2hZ4XJdx4cucI8BAKrhhMKP_Ppc-Jc8zs5lt4ZZWTzhB4IkVEZRhWCSDW6NfDguQrHbMQnaDTroWEbXTIOgwML1mHUlGDosFYmtJd_a6r-RGdcd_xdHiDzO9g8RLZzSaRva7KOxL0GlKM8qdH')"
-              }} />
-            <div className="p-6">
-              <h4 className="mb-3 text-lg font-bold text-[#0f766e]">
-                Jal Jeevan Mission
-              </h4>
-              <p className="mb-6 text-sm leading-relaxed text-slate-600">
-                Infrastructure development to provide Functional Household Tap
-                Connections (FHTC).
-              </p>
-              <button className="flex w-full items-center justify-center gap-2 border border-slate-300 bg-slate-100 py-3 text-xs font-bold text-[#0f766e] uppercase transition-all duration-300 hover:bg-[#f57b20] hover:text-white group-hover:border-[#f57b20]">
-                <span>Connection Status</span>
-                <ArrowRight className="size-4 -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-        <section className="bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-10 md:gap-16 lg:flex-row">
-          <div className="space-y-8 lg:w-1/2">
-            <h2 className="border-l-8 border-[#f57b20] pl-4 text-3xl font-black leading-tight text-[#0f766e] uppercase sm:pl-6 md:text-4xl">
-              Governance Transparency
-            </h2>
-            <p className="text-base font-medium text-slate-600 md:text-xl">
-              Real-time monitoring of rural development projects and complaint
-              resolution across the state.
-            </p>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="border-t-4 border-[#0f766e] bg-slate-50 p-8 shadow-sm">
-                <h4 className="mb-1 text-4xl font-black tracking-tight text-[#0f766e] md:text-5xl">
-                  85.4%
-                </h4>
-                <p className="text-xs font-black text-slate-500 uppercase">
-                  Grievance Resolution Rate
-                </p>
-              </div>
-              <div className="border-t-4 border-[#f57b20] bg-slate-50 p-8 shadow-sm">
-                <h4 className="mb-1 text-4xl font-black tracking-tight text-[#f57b20] md:text-5xl">
-                  12,402
-                </h4>
-                <p className="text-xs font-black text-slate-500 uppercase">
-                  Ongoing Infrastructure Projects
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full lg:w-1/2">
-            <div className="border border-slate-300 bg-white shadow-sm">
-              <div className="h-48 border-b border-slate-200 bg-cover bg-center" style={{
-                  backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCXAGavzmlpZw5esy2lzmIzekc0x-HDHTu1VFdcdIQYTVxwbpnhvBppA0EKASCE1_le1sjDr9cJ6L4Dk6m37Vd3guYmImFYDOGQbw4JmmUWIR7sZJp4aseoz_NVKl_zeqNguvYCy3st3xbv_dnbH18ApHyp4c9_KrRcMm13udwAXOrhGHk6w4Ep7MkeBWrcB2-AChZRUqm4HaOdm1KO7YwndQ3CrnuP35Vr_h0FF_d8TxcaRSovK22hmJKuTQC4P-oeOFL0550pW_N')"
-                }} />
-              <div className="p-5 sm:p-8">
-                <div className="mb-6 flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
-                  <div>
-                    <span className="mb-1 block text-[10px] font-black tracking-widest text-[#f57b20] uppercase">
-                      Model Village Profile
-                    </span>
-                    <h3 className="text-2xl font-bold text-[#0f766e]">
-                      Kharadi, Pune District
+        {/* BEGIN: Service Grid */}
+        <section
+          className="py-12 -mt-[80px] relative z-20"
+          data-purpose="service-cards"
+        >
+          <div className="max-w-[1200px] mx-auto px-4">
+            <div className="grid grid-cols-4 gap-6">
+              {/* Card 1 */}
+              <div className="bg-white p-6 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col h-[320px] relative overflow-hidden group">
+                <div className="absolute bottom-0 left-0 w-full h-[80px] z-0 overflow-hidden pointer-events-none">
+                  <svg
+                    className="absolute bottom-0 left-0 w-full h-full"
+                    viewBox="0 0 400 80"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M0,30 C150,50 250,10 400,30 L400,80 L0,80 Z"
+                      fill="#FDE9BD"
+                      opacity="0.8"
+                    />
+                    <path
+                      d="M0,50 C100,70 300,20 400,50 L400,80 L0,80 Z"
+                      fill="#FCAF4A"
+                    />
+                  </svg>
+                </div>
+                <div className="flex items-start space-x-4 mb-4 relative z-10 w-full text-left">
+                  <div className="w-[68px] h-[68px] flex flex-col items-center justify-end shrink-0 pt-2">
+                    <svg
+                      width="64"
+                      height="64"
+                      viewBox="0 0 100 100"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M25 85C25 68 36 58 50 58C64 58 75 68 75 85V90H25V85Z"
+                        fill="#D36C21"
+                      />
+                      <path
+                        d="M35 90V75C35 70 40 65 50 65C60 65 65 70 65 75V90H35Z"
+                        fill="#4CAF50"
+                      />
+                      <circle cx="50" cy="50" r="16" fill="#F4C698" />
+                      <path
+                        d="M50 49 Q45 49 42 45 Q50 38 58 45 Q55 49 50 49Z"
+                        fill="white"
+                      />
+                      <rect
+                        x="30"
+                        y="32"
+                        width="40"
+                        height="10"
+                        rx="3"
+                        fill="#E88328"
+                      />
+                      <path
+                        d="M25 40C25 35 40 30 50 30C60 30 75 35 75 40H25Z"
+                        fill="#D36C21"
+                      />
+                    </svg>
+                  </div>
+                  <div className="mt-1">
+                    <h3 className="text-[#1F4E79] font-bold text-[22px] leading-[1.2] m-0">
+                      Panchayat
+                      <br />
+                      Schemes
                     </h3>
                   </div>
-                  <span className="bg-green-700 px-3 py-1 text-[10px] font-bold text-white uppercase">
-                    Certified Platinum
-                  </span>
                 </div>
-
-                <div className="mb-8 space-y-4 border-y border-slate-100 py-6">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-bold tracking-tighter text-slate-500 uppercase">
-                      Total Inhabitants
-                    </span>
-                    <span className="font-bold text-[#0f766e]">14,250</span>
+                <div className="text-[15px] text-[#4A4A4A] mb-6 flex-grow leading-[1.6] relative z-10 font-medium pr-2">
+                  <p className="m-0">Discover various government</p>
+                  <p className="m-0">schemes available for</p>
+                  <p className="m-0">rural development.</p>
+                </div>
+                <div className="relative z-10 mt-auto pb-1">
+                  <button className="w-full bg-gradient-to-b from-[#F28C28] to-[#E67E22] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(242,140,40,0.3)] hover:brightness-110 transition border border-[#D35400]/20">
+                    Explore Schemes
+                  </button>
+                </div>
+              </div>
+              {/* Card 2 */}
+              <div className="bg-white p-6 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col h-[320px] relative overflow-hidden group">
+                <div className="absolute bottom-0 left-0 w-full h-[80px] z-0 overflow-hidden pointer-events-none">
+                  <svg
+                    className="absolute bottom-0 left-0 w-full h-full"
+                    viewBox="0 0 400 80"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M0,30 C150,50 250,10 400,30 L400,80 L0,80 Z"
+                      fill="#D4EDDA"
+                      opacity="0.8"
+                    />
+                    <path
+                      d="M0,50 C100,70 300,20 400,50 L400,80 L0,80 Z"
+                      fill="#81C784"
+                    />
+                  </svg>
+                </div>
+                <div className="flex items-start space-x-4 mb-4 relative z-10 w-full text-left">
+                  <div className="w-[68px] h-[68px] flex items-center justify-center shrink-0">
+                    <svg
+                      width="56"
+                      height="56"
+                      viewBox="0 0 100 100"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        x="25"
+                        y="15"
+                        width="50"
+                        height="70"
+                        rx="6"
+                        fill="#2E7D32"
+                      />
+                      <rect
+                        x="35"
+                        y="30"
+                        width="30"
+                        height="4"
+                        rx="2"
+                        fill="white"
+                      />
+                      <rect
+                        x="35"
+                        y="45"
+                        width="30"
+                        height="4"
+                        rx="2"
+                        fill="white"
+                      />
+                      <rect
+                        x="35"
+                        y="60"
+                        width="20"
+                        height="4"
+                        rx="2"
+                        fill="white"
+                      />
+                      <circle cx="75" cy="75" r="15" fill="#F28C28" />
+                      <path
+                        d="M70 75L73 78L80 71"
+                        stroke="white"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-bold tracking-tighter text-slate-500 uppercase">
-                      Revenue Collection
-                    </span>
-                    <span className="font-bold text-green-700">
-                      98.2% Compliance
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-bold tracking-tighter text-slate-500 uppercase">
-                      Pending Litigations
-                    </span>
-                    <span className="font-bold text-[#0f766e]">02 Case(s)</span>
+                  <div className="mt-1">
+                    <h3 className="text-[#1F4E79] font-bold text-[22px] leading-[1.2] m-0">
+                      Online
+                      <br />
+                      Services
+                    </h3>
                   </div>
                 </div>
-
-                <button className="w-full border border-[#0f766e] bg-[#0f766e] py-4 text-sm font-bold text-white uppercase transition-all hover:bg-slate-800">
-                  Access Statistical Data
-                </button>
+                <div className="text-[15px] text-[#4A4A4A] mb-6 flex-grow leading-[1.6] relative z-10 font-medium pr-2">
+                  <p className="m-0">Apply online for certificates,</p>
+                  <p className="m-0">pensions and other gram</p>
+                  <p className="m-0">panchayat services.</p>
+                </div>
+                <div className="relative z-10 mt-auto pb-1">
+                  <button className="w-full bg-gradient-to-b from-[#4CAF50] to-[#2E7D32] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(46,125,50,0.3)] hover:brightness-110 transition border border-[#1B5E20]/20">
+                    Apply Now
+                  </button>
+                </div>
+              </div>
+              {/* Card 3 */}
+              <div className="bg-white p-6 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col h-[320px] relative overflow-hidden group">
+                <div className="absolute bottom-0 left-0 w-full h-[80px] z-0 overflow-hidden pointer-events-none">
+                  <svg
+                    className="absolute bottom-0 left-0 w-full h-full"
+                    viewBox="0 0 400 80"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M0,30 C150,50 250,10 400,30 L400,80 L0,80 Z"
+                      fill="#D0E1F9"
+                      opacity="0.8"
+                    />
+                    <path
+                      d="M0,50 C100,70 300,20 400,50 L400,80 L0,80 Z"
+                      fill="#89B4E5"
+                    />
+                  </svg>
+                </div>
+                <div className="flex items-start space-x-4 mb-4 relative z-10 w-full text-left">
+                  <div className="w-[68px] h-[68px] flex items-center justify-center shrink-0">
+                    <svg
+                      width="56"
+                      height="56"
+                      viewBox="0 0 100 100"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M25 25C25 22 27 20 30 20H80C83 20 85 22 85 25V75C85 78 83 80 80 80H30C27 80 25 78 25 75V25Z"
+                        fill="#1E3A5F"
+                      />
+                      <path
+                        d="M15 35C15 32 17 30 20 30H25V80H20C17 80 15 78 15 75V35Z"
+                        fill="#4B6A90"
+                      />
+                      <rect
+                        x="35"
+                        y="32"
+                        width="20"
+                        height="20"
+                        rx="2"
+                        fill="#E2E8F0"
+                      />
+                      <rect
+                        x="60"
+                        y="35"
+                        width="15"
+                        height="4"
+                        rx="2"
+                        fill="#E2E8F0"
+                      />
+                      <rect
+                        x="60"
+                        y="45"
+                        width="15"
+                        height="4"
+                        rx="2"
+                        fill="#E2E8F0"
+                      />
+                      <rect
+                        x="35"
+                        y="60"
+                        width="40"
+                        height="4"
+                        rx="2"
+                        fill="#E2E8F0"
+                      />
+                    </svg>
+                  </div>
+                  <div className="mt-1">
+                    <h3 className="text-[#1F4E79] font-bold text-[22px] leading-[1.2] m-0">
+                      Latest
+                      <br />
+                      Updates
+                    </h3>
+                  </div>
+                </div>
+                <div className="text-[15px] text-[#4A4A4A] mb-6 flex-grow leading-[1.6] relative z-10 font-medium pr-2">
+                  <p className="m-0">Read the latest news,</p>
+                  <p className="m-0">announcements, and event</p>
+                  <p className="m-0">updates.</p>
+                </div>
+                <div className="relative z-10 mt-auto pb-1">
+                  <button className="w-full bg-gradient-to-b from-[#345B8E] to-[#1F4E79] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(31,78,121,0.3)] hover:brightness-110 transition border border-[#112E4A]/20">
+                    View Updates
+                  </button>
+                </div>
+              </div>
+              {/* Card 4 */}
+              <div className="bg-white p-6 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col h-[320px] relative overflow-hidden group">
+                <div className="absolute bottom-0 left-0 w-full h-[80px] z-0 overflow-hidden pointer-events-none">
+                  <svg
+                    className="absolute bottom-0 left-0 w-full h-full"
+                    viewBox="0 0 400 80"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M0,30 C150,50 250,10 400,30 L400,80 L0,80 Z"
+                      fill="#FDE9BD"
+                      opacity="0.8"
+                    />
+                    <path
+                      d="M0,50 C100,70 300,20 400,50 L400,80 L0,80 Z"
+                      fill="#FCAF4A"
+                    />
+                  </svg>
+                </div>
+                <div className="flex items-start space-x-4 mb-4 relative z-10 w-full text-left">
+                  <div className="w-[68px] h-[68px] flex items-center justify-center shrink-0">
+                    <svg
+                      width="56"
+                      height="56"
+                      viewBox="0 0 100 100"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="50" cy="42" r="14" fill="#F4C698" />
+                      <path
+                        d="M25 85C25 72 38 66 50 66C62 66 75 72 75 85V90H25V85Z"
+                        fill="#D4E0E8"
+                      />
+                      <path
+                        d="M26 40C26 26 36 17 50 17C64 17 74 26 74 40"
+                        stroke="#F28C28"
+                        strokeWidth="6"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        x="22"
+                        y="38"
+                        width="8"
+                        height="16"
+                        rx="4"
+                        fill="#E67E22"
+                      />
+                      <rect
+                        x="70"
+                        y="38"
+                        width="8"
+                        height="16"
+                        rx="4"
+                        fill="#E67E22"
+                      />
+                      <path
+                        d="M74 50C74 62 65 70 58 70"
+                        stroke="#F28C28"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+                      <circle cx="54" cy="70" r="4" fill="#D35400" />
+                    </svg>
+                  </div>
+                  <div className="mt-1">
+                    <h3 className="text-[#1F4E79] font-bold text-[22px] leading-[1.2] m-0">
+                      Gram Panchayat
+                      <br />
+                      Contact
+                    </h3>
+                  </div>
+                </div>
+                <div className="text-[15px] text-[#4A4A4A] mb-6 flex-grow leading-[1.6] relative z-10 font-medium pr-2">
+                  <p className="m-0">Get in touch with your local</p>
+                  <p className="m-0">Gram Panchayat</p>
+                  <p className="m-0">representatives.</p>
+                </div>
+                <div className="relative z-10 mt-auto pb-1">
+                  <button className="w-full bg-gradient-to-b from-[#F28C28] to-[#E67E22] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(242,140,40,0.3)] flex justify-between items-center px-6 hover:brightness-110 transition border border-[#D35400]/20">
+                    <span>Read More</span>{" "}
+                    <span className="font-black text-lg leading-none">
+                      &gt;
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* BEGIN: Main Content Section */}
+        <main className="py-6">
+          <div className="max-w-300 mx-auto px-4">
+            {/* Top Row */}
+            <div className="grid grid-cols-12 gap-8 mb-10 items-stretch">
+              <div className="col-span-8 flex flex-col h-full">
+                {/* Key Initiatives 3 Mini Cards */}
+                <section
+                  data-purpose="key-initiatives"
+                  className="flex flex-col h-full flex-grow"
+                >
+                  <div className="flex justify-between items-center mb-6 shrink-0">
+                    <h2 className="text-[#1F4E79] text-[24px] font-bold whitespace-nowrap pr-4 m-0 leading-none">
+                      Our Key Initiatives
+                    </h2>
+                    <div className="h-[1px] bg-gray-200 flex-grow mt-1"></div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-6 flex-grow">
+                    {/* Initiative 1 */}
+                    <div className="bg-[#F4F6F0] rounded-sm overflow-hidden shadow-sm flex flex-col h-full border border-[rgba(0,0,0,0.05)] shadow-[inset_0_0_20px_rgba(255,255,255,0.5)]">
+                      <div className="p-5 flex-grow">
+                        <div className="flex items-center space-x-3 mb-4">
+                          <div className="w-[52px] h-[52px] shrink-0">
+                            {/* Tractor Icon */}
+                            <svg
+                              viewBox="0 0 64 64"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M12 40A8 8 0 1 0 12 56A8 8 0 0 0 12 40ZM12 44A4 4 0 1 1 12 52A4 4 0 0 1 12 44Z"
+                                fill="#3B763D"
+                              />
+                              <path
+                                d="M48 40A8 8 0 1 0 48 56A8 8 0 0 0 48 40ZM48 44A4 4 0 1 1 48 52A4 4 0 0 1 48 44Z"
+                                fill="#3B763D"
+                              />
+                              <path d="M22 28L28 28V20H22V28Z" fill="#3B763D" />
+                              <path d="M8 32H20V28H8V32Z" fill="#3B763D" />
+                              <path
+                                d="M44 48H16V36H44V48Z"
+                                fill="#88C45A"
+                                opacity="0.3"
+                              />
+                              <path d="M42 36L46 24H32V36H42Z" fill="#3B763D" />
+                              <path d="M34 26H44L41 34H34V26Z" fill="#F4F6F0" />
+                              <path
+                                d="M52 36C52 36 50 32 46 32H44V36H52Z"
+                                fill="#3B763D"
+                              />
+                              <path d="M8 24H20V20H8V24Z" fill="#88C45A" />
+                              <path d="M4 48H18V44H4V48Z" fill="#3B763D" />
+                              <path d="M28 48H42V44H28V48Z" fill="#3B763D" />
+                              <path
+                                d="M28 56H42 M4 56H8"
+                                stroke="#88C45A"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                          </div>
+                          <h3 className="text-[19px] font-bold text-[#2A5E2E] leading-[1.2] m-0">
+                            Agriculture
+                            <br />
+                            Development
+                          </h3>
+                        </div>
+                        <p className="text-[15px] text-[#4A554A] m-0 pr-2">
+                          Improving farming practices and providing support
+                        </p>
+                      </div>
+                      <button className="w-full bg-[#3B763D] text-white py-[12px] font-semibold text-[15px] hover:bg-[#2F6131] transition-colors leading-none">
+                        Explore Schemes
+                      </button>
+                    </div>
+
+                    {/* Initiative 2 */}
+                    <div className="bg-[#FDF4E7] rounded-sm overflow-hidden shadow-sm flex flex-col h-full border border-[rgba(0,0,0,0.05)] shadow-[inset_0_0_20px_rgba(255,255,255,0.5)]">
+                      <div className="p-5 flex-grow">
+                        <div className="flex items-center space-x-3 mb-4">
+                          <div className="w-[52px] h-[52px] shrink-0">
+                            {/* People Icon */}
+                            <svg
+                              viewBox="0 0 64 64"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle cx="20" cy="24" r="6" fill="#D38A4B" />
+                              <path
+                                d="M12 48C12 40 16 34 20 34C24 34 28 40 28 48H12Z"
+                                fill="#F4B860"
+                              />
+                              <circle cx="44" cy="24" r="6" fill="#A56336" />
+                              <path
+                                d="M36 48C36 40 40 34 44 34C48 34 52 40 52 48H36Z"
+                                fill="#D38A4B"
+                              />
+                              <circle cx="32" cy="18" r="7" fill="#8B4513" />
+                              <path
+                                d="M22 48C22 38 27 30 32 30C37 30 42 38 42 48H22Z"
+                                fill="#7A4016"
+                              />
+                            </svg>
+                          </div>
+                          <h3 className="text-[19px] font-bold text-[#5A3825] leading-[1.2] m-0">
+                            Village
+                            <br />
+                            Infrastucture
+                          </h3>
+                        </div>
+                        <p className="text-[15px] text-[#5A4F45] m-0 pr-2">
+                          Enhancing roads, water, and sanitation facilities.
+                        </p>
+                      </div>
+                      <button className="w-full bg-[#E5781E] text-white py-[12px] font-semibold text-[15px] hover:bg-[#D46A15] transition-colors leading-none tracking-wide text-center">
+                        <span className="opacity-70 mr-1 font-normal">
+                          &lsaquo;
+                        </span>{" "}
+                        Apply Now{" "}
+                        <span className="opacity-70 ml-1 font-normal">
+                          &rsaquo;
+                        </span>
+                      </button>
+                    </div>
+
+                    {/* Initiative 3 */}
+                    <div className="bg-[#EFF2F5] rounded-sm overflow-hidden shadow-sm flex flex-col h-full border border-[rgba(0,0,0,0.05)] shadow-[inset_0_0_20px_rgba(255,255,255,0.5)]">
+                      <div className="p-5 flex-grow">
+                        <div className="flex items-start space-x-3 mb-4">
+                          <div className="w-[52px] h-[52px] shrink-0 pt-1">
+                            {/* Screen Icon */}
+                            <svg
+                              viewBox="0 0 64 64"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <rect
+                                x="10"
+                                y="16"
+                                width="44"
+                                height="28"
+                                rx="2"
+                                fill="#4B637B"
+                              />
+                              <rect
+                                x="13"
+                                y="19"
+                                width="38"
+                                height="22"
+                                fill="#DDE4EA"
+                              />
+                              <path d="M28 44H36V50H28V44Z" fill="#95A5A6" />
+                              <path d="M20 50H44V54H20V50Z" fill="#BDC3C7" />
+                              <path
+                                d="M13 32L21 26L29 32L39 19H51V41H13V32Z"
+                                fill="#F4A261"
+                                opacity="0.6"
+                              />
+                              <path
+                                d="M13 36L25 28L33 34L45 22V41H13V36Z"
+                                fill="#2ECC71"
+                                opacity="0.6"
+                              />
+                              <path
+                                d="M13 41V38L21 34L35 40L51 28V41H13Z"
+                                fill="#3498DB"
+                                opacity="0.7"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="text-[19px] font-bold text-[#193255] leading-[1.2] m-0">
+                              E-Governance
+                            </h3>
+                            <div className="h-[2px] w-[38px] bg-[#E5781E] mt-2"></div>
+                          </div>
+                        </div>
+                        <p className="text-[15px] text-[#424A55] m-0 pr-2">
+                          Digital solutions for transparent village
+                          adminstration.
+                        </p>
+                      </div>
+                      <button className="w-full bg-[#193255] text-white py-[12px] font-semibold text-[15px] hover:bg-[#11243F] transition-colors leading-none text-center">
+                        View Updates{" "}
+                        <span className="font-normal opacity-80">&rsaquo;</span>
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div className="col-span-4 flex flex-col h-full">
+                {/* Gram Panchayat at a Glance */}
+                <div className="bg-white rounded-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-[#EAECEA] flex flex-col overflow-hidden h-full">
+                  <div className="bg-gradient-to-b from-[#FAF9F5] to-[#F1F0EB] px-5 py-4 border-b border-[#EAECEA] shrink-0">
+                    <h3 className="m-0 text-[#2C3440] text-[19px] font-bold tracking-tight">
+                      Gram Panchayat at a Glance
+                    </h3>
+                  </div>
+                  <ul className="px-5 py-2 m-0 list-none flex flex-col flex-grow justify-evenly pb-4">
+                    <li className="flex items-center border-b border-[#F0F0F0] py-[14px] last:border-0">
+                      <div className="w-8 flex items-center justify-center shrink-0">
+                        {/* Leaf / Village Icon */}
+                        <svg
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 21.5C17.2467 21.5 21.5 17.2467 21.5 12C21.5 6.75329 17.2467 2.5 12 2.5C6.75329 2.5 2.5 6.75329 2.5 12C2.5 17.2467 6.75329 21.5 12 21.5Z"
+                            fill="#3B763D"
+                          />
+                          <path
+                            d="M8 14L12 12V6"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M16 14L12 12L7 9"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 12L17 10"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex items-baseline space-x-2 ml-1">
+                        <strong className="text-[#2A5E2E] text-[22px] font-bold tracking-tight">
+                          256
+                        </strong>
+                        <span className="text-[#515751] text-[16px]">
+                          Villages Covered
+                        </span>
+                      </div>
+                    </li>
+                    <li className="flex items-center border-b border-[#F0F0F0] py-[14px] last:border-0">
+                      <div className="w-8 flex items-center justify-center shrink-0">
+                        {/* Sprout Icon */}
+                        <svg
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 22V12 M12 12C12 12 5 10 5 4C5 4 10 3 12 8 M12 12C12 12 19 10 19 4C19 4 14 3 12 8"
+                            stroke="#E5781E"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex items-baseline space-x-2 ml-1">
+                        <strong className="text-[#2A5E2E] text-[22px] font-bold tracking-tight">
+                          1,432
+                        </strong>
+                        <span className="text-[#515751] text-[16px]">
+                          Schemes implemented
+                        </span>
+                      </div>
+                    </li>
+                    <li className="flex items-center border-b border-[#F0F0F0] py-[14px] last:border-0">
+                      <div className="w-8 flex items-center justify-center shrink-0">
+                        {/* User Icon */}
+                        <svg
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z"
+                            fill="#3B763D"
+                          />
+                          <path
+                            d="M5 21C5 17.6863 7.68629 15 11 15H13C16.3137 15 19 17.6863 19 21"
+                            fill="#3B763D"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex items-baseline space-x-2 ml-1">
+                        <strong className="text-[#2A5E2E] text-[22px] font-bold tracking-tight">
+                          345
+                        </strong>
+                        <span className="text-[#515751] text-[16px]">
+                          Registered Users
+                        </span>
+                      </div>
+                    </li>
+                    <li className="flex items-center border-b border-[#F0F0F0] py-[14px] last:border-0">
+                      <div className="w-8 flex items-center justify-center shrink-0">
+                        {/* Bowl/Hand Icon */}
+                        <svg
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M3 13C3 17.9706 7.02944 22 12 22C16.9706 22 21 17.9706 21 13H3Z"
+                            fill="#3B763D"
+                          />
+                          <path
+                            d="M6 9C6 5.68629 8.68629 3 12 3C15.3137 3 18 5.68629 18 9H6Z"
+                            fill="#A8D5BA"
+                            opacity="0.6"
+                          />
+                          <path
+                            d="M12 9H18C18 6.5 16 4.5 13.5 4L12 9Z"
+                            fill="#3B763D"
+                          />
+                          <rect
+                            x="2"
+                            y="11"
+                            width="20"
+                            height="2"
+                            fill="#2A5E2E"
+                            rx="1"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex items-baseline space-x-2 ml-1">
+                        <strong className="text-[#2A5E2E] text-[22px] font-bold tracking-tight">
+                          1,230
+                        </strong>
+                        <span className="text-[#515751] text-[16px]">
+                          Grievances Resolved
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Middle Divider */}
+            <div className="w-full h-[1px] bg-[#EAECEA] mb-10"></div>
+
+            {/* Bottom Row */}
+            <div className="grid grid-cols-12 gap-8 items-stretch">
+              <div className="col-span-8 flex flex-col h-full">
+                {/* Feature Banner - Agriculture Development */}
+                <section
+                  className="bg-white rounded-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-[#EAECEA] overflow-hidden flex h-full min-h-[320px] relative items-center"
+                  data-purpose="initiative-feature"
+                >
+                  {/* Background Image */}
+                  <div className="absolute inset-0 z-0 bg-[#E8F2E3]">
+                    <img
+                      src="./image.png"
+                      className="w-full h-full object-cover opacity-90 mix-blend-multiply"
+                      alt="Village gathering"
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="relative z-20 w-full md:w-[65%] pl-8 pr-4 py-8 flex flex-col h-full items-start">
+                    <h2 className="mb-5 text-[#1F4E79] text-[24px] font-bold">
+                      Our Key Initiatives
+                    </h2>
+                    <div className="flex items-center space-x-3 mb-2">
+                      <div className="w-[36px] shrink-0">
+                        <svg
+                          viewBox="0 0 64 64"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 40A8 8 0 1 0 12 56A8 8 0 0 0 12 40ZM12 44A4 4 0 1 1 12 52A4 4 0 0 1 12 44Z"
+                            fill="#3B763D"
+                          />
+                          <path
+                            d="M48 40A8 8 0 1 0 48 56A8 8 0 0 0 48 40ZM48 44A4 4 0 1 1 48 52A4 4 0 0 1 48 44Z"
+                            fill="#3B763D"
+                          />
+                          <path d="M22 28L28 28V20H22V28Z" fill="#3B763D" />
+                          <path d="M8 32H20V28H8V32Z" fill="#3B763D" />
+                          <path
+                            d="M44 48H16V36H44V48Z"
+                            fill="#88C45A"
+                            opacity="0.3"
+                          />
+                          <path d="M42 36L46 24H32V36H42Z" fill="#3B763D" />
+                          <path d="M34 26H44L41 34H34V26Z" fill="#F4F6F0" />
+                          <path
+                            d="M52 36C52 36 50 32 46 32H44V36H52Z"
+                            fill="#3B763D"
+                          />
+                          <path d="M8 24H20V20H8V24Z" fill="#88C45A" />
+                          <path d="M4 48H18V44H4V48Z" fill="#3B763D" />
+                          <path d="M28 48H42V44H28V48Z" fill="#3B763D" />
+                          <path
+                            d="M28 56H42 M4 56H8"
+                            stroke="#88C45A"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                      <h3 className="text-[#2A5E2E] m-0 text-[19px] font-bold">
+                        Agriculture Development
+                      </h3>
+                    </div>
+                    <p className="text-[#4A554A] mb-auto font-medium text-[15px]">
+                      Improving farming practices and providing support.
+                    </p>
+                  </div>
+
+                  {/* Absolute Read More Button */}
+                  <button className="absolute bottom-6 left-0 rounded-sm z-30 bg-[#E5781E] text-white py-4 w-60 flex items-center justify-center hover:bg-[#D46A15] transition-colors">
+                    <span className="font-semibold text-[18px] tracking-wide mr-2">
+                      Read More
+                    </span>
+                    <span className="font-light text-[24px] leading-none -mt-0.5">
+                      &rsaquo;
+                    </span>
+                  </button>
+                </section>
+              </div>
+              <div className="col-span-4 flex flex-col h-full">
+                {/* News & Announcements */}
+                <div className="bg-[#FAF9F5] rounded-sm shadow-[0_2px_10px_rgba(0,0,0,0.06)] border border-[#EAECEA] flex flex-col overflow-hidden h-full min-h-[320px]">
+                  <div className="bg-gradient-to-b from-[#FAF9F5] to-[#F1F0EB] px-5 py-4 border-b border-[#EAECEA] shrink-0">
+                    <h3 className="m-0 text-[#2C3440] text-[19px] font-bold tracking-tight">
+                      News &amp; Announcements
+                    </h3>
+                  </div>
+                  <ul className="px-5 py-2 m-0 list-none flex-grow flex flex-col justify-evenly pb-4">
+                    <li className="flex items-start space-x-3 border-b border-[#EAECEA] py-[16px]">
+                      <span className="w-2.5 h-2.5 bg-[#E66244] rounded-full mt-[6px] shrink-0"></span>
+                      <p className="text-[15px] text-[#424A55] m-0 leading-[1.45] pr-2">
+                        New PM Awac Ysjana applications opm for rurd no...
+                      </p>
+                    </li>
+                    <li className="flex items-start space-x-3 border-b border-[#EAECEA] py-[16px]">
+                      <span className="w-2.5 h-2.5 bg-[#E66244] rounded-full mt-[6px] shrink-0"></span>
+                      <p className="text-[15px] text-[#424A55] m-0 leading-[1.45] pr-2">
+                        Swachh-Bharot Mission, Village cheatlhese diva scheduled
+                        for May Ceth.
+                      </p>
+                    </li>
+                    <li className="flex items-start space-x-3 py-[16px]">
+                      <span className="w-2.5 h-2.5 bg-[#E66244] rounded-full mt-[6px] shrink-0"></span>
+                      <p className="text-[15px] text-[#424A55] m-0 leading-[1.45] pr-2">
+                        Gram Sabile meeting to discuss local development issues
+                        on juner 10th.
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* BEGIN: Footer */}
+        <footer
+          className="bg-[#2F5E3D] text-white pt-14 pb-6 mt-10"
+          data-purpose="main-footer"
+        >
+          <div className="max-w-[1200px] mx-auto px-4">
+            <div className="grid grid-cols-4 gap-8 mb-10">
+              <div>
+                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
+                  Quick Links
+                </h3>
+                <ul className="space-y-3 text-[15px] text-[#A7F3D0] m-0 list-none p-0">
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> Home
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> About Us
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> Sentittena
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> sarizces
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> callecty
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
+                  Important Links
+                </h3>
+                <ul className="space-y-3 text-[15px] text-[#A7F3D0] m-0 list-none p-0">
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> Govermaniza of
+                    mulia.
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> Minavy ou
+                    fnand levvelopment
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> utso it eat
+                    bravelopment expert..
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[10px]">&rsaquo;</span> Digitial mdla.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
+                  Contact Us
+                </h3>
+                <ul className="space-y-4 text-[14px] text-[#A7F3D0] m-0 list-none p-0 opacity-90">
+                  <li className="flex items-start space-x-3">
+                    <span className="text-white mt-1">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                      </svg>
+                    </span>{" "}
+                    <span>+35-8876549010</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <span className="text-white mt-1">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                    </span>{" "}
+                    <span className="break-all">
+                      f:jspom@jrenserridhtrii, tpim.
+                    </span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <span className="text-white mt-1">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                    </span>{" "}
+                    <span>1105 gprnsamridhage trit.</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
+                  Get in Touch
+                </h3>
+                <div className="flex space-x-3 mb-6">
+                  <div className="w-[34px] h-[34px] bg-[#1DA1F2] rounded-sm flex items-center justify-center cursor-pointer hover:opacity-90">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M22.46 6C21.69 6.35 20.86 6.58 20 6.69C20.88 6.16 21.56 5.32 21.88 4.31C21.05 4.81 20.13 5.16 19.16 5.36C18.37 4.5 17.26 4 16 4C13.65 4 11.73 5.92 11.73 8.29C11.73 8.63 11.77 8.96 11.84 9.27C8.28 9.09 5.11 7.38 3 4.79C2.63 5.42 2.42 6.16 2.42 6.94C2.42 8.43 3.17 9.75 4.33 10.5C3.62 10.5 2.96 10.3 2.38 10V10.03C2.38 12.11 3.86 13.85 5.82 14.24C5.46 14.34 5.08 14.39 4.69 14.39C4.42 14.39 4.15 14.36 3.89 14.31C4.43 16.01 6.01 17.25 7.89 17.28C6.41 18.45 4.54 19.14 2.5 19.14C2.15 19.14 1.8 19.12 1.45 19.08C3.33 20.29 5.56 21 8 21C15.86 21 20.16 14.49 20.16 8.85C20.16 8.67 20.16 8.48 20.15 8.3C20.98 7.7 21.71 6.91 22.46 6Z" />
+                    </svg>
+                  </div>
+                  <div className="w-[34px] h-[34px] bg-[#4267B2] rounded-sm flex items-center justify-center cursor-pointer hover:opacity-90">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M22.675 0H1.325C0.593 0 0 0.593 0 1.325V22.676C0 23.407 0.593 24 1.325 24H12.82V14.706H9.692V11.084H12.82V8.413C12.82 5.313 14.713 3.625 17.479 3.625C18.804 3.625 19.942 3.724 20.274 3.768V6.966L18.356 6.967C16.852 6.967 16.561 7.682 16.561 8.73V11.084H20.148L19.675 14.706H16.561V24H22.677C23.407 24 24 23.407 24 22.675V1.325C24 0.593 23.407 0 22.675 0Z" />
+                    </svg>
+                  </div>
+                  <div className="w-[34px] h-[34px] bg-[#FF0000] rounded-sm flex items-center justify-center cursor-pointer hover:opacity-90">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                    </svg>
+                  </div>
+                </div>
+                <ul className="space-y-3 text-[14px] text-[#A7F3D0] m-0 list-none p-0 opacity-90">
+                  <li className="flex items-center gap-3">
+                    <span className="text-[12px] opacity-80">&rsaquo;</span>{" "}
+                    Terme &amp; Conbliutere
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span className="text-[12px] opacity-80">&rsaquo;</span>{" "}
+                    Pronby Pedey
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span className="text-[12px] opacity-80">&rsaquo;</span>{" "}
+                    Accesibiity Sutement
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="border-t border-white/20 pt-6 text-center text-[13px] text-[#A7F3D0] opacity-80">
+              2034 Core Samriddhi Portal. All rights reserved.
+            </div>
+          </div>
+        </footer>
       </div>
-    </section>
-        <Footer />
-      </div>
-    </>;
+    </>
+  );
 }

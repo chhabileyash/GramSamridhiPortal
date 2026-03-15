@@ -27,7 +27,7 @@ export default function SignupPage() {
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
       {/* Left Side - Hero/Branding */}
-      <div className="hidden lg:flex flex-col justify-between bg-primary relative overflow-hidden text-white p-12">
+      <div className="hidden lg:flex flex-col justify-between bg-[#1F4E79] relative overflow-hidden text-white p-12">
         {/* Home Button for Desktop */}
         <Link
           href="/"
@@ -63,7 +63,7 @@ export default function SignupPage() {
                 <h3 className="text-[28px] font-[600] leading-[1.2] tracking-wide uppercase">
                   Gram Samridhi <br /> Portal
                 </h3>
-                <p className="text-xs text-accent font-bold tracking-[0.2em] uppercase mt-0.5">
+                <p className="text-xs text-[#F28C28] font-bold tracking-[0.2em] uppercase mt-0.5">
                   Govt. of Maharashtra
                 </p>
               </div>
@@ -72,14 +72,14 @@ export default function SignupPage() {
             <div className="space-y-8 max-w-3xl">
               <h1 className="text-4xl lg:text-6xl font-black leading-tight tracking-tight uppercase drop-shadow-lg">
                 Empowering <br />
-                <span className="text-accent inline-block mt-2">
+                <span className="text-[#F28C28] inline-block mt-2">
                   Local Governance
                 </span>{" "}
                 <br />
                 Digitally.
               </h1>
-              <div className="h-1.5 w-24 bg-accent rounded-[999px] mx-auto shadow-lg shadow-stone-400/20"></div>
-              <p className="text-green-50 text-xl leading-relaxed font-medium max-w-2xl mx-auto drop-shadow-[0px_4px_12px_rgba(0,0,0,0.12)]">
+              <div className="h-1.5 w-24 bg-[#F28C28] rounded-[999px] mx-auto shadow-lg shadow-stone-400/20"></div>
+              <p className="text-white/90 text-xl leading-relaxed font-medium max-w-2xl mx-auto drop-shadow-[0px_4px_12px_rgba(0,0,0,0.12)]">
                 The single unified platform for tax payments, certificates, and
                 transparent administration for 28,000+ Gram Panchayats across
                 the state.
@@ -90,20 +90,20 @@ export default function SignupPage() {
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex flex-col bg-surface h-full relative">
+      <div className="flex flex-col bg-white h-full relative">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:px-6 border-b border-green-100 bg-surface/80 backdrop-blur-md sticky top-0 z-20">
+        <div className="flex items-center justify-between p-4 sm:px-6 border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-20">
           <Link href="/" className="flex items-center gap-2">
-            <div className="p-1.5 bg-primary rounded-[6px]">
+            <div className="p-1.5 bg-[#1F4E79] rounded-[6px]">
               <Landmark className="w-5 h-5 text-white" />
             </div>
-            <span className="font-black text-primary text-[14px] uppercase tracking-wide">
+            <span className="font-black text-[#1F4E79] text-[14px] uppercase tracking-wide">
               Gram Samridhi
             </span>
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-1 text-[14px] font-bold text-primary hover:text-accent transition-colors"
+            className="flex items-center gap-1 text-[14px] font-bold text-[#1F4E79] hover:text-[#F28C28] transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back
@@ -113,10 +113,10 @@ export default function SignupPage() {
         <div className="flex-1 flex items-center justify-center p-[16px] overflow-y-auto">
           <div className="w-full max-w-lg space-y-8 py-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold text-green-950">
+              <h2 className="text-3xl font-bold text-[#1F4E79]">
                 Create Account
               </h2>
-              <p className="text-[var(--color-text-secondary)]">
+              <p className="text-gray-600">
                 Enter your details to register for the Maharashtra Digital
                 Portal.
               </p>
@@ -125,47 +125,47 @@ export default function SignupPage() {
             <form className="space-y-5 text-left">
               {/* Full Name */}
               <div className="space-y-1.5">
-                <label className="text-[14px] font-bold text-primary">
+                <label className="text-[14px] font-bold text-[#1F4E79]">
                   Full Name
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-[var(--color-text-muted)] group-focus-within:text-primary transition-colors" />
+                  <User className="absolute left-3 top-3 h-5 w-5 text-gray-400 group-focus-within:text-[#1F4E79] transition-colors" />
                   <input
                     type="text"
                     placeholder="E.g. Rajesh Kumar"
-                    className="w-full pl-10 pr-4 py-2.5 border border-border rounded-sm text-primary font-semibold focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all placeholder:text-[var(--color-text-muted)]"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400"
                   />
                 </div>
               </div>
 
               {/* Email Address */}
               <div className="space-y-1.5">
-                <label className="text-[14px] font-bold text-primary">
+                <label className="text-[14px] font-bold text-[#1F4E79]">
                   Email Address
                 </label>
                 <div className="relative group">
-                  <Mail className="absolute left-3 top-3 h-5 w-5 text-[var(--color-text-muted)] group-focus-within:text-primary transition-colors" />
+                  <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400 group-focus-within:text-[#1F4E79] transition-colors" />
                   <input
                     type="email"
                     placeholder="name@example.com"
-                    className="w-full pl-10 pr-4 py-2.5 border border-border rounded-sm text-primary font-semibold focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all placeholder:text-[var(--color-text-muted)]"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400"
                   />
                 </div>
               </div>
 
               {/* Mobile Number */}
               <div className="space-y-1.5">
-                <label className="text-[14px] font-bold text-primary">
+                <label className="text-[14px] font-bold text-[#1F4E79]">
                   Mobile Number
                 </label>
                 <div className="flex shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
-                  <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-border bg-green-50 text-[var(--color-text-secondary)] text-[14px] font-bold">
+                  <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-gray-200 bg-gray-50 text-gray-600 text-[14px] font-bold">
                     +91
                   </span>
                   <input
                     type="tel"
                     placeholder="9876543210"
-                    className="flex-1 min-w-0 block w-full px-4 py-2.5 rounded-none rounded-r-sm border border-border text-primary font-semibold focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all placeholder:text-[var(--color-text-muted)]"
+                    className="flex-1 min-w-0 block w-full px-4 py-2.5 rounded-none rounded-r-sm border border-gray-200 text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400"
                   />
                 </div>
               </div>
@@ -173,19 +173,19 @@ export default function SignupPage() {
               {/* Passwords Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-[14px] font-bold text-primary">
+                  <label className="text-[14px] font-bold text-[#1F4E79]">
                     Password
                   </label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
-                      className="w-full px-4 py-2.5 border border-border rounded-sm text-primary font-semibold focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all placeholder:text-[var(--color-text-muted)]"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] focus:outline-none"
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none"
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5" />
@@ -196,21 +196,21 @@ export default function SignupPage() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[14px] font-bold text-primary">
+                  <label className="text-[14px] font-bold text-[#1F4E79]">
                     Confirm Password
                   </label>
                   <div className="relative">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="••••••••"
-                      className="w-full px-4 py-2.5 border border-border rounded-sm text-primary font-semibold focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all placeholder:text-[var(--color-text-muted)]"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400"
                     />
                     <button
                       type="button"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute right-3 top-2.5 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] focus:outline-none"
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-5 w-5" />
@@ -229,25 +229,25 @@ export default function SignupPage() {
                     id="terms"
                     name="terms"
                     type="checkbox"
-                    className="h-4 w-4 text-accent focus:ring-accent border-border rounded-sm cursor-pointer accent-accent"
+                    className="h-4 w-4 text-[#F28C28] focus:ring-[#F28C28] border-gray-200 rounded-sm cursor-pointer accent-[#F28C28]"
                   />
                 </div>
                 <div className="ml-3 text-[14px]">
                   <label
                     htmlFor="terms"
-                    className="font-semibold text-[var(--color-text-secondary)]"
+                    className="font-semibold text-gray-600"
                   >
                     I agree to the{" "}
                     <a
                       href="#"
-                      className="text-accent hover:text-accent hover:underline font-bold"
+                      className="text-[#F28C28] hover:text-[#F28C28] hover:underline font-bold"
                     >
                       Terms of Service
                     </a>{" "}
                     and{" "}
                     <a
                       href="#"
-                      className="text-accent hover:text-accent hover:underline font-bold"
+                      className="text-[#F28C28] hover:text-[#F28C28] hover:underline font-bold"
                     >
                       Privacy Policy
                     </a>
@@ -259,7 +259,7 @@ export default function SignupPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent text-white py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-lg shadow-stone-700/10"
+                className="w-full flex items-center justify-center gap-2 bg-[#F28C28] hover:bg-[#F28C28] text-white py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-lg shadow-stone-700/10"
               >
                 Create Account
                 <ArrowRight className="w-5 h-5 ml-1" />
@@ -268,38 +268,38 @@ export default function SignupPage() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border"></div>
+                <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-[14px]">
-                <span className="px-4 bg-surface text-[var(--color-text-secondary)] font-medium tracking-wide text-xs uppercase">
+                <span className="px-4 bg-white text-gray-600 font-medium tracking-wide text-xs uppercase">
                   Or continue with
                 </span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-[16px]">
-              <button className="flex items-center justify-center gap-2 px-4 py-3 border border-border rounded-sm hover:bg-green-50 hover:border-primary transition-all group bg-primary shadow-[0px_2px_6px_rgba(0,0,0,0.08)] text-white">
-                <div className="w-6 h-6 rounded-[999px] bg-[#fcead8] flex items-center justify-center text-accent font-black text-xs group-hover:scale-110 transition-transform border border-accent/20">
+              <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-sm hover:bg-gray-50 hover:border-[#1F4E79] transition-all group bg-white shadow-sm text-gray-700">
+                <div className="w-6 h-6 rounded-[999px] bg-[#fcead8] flex items-center justify-center text-[#F28C28] font-black text-xs group-hover:scale-110 transition-transform border border-[#F28C28]/20">
                   M
                 </div>
-                <span className="font-bold text-primary uppercase text-[14px] tracking-wide">
+                <span className="font-bold text-[#1F4E79] uppercase text-[14px] tracking-wide">
                   Maha-ID
                 </span>
               </button>
-              <button className="flex items-center justify-center gap-2 px-4 py-3 border border-border rounded-sm hover:bg-green-50 hover:border-primary transition-all group bg-primary shadow-[0px_2px_6px_rgba(0,0,0,0.08)] text-white">
-                <Fingerprint className="w-5 h-5 text-[var(--color-text-secondary)] group-hover:text-primary" />
-                <span className="font-bold text-primary uppercase text-[14px] tracking-wide">
+              <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-sm hover:bg-gray-50 hover:border-[#1F4E79] transition-all group bg-white shadow-sm text-gray-700">
+                <Fingerprint className="w-5 h-5 text-[var(--color-text-secondary)] group-hover:text-[#1F4E79]" />
+                <span className="font-bold text-[#1F4E79] uppercase text-[14px] tracking-wide">
                   Aadhaar
                 </span>
               </button>
             </div>
 
             <div className="text-center">
-              <p className="text-[var(--color-text-secondary)] text-[14px] font-semibold">
+              <p className="text-gray-600 text-[14px] font-semibold">
                 Already have an account?{" "}
                 <Link
                   href="/auth/login"
-                  className="text-accent font-black hover:underline uppercase tracking-wide"
+                  className="text-[#F28C28] font-black hover:underline uppercase tracking-wide"
                 >
                   Login
                 </Link>
@@ -308,7 +308,7 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <footer className="w-full py-4 bg-primary border-t-4 border-accent text-center">
+        <footer className="w-full py-4 bg-[#2F5E3D] text-center">
           <p className="text-xs font-bold text-white/80 uppercase tracking-wider">
             &copy; {new Date().getFullYear()} Government of Maharashtra. All
             rights reserved.

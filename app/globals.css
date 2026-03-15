@@ -10,6 +10,9 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
+  --color-primary: #1e3a8a;
+  --color-accent: #ea580c;
+  --color-surface: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,6 +27,66 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+  top: 0px !important;
+}
+
+/* Google Translate Style Fixes */
+#google_translate_element {
+  display: flex !important;
+  align-items: center;
+}
+
+#google_translate_element .goog-te-gadget {
+  display: flex;
+  align-items: center;
+  font-size: 0px; /* Hide "Powered by Google" text */
+  margin: 0 !important;
+  color: transparent !important;
+}
+
+/* Hide the Google logo inside the gadget */
+#google_translate_element .goog-te-gadget img {
+  display: none !important;
+}
+
+/* Style the native select element */
+.goog-te-combo {
+  background-color: transparent !important;
+  border: none !important;
+  color: white !important;
+  font-size: 13px !important;
+  cursor: pointer;
+  outline: none !important;
+  padding: 0 4px !important;
+  margin: 0 !important;
+  width: auto;
+  max-width: 140px; /* Adjust as needed */
+}
+
+.goog-te-combo option {
+  background-color: var(--color-primary); /* Use theme color for dropdown */
+  color: white;
+  padding: 4px;
+}
+.VIpgJd-ZVi9od-l4eHX-hSRGPd{
+  display: none !important;
+}
+/* Hide the top banner frame from Google */
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none !important;
+}
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+.skiptranslate.goog-te-gadget {
+  display: flex !important;
+  align-items: center;
+  height: 100%;
+}
+#\:0\.targetLanguage {
+  display: flex !important;
+  height: 32px;
 }
 
 @theme {
