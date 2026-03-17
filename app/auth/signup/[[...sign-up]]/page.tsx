@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import locationData from "@/data.json";
-import { useSignUp } from "@clerk/nextjs";
+import { useSignUp, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { numberToAlphabet } from "@/utils/numbertoalphbate";
@@ -37,7 +37,8 @@ export default function SignupPage() {
   const [isSubmittingSignup, setIsSubmittingSignup] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [formError, setFormError] = useState("");
-  const { signUp,  fetchStatus } = useSignUp() as any;
+  const { signUp, fetchStatus } = useSignUp() as any;
+  const { setActive } = useClerk();
   const router = useRouter();
   const isSignUpReady = Boolean(signUp) && fetchStatus !== "fetching";
 
@@ -240,6 +241,7 @@ export default function SignupPage() {
         return;
       }
 
+      await setActive({ session: sessionId });
       router.replace("/home");
     } catch (err) {
       setFormError(getClerkErrorMessage(err));
