@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,8 +20,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} antialiased`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${inter.variable} antialiased`}
+        suppressHydrationWarning
+      >
+        <ClerkProvider
+          signInForceRedirectUrl={
+            process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL
+          }
+          signInFallbackRedirectUrl={
+            process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL
+          }
+          signUpForceRedirectUrl={
+            process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL
+          }
+          signUpFallbackRedirectUrl={
+            process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL
+          }
+          afterSignOutUrl="/"
+          publishableKey="pk_test_Y29vbC1jYW1lbC01MC5jbGVyay5hY2NvdW50cy5kZXYk"
+          key="sk_test_gbHfcd9jfeQmr3qZ6JLHrfpWxSUSmZfCyv2p02Jay3"
+        >
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
   );
 }

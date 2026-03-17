@@ -1,213 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-
-declare global {
-  interface Window {
-    googleTranslateElementInit: () => void;
-    google: any;
-  }
-}
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function Home() {
-  const [zoomLevel, setZoomLevel] = useState(1);
-
-  const zoomOut = () => setZoomLevel((prev) => Math.max(0.8, prev - 0.1));
-  const zoomIn = () => setZoomLevel((prev) => Math.min(1.2, prev + 0.1));
-  const zoomReset = () => setZoomLevel(1);
-
-  useEffect(() => {
-    // Add Google Translate script
-    const script = document.createElement("script");
-    script.src =
-      "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-    script.async = true;
-    document.body.appendChild(script);
-
-    // Add initialization function
-    window.googleTranslateElementInit = () => {
-      new (window as any).google.translate.TranslateElement(
-        {
-          pageLanguage: "en",
-        },
-        "google_translate_element",
-      );
-    };
-  }, []);
-
   return (
     <>
-      <div
-        className="font-sans bg-[#F5F6F7] text-[#2B2B2B] min-h-screen"
-        style={{ zoom: zoomLevel } as any}
-      >
-        {/* BEGIN: Top Header */}
-        <header
-          className="bg-[#1F4E79] text-white py-4"
-          data-purpose="main-header"
-        >
-          <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center px-4 gap-4 md:gap-0">
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
-              <div
-                className="w-12 h-12 flex items-center justify-center text-xs"
-                data-purpose="logo-placeholder"
-              >
-                <img src="./logo.svg" alt="Logo" className="w-14 h-14 " />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold leading-tight text-white mb-0">
-                  Gram Samriddhi Portal
-                </h2>
-                <p className="text-sm opacity-80 mb-0">
-                  Empowering Rural India
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap justify-center items-center gap-4 text-sm">
-              <div className="flex items-center bg-white/10 rounded-sm border border-white/20 px-2 py-1 h-8">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-white opacity-80 mr-2 shrink-0"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                  <path d="M2 12h20"></path>
-                </svg>
-                <div id="google_translate_element"></div>
-              </div>
-              <div className="flex items-center space-x-4 opacity-80">
-                <span className="flex items-center gap-2">
-                  <span className="cursor-pointer" onClick={zoomOut}>
-                    A-
-                  </span>{" "}
-                  |{" "}
-                  <span
-                    className="cursor-pointer font-bold bg-white text-black px-1"
-                    onClick={zoomReset}
-                  >
-                    A
-                  </span>{" "}
-                  |{" "}
-                  <span className="cursor-pointer" onClick={zoomIn}>
-                    A+
-                  </span>
-                </span>
-              </div>
-                <Link href="/auth/signup" className="bg-[#F28C28] px-6 py-2 rounded-sm font-bold hover:brightness-110 transition">
-            Register
-          </Link>
-            </div>
-          </div>
-        </header>
-
-        {/* BEGIN: Navigation Bar */}
-        <nav
-          className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50"
-          data-purpose="primary-navigation"
-        >
-          <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center justify-between px-4 overflow-x-auto gap-4 py-2 lg:py-0 w-full whitespace-nowrap">
-            <ul className="flex items-center m-0 p-0 list-none divide-x divide-gray-200 shrink-0">
-              <li className="bg-[#1F4E79] text-white font-semibold cursor-pointer">
-                <Link href="/" className="block px-6 py-4">
-                  Home
-                </Link>
-              </li>
-              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
-                <Link href="/about" className="block px-6 py-4">
-                  About Us
-                </Link>
-              </li>
-              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
-                <Link
-                  href="/schemes"
-                  className="block px-6 py-4 flex items-center gap-1"
-                >
-                  Schemes <span className="text-[10px]"></span>
-                </Link>
-              </li>
-              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
-                <Link
-                  href="/services"
-                  className="block px-6 py-4 flex items-center gap-1"
-                >
-                  Services <span className="text-[10px]"></span>
-                </Link>
-              </li>
-              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
-                <Link href="/gallery" className="block px-6 py-4">
-                  Gallery
-                </Link>
-              </li>
-              <li className="hover:bg-gray-50 cursor-pointer text-[#1F4E79] font-medium">
-                <Link href="/contact" className="block px-6 py-4">
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
-            <form
-              action="https://www.google.com/search"
-              method="GET"
-              target="_blank"
-              className="relative w-full lg:w-64 max-w-sm mb-2 lg:mb-0 shrink-0 mt-4 lg:mt-0"
-            >
-              <input
-                className="w-full border border-gray-200 bg-gray-50 rounded-full py-2 px-4 text-sm focus:outline-none focus:border-blue-400 focus:bg-white"
-                placeholder="Search with Google..."
-                name="q"
-                type="text"
-              />
-              <button
-                type="submit"
-                className="absolute right-4 top-2 text-gray-400 font-bold"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </button>
-            </form>
-          </div>
-        </nav>
-
-        {/* BEGIN: Alert Bar */}
-        <div
-          className="bg-[#FFF8F0] border-b border-orange-100 py-2"
-          data-purpose="alert-information"
-        >
-          <div className="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row justify-center sm:justify-start items-center space-y-2 sm:space-y-0 sm:space-x-3 text-sm text-center sm:text-left">
-            <span className="text-[#F28C28] text-lg"></span>
-            <p className="m-0 text-gray-700">
-              <strong>Covid-19 Information:</strong> Latest guidelines and
-              vaccination details here.{" "}
-              <span className="mx-2 text-gray-300">|</span>
-              <span className="text-[#F28C28] font-semibold cursor-pointer hover:underline">
-                Read More
-              </span>
-            </p>
-          </div>
-        </div>
+      <div className="font-sans bg-[#F5F6F7] text-[#2B2B2B] min-h-screen">
+        <Header />
 
         {/* BEGIN: Hero Section */}
         <section
-          className="relative bg-white overflow-hidden border-b border-gray-200 h-[450px]"
+          className="relative bg-white overflow-hidden border-b border-gray-200 min-h-[450px]"
           data-purpose="hero-section"
         >
           <div
@@ -215,37 +20,44 @@ export default function Home() {
             style={{
               backgroundImage: "url('./bg.png')",
               backgroundSize: "cover",
-              // backgroundPosition: "center 60%",
+              // backgroundPosition: "center",
             }}
           >
-            {/* <div className="absolute inset-0 bg-linear-to-r from-white/95 via-white/80 to-transparent"></div> */}
+            {/* <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/80 to-white/70 md:bg-gradient-to-r md:from-white/95 md:via-white/80 md:to-transparent"></div> */}
           </div>
-          <div className="max-w-300 mx-auto px-4 relative z-10 grid grid-cols-1 md:grid-cols-12 h-full items-center">
-            <div className="col-span-1 md:col-span-8 lg:col-span-7 text-center md:text-left pl-0 md:pl-8 pt-10 md:pt-0">
-              <h1 className="text-[#1F4E79] text-3xl mb-4">
-                Welcome to Gram Samriddhi Portal!
+          <div className="max-w-300 mx-auto px-4 relative z-10 grid grid-cols-1 md:grid-cols-12 h-full items-center min-h-[450px]">
+            <div className="col-span-1 md:col-span-8 lg:col-span-7 text-center md:text-left pl-0 md:pl-8 py-16 md:py-0">
+              <h1 className="text-[#1F4E79] text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight drop-shadow-sm">
+                Welcome to <br className="hidden sm:block" />
+                <span className="text-[#F28C28]">Gram Samruthi</span> Portal!
               </h1>
-              <p className="mt-2 text-xl text-gray-800 mb-8 font-medium">
-                Empowering our villages with information and services
+              <p className="mt-2 text-lg sm:text-xl text-gray-800 mb-8 font-medium md:max-w-[80%] mx-auto md:mx-0 drop-shadow-sm">
+                Empowering our villages with digital transparent information and
+                essential localized services.
               </p>
-              <button className="bg-[#F28C28] text-white px-7 py-[14px] rounded-sm font-semibold hover:brightness-110 transition shadow-md">
-                Learn More
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                <button className="bg-[#F28C28] text-white px-8 py-[14px] rounded-md font-bold hover:bg-[#e07b1e] transition-all shadow-lg hover:shadow-xl active:scale-95 text-lg w-full sm:w-auto">
+                  Learn More
+                </button>
+                <button className="bg-white text-[#1F4E79] border-2 border-[#1F4E79] px-8 py-[14px] rounded-md font-bold hover:bg-gray-50 transition-all shadow-sm hover:shadow-md active:scale-95 text-lg w-full sm:w-auto">
+                  Discover Schemes
+                </button>
+              </div>
             </div>
-            <div className="hidden md:flex col-span-4 md:col-span-5 justify-end items-end h-full"></div>
+            <div className="hidden md:flex col-span-1 md:col-span-4 lg:col-span-5 justify-end items-end h-full"></div>
           </div>
         </section>
 
         {/* BEGIN: Service Grid */}
         <section
-          className="py-12 -mt-[80px] relative z-20"
+          className="py-12 -mt-20 relative z-20"
           data-purpose="service-cards"
         >
           <div className="max-w-[1200px] mx-auto px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Card 1 */}
               <div className="bg-white p-6 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col h-[320px] relative overflow-hidden group">
-                <div className="absolute bottom-0 left-0 w-full h-[80px] z-0 overflow-hidden pointer-events-none">
+                <div className="absolute bottom-0 left-0 w-full h-20 z-0 overflow-hidden pointer-events-none">
                   <svg
                     className="absolute bottom-0 left-0 w-full h-full"
                     viewBox="0 0 400 80"
@@ -1055,179 +867,7 @@ export default function Home() {
           </div>
         </main>
 
-        {/* BEGIN: Footer */}
-        <footer
-          className="bg-[#2F5E3D] text-white pt-14 pb-6 mt-10"
-          data-purpose="main-footer"
-        >
-          <div className="max-w-[1200px] mx-auto px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-              <div>
-                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
-                  Quick Links
-                </h3>
-                <ul className="space-y-3 text-[15px] text-[#A7F3D0] m-0 list-none p-0">
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> Home
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> About Us
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> Sentittena
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> sarizces
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> callecty
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
-                  Important Links
-                </h3>
-                <ul className="space-y-3 text-[15px] text-[#A7F3D0] m-0 list-none p-0">
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> Govermaniza of
-                    mulia.
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> Minavy ou
-                    fnand levvelopment
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> utso it eat
-                    bravelopment expert..
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[10px]">&rsaquo;</span> Digitial mdla.
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
-                  Contact Us
-                </h3>
-                <ul className="space-y-4 text-[14px] text-[#A7F3D0] m-0 list-none p-0 opacity-90">
-                  <li className="flex items-start space-x-3">
-                    <span className="text-white mt-1">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                      </svg>
-                    </span>{" "}
-                    <span>+35-8876549010</span>
-                  </li>
-                  <li className="flex items-start space-x-3">
-                    <span className="text-white mt-1">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                      </svg>
-                    </span>{" "}
-                    <span className="break-all">
-                      f:jspom@jrenserridhtrii, tpim.
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-3">
-                    <span className="text-white mt-1">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </span>{" "}
-                    <span>1105 gprnsamridhage trit.</span>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold mb-5 text-[#E2E8F0]">
-                  Get in Touch
-                </h3>
-                <div className="flex space-x-3 mb-6">
-                  <div className="w-[34px] h-[34px] bg-[#1DA1F2] rounded-sm flex items-center justify-center cursor-pointer hover:opacity-90">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="white"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M22.46 6C21.69 6.35 20.86 6.58 20 6.69C20.88 6.16 21.56 5.32 21.88 4.31C21.05 4.81 20.13 5.16 19.16 5.36C18.37 4.5 17.26 4 16 4C13.65 4 11.73 5.92 11.73 8.29C11.73 8.63 11.77 8.96 11.84 9.27C8.28 9.09 5.11 7.38 3 4.79C2.63 5.42 2.42 6.16 2.42 6.94C2.42 8.43 3.17 9.75 4.33 10.5C3.62 10.5 2.96 10.3 2.38 10V10.03C2.38 12.11 3.86 13.85 5.82 14.24C5.46 14.34 5.08 14.39 4.69 14.39C4.42 14.39 4.15 14.36 3.89 14.31C4.43 16.01 6.01 17.25 7.89 17.28C6.41 18.45 4.54 19.14 2.5 19.14C2.15 19.14 1.8 19.12 1.45 19.08C3.33 20.29 5.56 21 8 21C15.86 21 20.16 14.49 20.16 8.85C20.16 8.67 20.16 8.48 20.15 8.3C20.98 7.7 21.71 6.91 22.46 6Z" />
-                    </svg>
-                  </div>
-                  <div className="w-[34px] h-[34px] bg-[#4267B2] rounded-sm flex items-center justify-center cursor-pointer hover:opacity-90">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="white"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M22.675 0H1.325C0.593 0 0 0.593 0 1.325V22.676C0 23.407 0.593 24 1.325 24H12.82V14.706H9.692V11.084H12.82V8.413C12.82 5.313 14.713 3.625 17.479 3.625C18.804 3.625 19.942 3.724 20.274 3.768V6.966L18.356 6.967C16.852 6.967 16.561 7.682 16.561 8.73V11.084H20.148L19.675 14.706H16.561V24H22.677C23.407 24 24 23.407 24 22.675V1.325C24 0.593 23.407 0 22.675 0Z" />
-                    </svg>
-                  </div>
-                  <div className="w-[34px] h-[34px] bg-[#FF0000] rounded-sm flex items-center justify-center cursor-pointer hover:opacity-90">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="white"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                    </svg>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-[14px] text-[#A7F3D0] m-0 list-none p-0 opacity-90">
-                  <li className="flex items-center gap-3">
-                    <span className="text-[12px] opacity-80">&rsaquo;</span>{" "}
-                    Terme &amp; Conbliutere
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <span className="text-[12px] opacity-80">&rsaquo;</span>{" "}
-                    Pronby Pedey
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <span className="text-[12px] opacity-80">&rsaquo;</span>{" "}
-                    Accesibiity Sutement
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-white/20 pt-6 text-center text-[13px] text-[#A7F3D0] opacity-80">
-              2034 Core Samriddhi Portal. All rights reserved.
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );

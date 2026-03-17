@@ -90,7 +90,7 @@ export default function Home() {
       <div className="absolute inset-0 z-0 bg-cover bg-center" style={{
           backgroundImage: "linear-gradient(rgba(0, 33, 71, 0.85), rgba(0, 33, 71, 0.95)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDE2AIfo1s1gN4TWz6BFu1Hgx8d2yB6SvIC7v8fhsy4_ElrdgN6fM3CGAerBp1usnm5AoYpJ8MXn_iWTLOf1X_Xjfgc2CHJjq5WRhdrWGEmVta1CDsYouxyQfas_XAxF-yQ4DeBjQ0mp8pGemJ1wGgAgMhvRNjHeIAbbwyx1ClBtG3JTE5a91kG2gvzOM_evj6G2xV7PjSwoBWEwYuzkTvjrR1vq3lJlrCCFRg-PG4pZEzJIdTCOiEsV66L9lof6o8iom0rGukyIz7E')"
         }} />
-      <div className="relative z-10 mx-auto w-full max-w-300 px-4 text-center text-white sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-[1200px] px-4 text-center text-white sm:px-6 lg:px-8">
         <span className="mb-6 inline-block border border-white/30 px-4 py-1 text-xs font-bold tracking-[0.2em] text-white uppercase">
           Rural Development Department
         </span>
@@ -114,7 +114,7 @@ export default function Home() {
       </div>
     </section>
         <section className="border-b border-slate-200 bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-10 md:gap-16 lg:grid-cols-2">
           <div className="space-y-6">
             <h2 className="inline-block border-b-4 border-[#f57b20] pb-2 text-3xl font-black tracking-tight text-[#0f766e] uppercase">
@@ -187,7 +187,7 @@ export default function Home() {
       </div>
     </section>
         <section className="overflow-hidden border-b border-slate-200 bg-slate-50 py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center md:mb-16">
           <h2 className="mb-4 text-3xl font-black tracking-tight text-[#0f766e] uppercase">
             Glimpses of Rural Maharashtra
@@ -203,7 +203,7 @@ export default function Home() {
         {slides.map((slide: any, index: number) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === current ? "opacity-100 z-10" : "opacity-0 z-0"}`}>
             <img alt={slide.title} className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0" src={slide.image} />
             <div className="absolute right-0 bottom-0 left-0 border-t-4 border-[#f57b20] bg-[#fffffff]/80 p-6 text-white backdrop-blur-sm">
-              <div className="mx-auto w-full max-w-300 px-3 sm:px-6 lg:px-8">
+              <div className="mx-auto w-full max-w-[1200px] px-3 sm:px-6 lg:px-8">
                 <h3 className="text-lg font-black tracking-tight uppercase sm:text-xl">
                   {slide.title}
                 </h3>
@@ -261,7 +261,7 @@ export default function Home() {
       </div>
     </section>
         <section className="border-b border-slate-200 bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
           <div>
             <h2 className="text-3xl font-black tracking-tight text-[#0f766e] uppercase">
@@ -325,7 +325,7 @@ export default function Home() {
       </div>
     </section>
         <section className="border-b border-slate-200 bg-white py-14 md:py-20 ">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center md:mb-16">
           <h2 className="mb-4 text-3xl font-black tracking-tight text-[#0f766e] uppercase">
             Citizen Journey Guide
@@ -374,7 +374,7 @@ export default function Home() {
       </div>
     </section>
         <section className="border-y-8 border-[#f57b20] bg-[#0f766e] py-14 text-white md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-10 md:gap-16 lg:gap-20 lg:grid-cols-2">
           <div className="space-y-8">
             <h2 className="text-3xl font-black leading-tight uppercase md:text-4xl">
@@ -467,7 +467,7 @@ export default function Home() {
       </div>
     </section>
         <section className="border-b border-slate-200 bg-slate-100 py-12">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="border border-slate-300 bg-white p-5 shadow-sm sm:p-8">
           <h3 className="mb-6 flex items-center gap-2 text-base font-bold tracking-wider text-[#0f766e] uppercase sm:text-lg">
             <MapPin className="text-[#f57b20]" />
@@ -543,7 +543,7 @@ export default function Home() {
       </div>
     </section>
         <section className="bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 flex flex-col items-end justify-between gap-6 border-b-2 border-slate-100 pb-8 md:flex-row">
           <div>
             <h2 className="text-3xl font-black tracking-tight text-[#0f766e] uppercase">
@@ -617,7 +617,7 @@ export default function Home() {
       </div>
     </section>
         <section className="bg-[#0f766e] py-16 text-white">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-5">
           <div className="border border-white/10 p-4 text-center sm:p-6">
             <h3 className="mb-2 text-3xl font-black text-[#f57b20] sm:text-4xl">
@@ -663,7 +663,7 @@ export default function Home() {
       </div>
     </section>
         <section className="border-y border-slate-200 bg-slate-50 py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <h2 className="mb-10 text-center text-3xl font-black tracking-tight text-[#0f766e] uppercase md:mb-12">
           Public Welfare Schemes
         </h2>
@@ -728,7 +728,7 @@ export default function Home() {
       </div>
     </section>
         <section className="bg-white py-14 md:py-20">
-      <div className="mx-auto w-full max-w-300 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-10 md:gap-16 lg:flex-row">
           <div className="space-y-8 lg:w-1/2">
             <h2 className="border-l-8 border-[#f57b20] pl-4 text-3xl font-black leading-tight text-[#0f766e] uppercase sm:pl-6 md:text-4xl">
