@@ -146,6 +146,15 @@ export default function LoginPage() {
                   setErrorMsg("");
                   if (fetchStatus === "fetching") return;
 
+                  // Input validation
+                  const trimmedIdentifier = identifier.trim();
+                  const trimmedPassword = password.trim();
+
+                  if (!trimmedIdentifier) {
+                    setErrorMsg("Please enter your email or Aadhar number");
+                    return;
+                  }
+
                   if (isOtpLogin && !isOtpSent) {
                     setErrorMsg("Please use email/password for now");
                     // Implement OTP request here if possible,
@@ -153,6 +162,10 @@ export default function LoginPage() {
                   } else if (isOtpLogin && isOtpSent) {
                     try {
                       const code = otpValues.join("");
+                      if (!code || code.length !== 6) {
+                        setErrorMsg("Please enter the complete 6-digit code");
+                        return;
+                      }
                       const { error } = await signIn.mfa.verifyEmailCode({
                         code,
                       });
@@ -175,17 +188,28 @@ export default function LoginPage() {
                         });
                       }
                     } catch (err: any) {
-                      setErrorMsg("An error occurred");
+                      console.error("OTP verification error:", err);
+                      setErrorMsg(
+                        err?.errors?.[0]?.longMessage ||
+                          err?.message ||
+                          "An error occurred during OTP verification",
+                      );
                     }
                   } else {
                     // Password Login
+                    if (!trimmedPassword) {
+                      setErrorMsg("Please enter your password");
+                      return;
+                    }
+
                     try {
-                      const { error } = await signIn.password({
-                        emailAddress: identifier,
-                        password,
+                      const response = await signIn.password({
+                        emailAddress: trimmedIdentifier,
+                        password: trimmedPassword,
                       });
-                      if (error) {
-                        const err = error as any;
+
+                      if (response.error) {
+                        const err = response.error as any;
                         // Support for identifier not found fallbacks etc as per reference
                         if (
                           err.errors?.[0]?.code === "form_identifier_not_found"
@@ -203,7 +227,7 @@ export default function LoginPage() {
                         return;
                       }
 
-                      if (signIn.status === "complete") {
+                      if (response.status === "complete") {
                         await signIn.finalize({
                           navigate: ({ session, decorateUrl }) => {
                             if (session?.currentTask) return;
@@ -211,9 +235,13 @@ export default function LoginPage() {
                             router.push(url);
                           },
                         });
-                      } else if (signIn.status === "needs_client_trust") {
+                      } else if (response.status === "needs_first_factor") {
+                        setErrorMsg(
+                          "Authentication started. Please complete the login process.",
+                        );
+                      } else if (response.status === "needs_second_factor") {
                         const emailCodeFactor =
-                          signIn.supportedSecondFactors?.find(
+                          response.supportedSecondFactors?.find(
                             (factor) => factor.strategy === "email_code",
                           );
                         if (emailCodeFactor) {
@@ -221,16 +249,27 @@ export default function LoginPage() {
                           setIsOtpLogin(true);
                           setIsOtpSent(true);
                           setCountdown(30);
+                        } else {
+                          setErrorMsg(
+                            "Two-factor authentication is required but not supported",
+                          );
                         }
+                      } else {
+                        setErrorMsg(
+                          "Login process incomplete. Please try again.",
+                        );
                       }
                     } catch (err: any) {
+                      console.error("Login error:", err);
                       if (
                         err?.errors?.[0]?.code === "form_identifier_not_found"
                       ) {
                         setErrorMsg("User not found or invalid identifier.");
                       } else {
                         setErrorMsg(
-                          err.errors?.[0]?.longMessage || "An error occurred",
+                          err.errors?.[0]?.longMessage ||
+                            err?.message ||
+                            "An error occurred during login. Please try again.",
                         );
                       }
                     }
@@ -243,13 +282,15 @@ export default function LoginPage() {
                     Email or Aadhar No
                   </label>
                   <div className="relative group">
-                    <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400 group-focus-within:text-[#1F4E79] transition-colors" />
+                    <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400 group-focus-within:text-[#1F4E79] transition-colors pointer-events-none" />
                     <input
                       type="text"
+                      autoComplete="email"
+                      inputMode="email"
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="Enter email or 12-digit Aadhar No"
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400"
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400 text-base"
                     />
                   </div>
                 </div>
@@ -269,18 +310,19 @@ export default function LoginPage() {
                       </Link>
                     </div>
                     <div className="relative group">
-                      <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400 group-focus-within:text-[#1F4E79] transition-colors" />
+                      <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400 group-focus-within:text-[#1F4E79] transition-colors pointer-events-none" />
                       <input
                         type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400"
+                        className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400 text-base"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none"
+                        className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none active:text-[#F28C28]"
                       >
                         {showPassword ? (
                           <EyeOff className="h-5 w-5" />
@@ -302,7 +344,10 @@ export default function LoginPage() {
                       <button
                         type="button"
                         onClick={() => {
-                          if (countdown === 0) setCountdown(30);
+                          if (countdown === 0) {
+                            setCountdown(30);
+                            // Could add logic to resend OTP here
+                          }
                         }}
                         className={`text-[13px] font-bold ${
                           countdown > 0
@@ -316,7 +361,7 @@ export default function LoginPage() {
                           : "Resend OTP"}
                       </button>
                     </div>
-                    <div className="flex justify-between gap-2 sm:gap-3">
+                    <div className="flex justify-center gap-2 sm:gap-3">
                       {otpValues.map((value, index) => (
                         <input
                           key={index}
@@ -331,7 +376,8 @@ export default function LoginPage() {
                             handleOtpChange(index, e.target.value)
                           }
                           onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                          className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-black text-[#1F4E79] border border-gray-200 rounded-sm focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all bg-gray-50/50 shadow-inner"
+                          autoComplete={`off`}
+                          className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-black text-[#1F4E79] border-2 border-gray-200 rounded-sm focus:outline-none focus:border-[#F28C28] transition-all bg-gray-50/50 shadow-inner text-base"
                         />
                       ))}
                     </div>
@@ -341,8 +387,8 @@ export default function LoginPage() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={fetchStatus === "fetching"}
-                  className="w-full flex items-center justify-center gap-2 bg-[#F28C28] hover:bg-[#F28C28] text-white py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-lg shadow-stone-700/10 disabled:opacity-75 disabled:cursor-not-allowed"
+                  disabled={fetchStatus === "fetching" || !identifier.trim()}
+                  className="w-full flex items-center justify-center gap-2 bg-[#F28C28] hover:bg-[#E67D1A] active:bg-[#D97016] text-white py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-lg shadow-stone-700/10 disabled:opacity-75 disabled:cursor-not-allowed min-h-[48px] text-base"
                 >
                   {fetchStatus === "fetching" ? (
                     <>
@@ -372,8 +418,9 @@ export default function LoginPage() {
                   onClick={() => {
                     setIsOtpLogin(!isOtpLogin);
                     setIsOtpSent(false); // Reset OTP state when toggling
+                    setOtpValues(["", "", "", "", "", ""]); // Clear OTP values
                   }}
-                  className="w-full flex items-center justify-center gap-2 bg-white border-2 border-[#1F4E79] text-[#1F4E79] hover:bg-gray-50 py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-white border-2 border-[#1F4E79] text-[#1F4E79] hover:bg-gray-50 active:bg-gray-100 py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-sm min-h-[48px] text-base"
                 >
                   {isOtpLogin ? "Login with Password" : "Login with OTP"}
                 </button>
