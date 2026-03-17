@@ -32,22 +32,30 @@ export default function Header() {
 
   // Initialize Google Translate
   useEffect(() => {
+    let retryCount = 0;
+    const MAX_RETRIES = 20;
+
     const initTranslate = () => {
       const desktopDiv = document.getElementById("google_translate_element");
-      if (desktopDiv && desktopDiv.innerHTML === "") {
-        new (window as any).google.translate.TranslateElement(
-          { pageLanguage: "en" },
-          "google_translate_element",
-        );
-      }
       const mobileDiv = document.getElementById(
         "google_translate_element_mobile",
       );
-      if (mobileDiv && mobileDiv.innerHTML === "") {
-        new (window as any).google.translate.TranslateElement(
-          { pageLanguage: "en" },
-          "google_translate_element_mobile",
-        );
+
+      const tryInit = (div: HTMLElement | null, id: string) => {
+        if (div && div.innerHTML.trim() === "") {
+          new (window as any).google.translate.TranslateElement(
+            { pageLanguage: "en", autoDisplay: false },
+            id,
+          );
+        }
+      };
+
+      if ((window as any).google?.translate?.TranslateElement) {
+        tryInit(desktopDiv, "google_translate_element");
+        tryInit(mobileDiv, "google_translate_element_mobile");
+      } else if (retryCount < MAX_RETRIES) {
+        retryCount++;
+        setTimeout(initTranslate, 300);
       }
     };
 
@@ -60,11 +68,8 @@ export default function Header() {
       script.async = true;
       document.body.appendChild(script);
     } else {
-      setTimeout(() => {
-        if ((window as any).google && (window as any).google.translate) {
-          initTranslate();
-        }
-      }, 100);
+      // Script already in DOM — trigger manually after a tick
+      setTimeout(initTranslate, 100);
     }
   }, []);
 
@@ -78,7 +83,7 @@ export default function Header() {
 
       {/* Mobile Sidebar Drawer */}
       <div
-        className={`fixed top-0 left-0 h-full w-[280px] bg-white z-[70] transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 left-0 h-full w-70 bg-white z-[70] transform transition-transform duration-300 ease-in-out lg:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } overflow-y-auto flex flex-col shadow-2xl`}
       >
