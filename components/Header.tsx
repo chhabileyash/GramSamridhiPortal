@@ -1,77 +1,238 @@
 ﻿"use client";
 
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  memo,
+  useRef,
+} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+import CustomUserButton from "./CustomUserButton";
+
+// Constants
+const COLORS = {
+  primary: "#1F4E79",
+  accent: "#F28C28",
+  light: "#f8fafc",
+} as const;
+
+const GOOGLE_TRANSLATE_CONFIG = {
+  MAX_RETRIES: 20,
+  RETRY_DELAY: 300,
+  INITIAL_DELAY: 100,
+  PAGE_LANGUAGE: "en",
+  ELEMENT_ID: "google_translate_element",
+  ELEMENT_MOBILE_ID: "google_translate_element_mobile",
+} as const;
+
+const ZOOM_CONFIG = {
+  MIN: 0.8,
+  MAX: 1.2,
+  STEP: 0.1,
+  DEFAULT: 1,
+} as const;
 
 declare global {
   interface Window {
-    googleTranslateElementInit: () => void;
-    google: any;
+    googleTranslateElementInit?: () => void;
+    google?: {
+      translate?: {
+        TranslateElement?: new (
+          options: { pageLanguage: string; autoDisplay: boolean },
+          elementId: string,
+        ) => void;
+      };
+    };
   }
 }
 
-export default function Header() {
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
-  const { isSignedIn, isLoaded } = useUser();
-
+const HeaderContent = memo(function HeaderContent({
+  zoomLevel,
+  setZoomLevel,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen,
+  pathname,
+  isSignedIn,
+  isLoaded,
+}: {
+  zoomLevel: number;
+  setZoomLevel: React.Dispatch<React.SetStateAction<number>>;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (value: boolean) => void;
+  pathname: string;
+  isSignedIn: boolean | undefined;
+  isLoaded: boolean;
+}) {
   const isRoot = pathname === "/";
 
-  const zoomOut = () => setZoomLevel((prev) => Math.max(0.8, prev - 0.1));
-  const zoomIn = () => setZoomLevel((prev) => Math.min(1.2, prev + 0.1));
-  const zoomReset = () => setZoomLevel(1);
+  const zoomOut = useCallback(
+    () =>
+      setZoomLevel((prev) =>
+        Math.max(ZOOM_CONFIG.MIN, prev - ZOOM_CONFIG.STEP),
+      ),
+    [setZoomLevel],
+  );
+  const zoomIn = useCallback(
+    () =>
+      setZoomLevel((prev) =>
+        Math.min(ZOOM_CONFIG.MAX, prev + ZOOM_CONFIG.STEP),
+      ),
+    [setZoomLevel],
+  );
+  const zoomReset = useCallback(
+    () => setZoomLevel(ZOOM_CONFIG.DEFAULT),
+    [setZoomLevel],
+  );
+
+  const navLinks = useMemo(
+    () => [
+      { path: isSignedIn ? "/home" : "/", label: "Home" },
+      { path: "/about", label: "About Us" },
+      { path: "/schemes", label: "Schemes" },
+      { path: "/services", label: "Services" },
+      { path: "/gallery", label: "Gallery" },
+      { path: "/contact", label: "Contact Us" },
+    ],
+    [isSignedIn],
+  );
+
+  const isAuthPage = useMemo(() => pathname?.includes("/auth"), [pathname]);
+
+  const renderNavLink = useCallback(
+    (link: { path: string; label: string }, isDesktop = false) => {
+      const isActive =
+        pathname === link.path ||
+        (link.path !== "/" && pathname?.startsWith(link.path));
+
+      const baseClass = `transition-colors cursor-pointer ${
+        isActive
+          ? "bg-[#1F4E79] text-white font-semibold"
+          : "hover:bg-gray-50 text-[#1F4E79] font-medium"
+      }`;
+
+      const linkClass = `block flex items-center gap-1 ${
+        isDesktop ? "px-5 py-3" : "px-6 py-4"
+      } ${isActive ? "hover:bg-[#153a5c]" : ""}`;
+
+      return (
+        <li key={link.path} className={baseClass}>
+          <Link
+            href={link.path}
+            className={linkClass}
+            onClick={() => !isDesktop && setIsMobileMenuOpen(false)}
+          >
+            {link.label}
+          </Link>
+        </li>
+      );
+    },
+    [pathname, setIsMobileMenuOpen],
+  );
 
   // Apply zoom to document body
   useEffect(() => {
     document.body.style.zoom = zoomLevel.toString();
   }, [zoomLevel]);
 
-  // Initialize Google Translate
-  useEffect(() => {
-    let retryCount = 0;
-    const MAX_RETRIES = 20;
+  // Memoized components for zoom and auth controls to avoid duplication
+  const ZoomControls = useCallback(
+    ({ isMobile = false }: { isMobile?: boolean }) => (
+      <div
+        className={`flex items-center ${
+          isMobile
+            ? "justify-between bg-gray-200 rounded-md px-3 py-1.5 h-10 w-full text-[#1F4E79]"
+            : "space-x-3 bg-black/20 rounded-md px-3 py-1.5 h-10 border border-white/10"
+        }`}
+      >
+        <span className={`${isMobile ? "font-medium text-sm mr-auto" : ""}`}>
+          {isMobile && "Font Size"}
+        </span>
+        <span className={`flex items-center gap-3 font-medium`}>
+          <span
+            className={`cursor-pointer ${
+              isMobile
+                ? "hover:font-bold"
+                : "hover:text-white text-blue-100 transition-colors"
+            }`}
+            onClick={zoomOut}
+          >
+            A-
+          </span>
+          <span className={isMobile ? "text-gray-400" : "text-white/30"}>
+            |
+          </span>
+          <span
+            className={`cursor-pointer font-bold ${
+              isMobile
+                ? "bg-white text-[#1F4E79] px-2 py-0.5 rounded shadow-sm"
+                : "bg-white text-[#1F4E79] px-2 py-0.5 rounded shadow-sm"
+            }`}
+            onClick={zoomReset}
+          >
+            A
+          </span>
+          <span className={isMobile ? "text-gray-400" : "text-white/30"}>
+            |
+          </span>
+          <span
+            className={`cursor-pointer ${
+              isMobile
+                ? "hover:font-bold"
+                : "hover:text-white text-blue-100 transition-colors"
+            }`}
+            onClick={zoomIn}
+          >
+            A+
+          </span>
+        </span>
+      </div>
+    ),
+    [zoomOut, zoomReset, zoomIn],
+  );
 
-    const initTranslate = () => {
-      const desktopDiv = document.getElementById("google_translate_element");
-      const mobileDiv = document.getElementById(
-        "google_translate_element_mobile",
+  const AuthButton = useCallback(
+    ({ isMobile = false }: { isMobile?: boolean }) => {
+      if (isAuthPage) return null;
+      if (!isLoaded)
+        return (
+          <div
+            className={`${isMobile ? "h-10 w-full" : "h-10 w-32"} animate-pulse ${isMobile ? "bg-gray-200" : "bg-white/20"} rounded-md`}
+          ></div>
+        );
+      if (!isSignedIn)
+        return (
+          <Link
+            href="/auth/sign-in"
+            onClick={() => isMobile && setIsMobileMenuOpen(false)}
+            className={`bg-[#F28C28] text-white px-6 py-2 h-10 flex items-center justify-center rounded-md font-bold shadow-sm ${
+              isMobile ? "w-full" : ""
+            } ${isMobile ? "" : "hover:bg-[#e07b1e] hover:shadow-md transition-all"}`}
+          >
+            Login / Register
+          </Link>
+        );
+      return (
+        <div
+          className={`flex items-center ${
+            isMobile
+              ? "justify-center bg-gray-100 rounded-md py-2 min-h-10"
+              : "min-h-[40px]"
+          }`}
+        >
+          <CustomUserButton
+            isMobile={isMobile}
+            onSignOut={() => setIsMobileMenuOpen(false)}
+          />
+        </div>
       );
-
-      const tryInit = (div: HTMLElement | null, id: string) => {
-        if (div && div.innerHTML.trim() === "") {
-          new (window as any).google.translate.TranslateElement(
-            { pageLanguage: "en", autoDisplay: false },
-            id,
-          );
-        }
-      };
-
-      if ((window as any).google?.translate?.TranslateElement) {
-        tryInit(desktopDiv, "google_translate_element");
-        tryInit(mobileDiv, "google_translate_element_mobile");
-      } else if (retryCount < MAX_RETRIES) {
-        retryCount++;
-        setTimeout(initTranslate, 300);
-      }
-    };
-
-    window.googleTranslateElementInit = initTranslate;
-
-    if (!document.querySelector('script[src*="translate.google.com"]')) {
-      const script = document.createElement("script");
-      script.src =
-        "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      script.async = true;
-      document.body.appendChild(script);
-    } else {
-      // Script already in DOM — trigger manually after a tick
-      setTimeout(initTranslate, 100);
-    }
-  }, []);
+    },
+    [isSignedIn, isLoaded, isAuthPage, setIsMobileMenuOpen],
+  );
 
   return (
     <>
@@ -113,91 +274,17 @@ export default function Header() {
         <div className="p-4 flex flex-col gap-4 border-b border-gray-100 bg-[#f8fafc]">
           <div className="flex items-center bg-gray-200 rounded-md px-3 py-1.5 h-10 w-full">
             <div
-              id="google_translate_element_mobile"
-              className="min-w-[120px] overflow-hidden"
+              id={GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID}
+              className="min-w-30 overflow-hidden"
             ></div>
           </div>
-          <div className="flex items-center justify-between bg-gray-200 rounded-md px-3 py-1.5 h-10 w-full text-[#1F4E79]">
-            <span className="font-medium text-sm">Font Size</span>
-            <span className="flex items-center gap-3 font-medium">
-              <span
-                className="cursor-pointer hover:font-bold"
-                onClick={zoomOut}
-              >
-                A-
-              </span>
-              <span className="text-gray-400">|</span>
-              <span
-                className="cursor-pointer font-bold bg-white text-[#1F4E79] px-2 py-0.5 rounded shadow-sm"
-                onClick={zoomReset}
-              >
-                A
-              </span>
-              <span className="text-gray-400">|</span>
-              <span className="cursor-pointer hover:font-bold" onClick={zoomIn}>
-                A+
-              </span>
-            </span>
-          </div>
-          {!pathname?.includes("/auth") && (
-            <>
-              {!isLoaded ? (
-                <div className="h-10 w-full animate-pulse bg-gray-200 rounded-md"></div>
-              ) : !isSignedIn ? (
-                <Link
-                  href="/auth/sign-in"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="bg-[#F28C28] text-white px-6 py-2 h-10 flex items-center justify-center rounded-md font-bold shadow-sm w-full"
-                >
-                  Login / Register
-                </Link>
-              ) : (
-                <div className="flex justify-center bg-gray-100 rounded-md py-2 min-h-10">
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        userButtonPopoverActionButton__manageAccount: "hidden",
-                      },
-                    }}
-                  />
-                </div>
-              )}
-            </>
-          )}
+          <ZoomControls isMobile={true} />
+          <AuthButton isMobile={true} />
         </div>
 
         {/* Mobile Nav Links */}
         <ul className="flex flex-col m-0 p-0 list-none divide-y divide-gray-100">
-          {[
-            { path: isSignedIn ? "/home" : "/", label: "Home" },
-            { path: "/about", label: "About Us" },
-            { path: "/schemes", label: "Schemes" },
-            { path: "/services", label: "Services" },
-            { path: "/gallery", label: "Gallery" },
-            { path: "/contact", label: "Contact Us" },
-          ].map((link) => {
-            const isActive =
-              pathname === link.path ||
-              (link.path !== "/" && pathname?.startsWith(link.path));
-            return (
-              <li
-                key={link.path}
-                className={`transition-colors cursor-pointer ${
-                  isActive
-                    ? "bg-[#1F4E79] text-white font-semibold"
-                    : "hover:bg-gray-50 text-[#1F4E79] font-medium"
-                }`}
-              >
-                <Link
-                  href={link.path}
-                  className={`block px-6 py-4 flex items-center gap-1 ${isActive ? "hover:bg-[#153a5c]" : ""}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            );
-          })}
+          {navLinks.map((link) => renderNavLink(link, false))}
         </ul>
       </div>
 
@@ -268,59 +355,12 @@ export default function Header() {
                   <path d="M2 12h20"></path>
                 </svg>
                 <div
-                  id="google_translate_element"
+                  id={GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID}
                   className="min-w-[120px]"
                 ></div>
               </div>
-              <div className="flex items-center space-x-3 bg-black/20 rounded-md px-3 py-1.5 h-10 border border-white/10">
-                <span className="flex items-center gap-3 font-medium">
-                  <span
-                    className="cursor-pointer hover:text-white text-blue-100 transition-colors"
-                    onClick={zoomOut}
-                  >
-                    A-
-                  </span>
-                  <span className="text-white/30">|</span>
-                  <span
-                    className="cursor-pointer font-bold bg-white text-[#1F4E79] px-2 py-0.5 rounded shadow-sm"
-                    onClick={zoomReset}
-                  >
-                    A
-                  </span>
-                  <span className="text-white/30">|</span>
-                  <span
-                    className="cursor-pointer hover:text-white text-blue-100 transition-colors"
-                    onClick={zoomIn}
-                  >
-                    A+
-                  </span>
-                </span>
-              </div>
-              {!pathname?.includes("/auth") && (
-                <>
-                  {!isLoaded ? (
-                    <div className="h-10 w-32 animate-pulse bg-white/20 rounded-md"></div>
-                  ) : !isSignedIn ? (
-                    <Link
-                      href="/auth/sign-in"
-                      className="bg-[#F28C28] text-white px-6 py-2 h-10 flex items-center justify-center rounded-md font-bold shadow-sm hover:bg-[#e07b1e] hover:shadow-md transition-all"
-                    >
-                      Login / Register
-                    </Link>
-                  ) : (
-                    <div className="min-h-[40px] flex items-center">
-                      <UserButton
-                        appearance={{
-                          elements: {
-                            userButtonPopoverActionButton__manageAccount:
-                              "hidden",
-                          },
-                        }}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
+              <ZoomControls isMobile={false} />
+              <AuthButton isMobile={false} />
             </div>
 
             {/* Mobile Hamburger toggle */}
@@ -359,35 +399,7 @@ export default function Header() {
             } mx-auto flex items-center justify-between px-4 py-0 w-full relative transition-all duration-300`}
           >
             <ul className="flex items-center m-0 p-0 list-none divide-x divide-gray-200 w-auto">
-              {[
-                { path: isSignedIn ? "/home" : "/", label: "Home" },
-                { path: "/about", label: "About Us" },
-                { path: "/schemes", label: "Schemes" },
-                { path: "/services", label: "Services" },
-                { path: "/gallery", label: "Gallery" },
-                { path: "/contact", label: "Contact Us" },
-              ].map((link) => {
-                const isActive =
-                  pathname === link.path ||
-                  (link.path !== "/" && pathname?.startsWith(link.path));
-                return (
-                  <li
-                    key={link.path}
-                    className={`transition-colors cursor-pointer ${
-                      isActive
-                        ? "bg-[#1F4E79] text-white font-semibold"
-                        : "hover:bg-gray-50 text-[#1F4E79] font-medium"
-                    }`}
-                  >
-                    <Link
-                      href={link.path}
-                      className={`block px-5 py-3 flex items-center gap-1 ${isActive ? "hover:bg-[#153a5c]" : ""}`}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
+              {navLinks.map((link) => renderNavLink(link, true))}
             </ul>
             <form
               action="https://www.google.com/search"
@@ -427,7 +439,7 @@ export default function Header() {
       </div>
 
       {/* BEGIN: Alert Bar */}
-      {!pathname?.includes("/auth") && (
+      {!isAuthPage && (
         <div
           className="bg-[#FFF8F0] border-b border-orange-100 py-2 relative z-20"
           data-purpose="alert-information"
@@ -451,4 +463,95 @@ export default function Header() {
       )}
     </>
   );
-}
+});
+
+export default memo(function Header() {
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const retryCountRef = useRef(0);
+  const initCompletedRef = useRef(false);
+  const pathname = usePathname();
+  const { isSignedIn, isLoaded } = useUser();
+
+  // Initialize Google Translate
+  useEffect(() => {
+    retryCountRef.current = 0;
+    initCompletedRef.current = false;
+
+    const initTranslate = () => {
+      if (initCompletedRef.current) return;
+
+      const desktopDiv = document.getElementById(
+        GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID,
+      );
+      const mobileDiv = document.getElementById(
+        GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID,
+      );
+
+      if (!desktopDiv || !mobileDiv) {
+        if (retryCountRef.current < GOOGLE_TRANSLATE_CONFIG.MAX_RETRIES) {
+          retryCountRef.current++;
+          setTimeout(initTranslate, GOOGLE_TRANSLATE_CONFIG.RETRY_DELAY);
+        }
+        return;
+      }
+
+      if (
+        window.google?.translate?.TranslateElement &&
+        typeof window.google.translate.TranslateElement === "function"
+      ) {
+        try {
+          if (desktopDiv.innerHTML.trim() === "") {
+            new window.google.translate.TranslateElement(
+              {
+                pageLanguage: GOOGLE_TRANSLATE_CONFIG.PAGE_LANGUAGE,
+                autoDisplay: false,
+              },
+              GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID,
+            );
+          }
+          if (mobileDiv.innerHTML.trim() === "") {
+            new window.google.translate.TranslateElement(
+              {
+                pageLanguage: GOOGLE_TRANSLATE_CONFIG.PAGE_LANGUAGE,
+                autoDisplay: false,
+              },
+              GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID,
+            );
+          }
+          initCompletedRef.current = true;
+        } catch (error) {
+          console.error("[Google Translate] Initialization error:", error);
+          if (retryCountRef.current < GOOGLE_TRANSLATE_CONFIG.MAX_RETRIES) {
+            retryCountRef.current++;
+            setTimeout(initTranslate, GOOGLE_TRANSLATE_CONFIG.RETRY_DELAY);
+          }
+        }
+      } else if (retryCountRef.current < GOOGLE_TRANSLATE_CONFIG.MAX_RETRIES) {
+        retryCountRef.current++;
+        setTimeout(initTranslate, GOOGLE_TRANSLATE_CONFIG.RETRY_DELAY);
+      }
+    };
+
+    window.googleTranslateElementInit = initTranslate;
+    setTimeout(initTranslate, GOOGLE_TRANSLATE_CONFIG.INITIAL_DELAY);
+
+    return () => {
+      if (window.googleTranslateElementInit) {
+        delete window.googleTranslateElementInit;
+      }
+    };
+  }, []);
+
+  return (
+    <HeaderContent
+      zoomLevel={zoomLevel}
+      setZoomLevel={setZoomLevel}
+      isMobileMenuOpen={isMobileMenuOpen}
+      setIsMobileMenuOpen={setIsMobileMenuOpen}
+      pathname={pathname}
+      isSignedIn={isSignedIn}
+      isLoaded={isLoaded}
+    />
+  );
+});

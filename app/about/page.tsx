@@ -6,7 +6,7 @@ export default function AboutPage() {
       <div className="font-sans bg-[#F5F6F7] text-[#1F2933] min-h-screen">
         {/* BEGIN: Top Header */}
         {/* BEGIN: Navigation Bar */}
-        <Header />
+        {/* <Header /> */}
         <main className="py-[40px] flex-grow bg-surface border-b border-[#E0E0E0]">
           <div className="max-w-[1200px] mx-auto px-4">
             {/* Page Title */}

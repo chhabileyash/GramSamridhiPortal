@@ -63,7 +63,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 lg:bg-white text-gray-900">
-      <Header />
+      {/* <Header /> */}
 
       <div className="flex-1 flex flex-col lg:grid lg:grid-cols-2 w-full">
         {/* Left Side - Hero/Branding */}
@@ -203,31 +203,13 @@ export default function LoginPage() {
                     }
 
                     try {
-                      const response = await signIn.password({
+                      await signIn.password({
                         emailAddress: trimmedIdentifier,
                         password: trimmedPassword,
                       });
 
-                      if (response.error) {
-                        const err = response.error as any;
-                        // Support for identifier not found fallbacks etc as per reference
-                        if (
-                          err.errors?.[0]?.code === "form_identifier_not_found"
-                        ) {
-                          setErrorMsg(
-                            "User not found, please create an account",
-                          );
-                          return;
-                        }
-                        setErrorMsg(
-                          err.errors?.[0]?.longMessage ||
-                            err.longMessage ||
-                            "Invalid credentials",
-                        );
-                        return;
-                      }
-
-                      if (response.status === "complete") {
+                      // Check signIn status after password attempt
+                      if (signIn.status === "complete") {
                         await signIn.finalize({
                           navigate: ({ session, decorateUrl }) => {
                             if (session?.currentTask) return;
@@ -235,14 +217,14 @@ export default function LoginPage() {
                             router.push(url);
                           },
                         });
-                      } else if (response.status === "needs_first_factor") {
+                      } else if (signIn.status === "needs_first_factor") {
                         setErrorMsg(
                           "Authentication started. Please complete the login process.",
                         );
-                      } else if (response.status === "needs_second_factor") {
+                      } else if (signIn.status === "needs_second_factor") {
                         const emailCodeFactor =
-                          response.supportedSecondFactors?.find(
-                            (factor) => factor.strategy === "email_code",
+                          signIn.supportedSecondFactors?.find(
+                            (factor: any) => factor.strategy === "email_code",
                           );
                         if (emailCodeFactor) {
                           await signIn.mfa.sendEmailCode();
@@ -260,15 +242,22 @@ export default function LoginPage() {
                         );
                       }
                     } catch (err: any) {
-                      console.error("Login error:", err);
-                      if (
-                        err?.errors?.[0]?.code === "form_identifier_not_found"
-                      ) {
+                      // Handle only errors - extract error code and message from error object
+                      const errorCode = err?.code || err?.errors?.[0]?.code;
+                      const errorMsg =
+                        err?.longMessage ||
+                        err?.errors?.[0]?.longMessage ||
+                        err?.message;
+
+                      if (errorCode === "session_exists") {
+                        router.push("/home");
+                      } else if (errorCode === "form_identifier_not_found") {
                         setErrorMsg("User not found or invalid identifier.");
+                      } else if (errorCode === "form_password_incorrect") {
+                        setErrorMsg("Invalid password. Please try again.");
                       } else {
                         setErrorMsg(
-                          err.errors?.[0]?.longMessage ||
-                            err?.message ||
+                          errorMsg ||
                             "An error occurred during login. Please try again.",
                         );
                       }

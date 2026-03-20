@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+  memo,
+} from "react";
 import {
   Landmark,
   User,
@@ -14,11 +21,15 @@ import {
   Phone,
 } from "lucide-react";
 import Link from "next/link";
+import toast, { Toaster } from "react-hot-toast";
 import locationData from "@/data.json";
 import { useSignUp, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { numberToAlphabet } from "@/utils/numbertoalphbate";
+
+// Memoize Header to prevent re-renders
+const MemoizedHeader = memo(Header);
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -36,7 +47,6 @@ export default function SignupPage() {
   const [verifying, setVerifying] = useState(false);
   const [isSubmittingSignup, setIsSubmittingSignup] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [formError, setFormError] = useState("");
   const { signUp, fetchStatus } = useSignUp() as any;
   const { setActive } = useClerk();
   const router = useRouter();
@@ -55,204 +65,238 @@ export default function SignupPage() {
     return () => clearInterval(timer);
   }, [isOtpSent, countdown]);
 
-  const handleOtpChange = (index: number, value: string) => {
+  const handleOtpChange = useCallback((index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
-    const newOtpValues = [...otpValues];
-    newOtpValues[index] = value;
-    setOtpValues(newOtpValues);
+    setOtpValues((prev) => {
+      const newOtpValues = [...prev];
+      newOtpValues[index] = value;
+      return newOtpValues;
+    });
     if (value !== "" && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
-  };
+  }, []);
 
-  const handleOtpKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === "Backspace" && otpValues[index] === "" && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
+  const handleOtpKeyDown = useCallback(
+    (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Backspace" && otpValues[index] === "" && index > 0) {
+        inputRefs.current[index - 1]?.focus();
+      }
+    },
+    [otpValues],
+  );
 
   const [district, setDistrict] = useState("");
   const [taluka, setTaluka] = useState("");
   const [village, setVillage] = useState("");
 
-  const locationDataset = locationData as {
-    districts?: Array<{
-      district: string;
-      subDistricts: Array<{ subDistrict: string; villages: string[] }>;
-    }>;
-  };
+  const locationDataset = useMemo(
+    () =>
+      locationData as {
+        districts?: Array<{
+          district: string;
+          subDistricts: Array<{ subDistrict: string; villages: string[] }>;
+        }>;
+      },
+    [],
+  );
 
-  const handleFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleFieldChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    },
+    [],
+  );
 
-  const withTimeout = async <T,>(
-    promise: Promise<T>,
-    ms = 15000,
-  ): Promise<T> => {
-    return await Promise.race([
-      promise,
-      new Promise<T>((_, reject) => {
-        setTimeout(
-          () => reject(new Error("Request timed out. Please try again.")),
-          ms,
-        );
-      }),
-    ]);
-  };
-
-  const getClerkErrorMessage = (err: any) => {
-    console.error("Clerk API Error:", err);
-    return (
-      err?.errors?.[0]?.longMessage ||
-      err?.errors?.[0]?.message ||
-      err?.message ||
-      "Something went wrong. Please try again."
-    );
-  };
-
-  const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!isSignUpReady) {
-      setFormError(
-        "Authentication is still loading. Please try again in a moment.",
-      );
-      return;
-    }
-
-    if (
-      !formData.fullName ||
-      !formData.email ||
-      !formData.aadhar ||
-      !formData.mobile ||
-      !formData.password ||
-      !formData.confirmPassword ||
-      !district ||
-      !taluka ||
-      !village
-    ) {
-      setFormError("Please fill all required fields.");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setFormError("Password and Confirm Password do not match.");
-      return;
-    }
-
-    if (!acceptedTerms) {
-      setFormError("Please accept Terms of Service and Privacy Policy.");
-      return;
-    }
-
-    setFormError("");
-    setIsSubmittingSignup(true);
-    const phoneDigits = formData.mobile.replace(/\D/g, "");
-    const normalizedPhone = phoneDigits.startsWith("91")
-      ? `+${phoneDigits}`
-      : `+91${phoneDigits}`;
-
-    try {
-      const payload: any = {
-        email_address: formData.email,
-        password: formData.password,
-        firstName: formData.fullName.split(" ")[0],
-        lastName: formData.fullName.split(" ").slice(1).join(" "),
-        username: numberToAlphabet(formData.aadhar),
-        unsafeMetadata: {
-          phoneNumber: normalizedPhone,
-          district,
-          taluka,
-          village,
-          legalAccepted: acceptedTerms,
-        },
-      };
-
-      // Reset any existing sign-up state
-      await signUp.reset();
-
-      // Start a fresh sign-up
-      await withTimeout(signUp.create(payload));
-
-      await withTimeout(signUp.verifications.sendEmailCode());
-
-      setIsOtpSent(true);
-      setCountdown(30);
-    } catch (err) {
-      setFormError(getClerkErrorMessage(err));
-    } finally {
-      setIsSubmittingSignup(false);
-    }
-  };
-
-  const handleVerifySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!isSignUpReady) {
-      setFormError(
-        "Authentication is still loading. Please try again in a moment.",
-      );
-      return;
-    }
-    const otp = otpValues.join("");
-
-    if (otp.length !== 6) {
-      setFormError("Please enter the complete 6-digit OTP.");
-      return;
-    }
-
-    setVerifying(true);
-    setFormError("");
-
-    try {
-      const { error } = await signUp.verifications.verifyEmailCode({
-        code: otp,
+  const withTimeout = useCallback(
+    async <T,>(promise: Promise<T>, ms = 15000): Promise<T> => {
+      const timeoutPromise = new Promise<T>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error("Request timed out. Please try again."));
+        }, ms);
       });
 
-      if (error) {
-        setFormError(
-          error.message ||
-            "OTP is invalid or expired. Please enter the latest OTP sent to your email.",
-        );
-        return;
+      const data: any = await Promise.race([promise, timeoutPromise]);
+      if (data.error) {
+        throw data.error;
       }
+      return data;
+    },
+    [],
+  );
 
-      
+  const getClerkErrorMessage = useCallback((err: any): string => {
+    console.error("Clerk API Error:", err);
 
-      if (signUp.status !== "complete") {
-        setFormError(
-          "Verification is not complete. Please check the OTP and try again.",
-        );
-        return;
-      }
+    const errorMessage = err?.errors?.[0]?.message || err?.message;
 
-      // Extract sessionId
-      const sessionId = signUp.createdSessionId;
-
-      if (!sessionId) {
-        setFormError(
-          "Verification succeeded but session creation is pending. Please try again in a moment.",
-        );
-        return;
-      }
-
-      await setActive({ session: sessionId });
-      router.replace("/home");
-    } catch (err) {
-      setFormError(getClerkErrorMessage(err));
-    } finally {
-      setVerifying(false);
+    if (errorMessage) {
+      return errorMessage;
     }
-  };
 
-  const handleResendOtp = async () => {
+    const longMessage = err?.errors?.[0]?.longMessage;
+    if (longMessage) {
+      return longMessage;
+    }
+
+    return "Something went wrong. Please try again.";
+  }, []);
+
+  const handleSignupSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!isSignUpReady) {
+        toast.error(
+          "Authentication is still loading. Please try again in a moment.",
+        );
+        return;
+      }
+
+      if (
+        !formData.fullName ||
+        !formData.email ||
+        !formData.aadhar ||
+        !formData.mobile ||
+        !formData.password ||
+        !formData.confirmPassword ||
+        !district ||
+        !taluka ||
+        !village
+      ) {
+        toast.error("Please fill all required fields.");
+        return;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("Password and Confirm Password do not match.");
+        return;
+      }
+
+      if (!acceptedTerms) {
+        toast.error("Please accept Terms of Service and Privacy Policy.");
+        return;
+      }
+
+      setIsSubmittingSignup(true);
+      const phoneDigits = formData.mobile.replace(/\D/g, "");
+      const normalizedPhone = phoneDigits.startsWith("91")
+        ? `+${phoneDigits}`
+        : `+91${phoneDigits}`;
+
+      try {
+        const payload: any = {
+          email_address: formData.email,
+          password: formData.password,
+          firstName: formData.fullName.split(" ")[0],
+          lastName: formData.fullName.split(" ").slice(1).join(" "),
+          username: numberToAlphabet(formData.aadhar),
+          unsafeMetadata: {
+            phoneNumber: normalizedPhone,
+            district,
+            taluka,
+            village,
+            legalAccepted: acceptedTerms,
+          },
+        };
+
+        // Reset any existing sign-up state
+        await signUp.reset();
+
+        // Start a fresh sign-up
+        await withTimeout(signUp.create(payload));
+
+        // Send verification email code
+        await withTimeout(signUp.verifications.sendEmailCode());
+
+        toast.success("Account created! Check your email for the OTP.");
+        setIsOtpSent(true);
+        setCountdown(30);
+      } catch (err) {
+        toast.error(getClerkErrorMessage(err));
+      } finally {
+        setIsSubmittingSignup(false);
+      }
+    },
+    [
+      isSignUpReady,
+      formData,
+      district,
+      taluka,
+      village,
+      acceptedTerms,
+      signUp,
+      withTimeout,
+      getClerkErrorMessage,
+    ],
+  );
+
+  const handleVerifySubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!isSignUpReady) {
+        toast.error(
+          "Authentication is still loading. Please try again in a moment.",
+        );
+        return;
+      }
+      const otp = otpValues.join("");
+
+      if (otp.length !== 6) {
+        toast.error("Please enter the complete 6-digit OTP.");
+        return;
+      }
+
+      setVerifying(true);
+
+      try {
+        const { error } = await signUp.verifications.verifyEmailCode({
+          code: otp,
+        });
+
+        if (error) {
+          toast.error(
+            error.message ||
+              "OTP is invalid or expired. Please enter the latest OTP sent to your email.",
+          );
+          setVerifying(false);
+          return;
+        }
+
+        if (signUp.status !== "complete") {
+          toast.error(
+            "Verification is not complete. Please check the OTP and try again.",
+          );
+          setVerifying(false);
+          return;
+        }
+
+        // Extract sessionId
+        const sessionId = signUp.createdSessionId;
+
+        if (!sessionId) {
+          toast.error(
+            "Verification succeeded but session creation is pending. Please try again in a moment.",
+          );
+          setVerifying(false);
+          return;
+        }
+
+        toast.success("Account verified successfully! Redirecting...");
+        await setActive({ session: sessionId });
+        router.replace("/home");
+      } catch (err) {
+        toast.error(getClerkErrorMessage(err));
+      } finally {
+        setVerifying(false);
+      }
+    },
+    [isSignUpReady, otpValues, signUp, setActive, router, getClerkErrorMessage],
+  );
+
+  const handleResendOtp = useCallback(async () => {
     if (!isSignUpReady) {
-      setFormError(
+      toast.error(
         "Authentication is still loading. Please try again in a moment.",
       );
       return;
@@ -261,31 +305,80 @@ export default function SignupPage() {
 
     try {
       await withTimeout(signUp.verifications.sendEmailCode());
-      setFormError("");
+      toast.success("OTP resent successfully!");
       setCountdown(30);
     } catch (err) {
-      setFormError(getClerkErrorMessage(err));
+      toast.error(getClerkErrorMessage(err));
     }
-  };
+  }, [isSignUpReady, countdown, signUp, withTimeout, getClerkErrorMessage]);
 
-  const handleEditDetails = () => {
+  const handleEditDetails = useCallback(() => {
     setIsOtpSent(false);
     setOtpValues(["", "", "", "", "", ""]);
     setCountdown(30);
-    setFormError("");
-  };
+  }, []);
 
-  const districts = locationDataset.districts || [];
-  const selectedDistrictObj = districts.find(
-    (d: any) => d.district === district,
+  const toggleShowPassword = useCallback(() => {
+    setShowPassword((prev) => !prev);
+  }, []);
+
+  const toggleShowConfirmPassword = useCallback(() => {
+    setShowConfirmPassword((prev) => !prev);
+  }, []);
+
+  const toggleAcceptedTerms = useCallback(() => {
+    setAcceptedTerms((prev) => !prev);
+  }, []);
+
+  const handleDistrictChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setDistrict(e.target.value);
+      setTaluka("");
+      setVillage("");
+    },
+    [],
   );
-  const talukas = selectedDistrictObj ? selectedDistrictObj.subDistricts : [];
-  const selectedTalukaObj = talukas.find((t: any) => t.subDistrict === taluka);
-  const villages = selectedTalukaObj ? selectedTalukaObj.villages : [];
+
+  const handleTalukaChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setTaluka(e.target.value);
+      setVillage("");
+    },
+    [],
+  );
+
+  const handleVillageChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setVillage(e.target.value);
+    },
+    [],
+  );
+
+  // Memoize location data calculations
+  const districts = useMemo(
+    () => locationDataset.districts || [],
+    [locationDataset],
+  );
+  const selectedDistrictObj = useMemo(
+    () => districts.find((d: any) => d.district === district),
+    [districts, district],
+  );
+  const talukas = useMemo(
+    () => (selectedDistrictObj ? selectedDistrictObj.subDistricts : []),
+    [selectedDistrictObj],
+  );
+  const selectedTalukaObj = useMemo(
+    () => talukas.find((t: any) => t.subDistrict === taluka),
+    [talukas, taluka],
+  );
+  const villages = useMemo(
+    () => (selectedTalukaObj ? selectedTalukaObj.villages : []),
+    [selectedTalukaObj],
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 lg:bg-white text-gray-900">
-      <Header />
+      {/* <MemoizedHeader /> */}
 
       <div className="flex-1 flex flex-col lg:grid lg:grid-cols-2 w-full">
         {/* Left Side - Hero/Branding */}
@@ -458,11 +551,7 @@ export default function SignupPage() {
                         <select
                           className="w-full px-3 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all bg-white"
                           value={district}
-                          onChange={(e) => {
-                            setDistrict(e.target.value);
-                            setTaluka("");
-                            setVillage("");
-                          }}
+                          onChange={handleDistrictChange}
                         >
                           <option value="" disabled className="text-gray-400">
                             Select District
@@ -481,10 +570,7 @@ export default function SignupPage() {
                         <select
                           className="w-full px-3 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all bg-white disabled:opacity-50 disabled:bg-gray-50"
                           value={taluka}
-                          onChange={(e) => {
-                            setTaluka(e.target.value);
-                            setVillage("");
-                          }}
+                          onChange={handleTalukaChange}
                           disabled={!district}
                         >
                           <option value="" disabled className="text-gray-400">
@@ -504,7 +590,7 @@ export default function SignupPage() {
                         <select
                           className="w-full px-3 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all bg-white disabled:opacity-50 disabled:bg-gray-50"
                           value={village}
-                          onChange={(e) => setVillage(e.target.value)}
+                          onChange={handleVillageChange}
                           disabled={!taluka}
                         >
                           <option value="" disabled className="text-gray-400">
@@ -539,7 +625,7 @@ export default function SignupPage() {
                         />
                         <button
                           type="button"
-                          onClick={() => setShowPassword(!showPassword)}
+                          onClick={toggleShowPassword}
                           className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none"
                         >
                           {showPassword ? (
@@ -567,9 +653,7 @@ export default function SignupPage() {
                         />
                         <button
                           type="button"
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
+                          onClick={toggleShowConfirmPassword}
                           className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none"
                         >
                           {showConfirmPassword ? (
@@ -590,7 +674,7 @@ export default function SignupPage() {
                         name="terms"
                         type="checkbox"
                         checked={acceptedTerms}
-                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        onChange={toggleAcceptedTerms}
                         className="h-4 w-4 text-[#F28C28] focus:ring-[#F28C28] border-gray-200 rounded-sm cursor-pointer accent-[#F28C28]"
                       />
                     </div>
@@ -629,12 +713,6 @@ export default function SignupPage() {
                     {isSubmittingSignup ? "Creating..." : "Create Account"}
                     <ArrowRight className="w-5 h-5 ml-1" />
                   </button>
-
-                  {formError && (
-                    <p className="text-sm font-semibold text-red-600">
-                      {formError}
-                    </p>
-                  )}
                 </form>
               ) : (
                 <form
@@ -674,12 +752,6 @@ export default function SignupPage() {
                     {verifying ? "Verifying..." : "Verify & Register"}
                     <ArrowRight className="w-5 h-5 ml-1" />
                   </button>
-
-                  {formError && (
-                    <p className="text-sm font-semibold text-red-600 text-center">
-                      {formError}
-                    </p>
-                  )}
 
                   <div className="text-center pt-2">
                     <button
@@ -722,6 +794,19 @@ export default function SignupPage() {
         </div>
       </div>
       {/* <Footer /> */}
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={12}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            fontSize: "14px",
+            borderRadius: "8px",
+            maxWidth: "90vw",
+          },
+        }}
+      />
     </div>
   );
 }

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import Header from "@/components/Header";
+import Script from "next/script"; // ✅ Add this import
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,6 +28,10 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning
       >
+         <Script
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="afterInteractive"
+        />
         <ClerkProvider
           signInForceRedirectUrl={
             process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL
@@ -42,6 +49,7 @@ export default function RootLayout({
           publishableKey="pk_test_Y29vbC1jYW1lbC01MC5jbGVyay5hY2NvdW50cy5kZXYk"
           key="sk_test_gbHfcd9jfeQmr3qZ6JLHrfpWxSUSmZfCyv2p02Jay3"
         >
+          <Header />
           {children}
         </ClerkProvider>
       </body>

@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <>
       <div className="font-sans bg-[#F5F6F7] text-[#2B2B2B] min-h-screen">
-        <Header />
+        {/* <Header /> */}
 
         {/* BEGIN: Hero Section */}
         <section

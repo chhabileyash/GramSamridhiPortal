@@ -550,7 +550,7 @@ export default function VillagePage() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <main className="min-h-screen bg-[#f9f9f9] text-[#0f172a]">
         <section className="relative overflow-hidden border-b-4 border-[#f58320] bg-[#082b57]">
           <div

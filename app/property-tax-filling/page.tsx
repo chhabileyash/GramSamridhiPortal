@@ -17,7 +17,7 @@ import { Sidebar } from "@/components/Sidebar";
 export default function PropertyTaxFiling() {
   return (
     <div className="min-h-screen flex flex-col text-gray-800 font-sans bg-[#fcfcfc]">
-      <Header />
+      {/* <Header /> */}
 
       <div className="flex flex-1 items-start">
         <Sidebar />
