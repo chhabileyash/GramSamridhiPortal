@@ -1,96 +1,154 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, Plus, Map, CheckCircle, TrendingUp, Edit3, Trash2, X, RefreshCw } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { Search, Plus, Map, CheckCircle, TrendingUp, Edit3, Trash2, X, RefreshCw, Loader2, Clock } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function DevelopmentWorksPage() {
-  const [works, setWorks] = useState([
-    { id: "DW-23-01", name: "Village Main Road Repair", contractor: "ABC Infra", budget: "12,50,000", progress: 85, status: "Ongoing" },
-    { id: "DW-23-02", name: "New Panchayat Well Construction", contractor: "XYZ Builders", budget: "8,00,000", progress: 100, status: "Completed" },
-    { id: "DW-23-03", name: "Primary School Renovation", contractor: "Local Co-op", budget: "5,25,000", progress: 40, status: "Ongoing" },
-    { id: "DW-23-04", name: "Solar Street Lights Installation", contractor: "SunPower Ltd", budget: "15,00,000", progress: 10, status: "Pending Start" },
-    { id: "DW-23-05", name: "Community Hall Construction", contractor: "ABC Infra", budget: "25,00,000", progress: 60, status: "Ongoing" },
-  ]);
+  const { user } = useUser();
+  const villageId = (user?.unsafeMetadata as any)?.village_id as string;
+
+  const [works, setWorks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingWorkId, setEditingWorkId] = useState<string | null>(null);
+  const [editingWork, setEditingWork] = useState<any>(null);
 
-  // Form Data
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+
   const [formData, setFormData] = useState({
     name: "",
+    description: "",
     contractor: "",
     budget: "",
     progress: 0,
-    status: "Pending Start"
+    status: "Pending Start",
+    startDate: "",
+    expectedEndDate: "",
   });
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Search Filter
-  const [searchQuery, setSearchQuery] = useState("");
+  const fetchWorks = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/development-works");
+      if (res.ok) {
+        const json = await res.json();
+        setWorks(json.data || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch development works:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleOpenModal = (workToEdit: any = null) => {
-    if (workToEdit) {
-      setEditingWorkId(workToEdit.id);
+  useEffect(() => {
+    fetchWorks();
+  }, []);
+
+  const handleOpenModal = (work: any = null) => {
+    if (work) {
+      setEditingWork(work);
       setFormData({
-        name: workToEdit.name,
-        contractor: workToEdit.contractor,
-        budget: workToEdit.budget.replace(/,/g, ""), // Strip commas for input
-        progress: workToEdit.progress,
-        status: workToEdit.status
+        name: work.name || "",
+        description: work.description || "",
+        contractor: work.contractor || "",
+        budget: work.budget || "",
+        progress: work.progress || 0,
+        status: work.status || "Pending Start",
+        startDate: work.startDate || "",
+        expectedEndDate: work.expectedEndDate || "",
       });
     } else {
-      setEditingWorkId(null);
-      setFormData({ name: "", contractor: "", budget: "", progress: 0, status: "Pending Start" });
+      setEditingWork(null);
+      setFormData({ name: "", description: "", contractor: "", budget: "", progress: 0, status: "Pending Start", startDate: "", expectedEndDate: "" });
     }
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEditingWork(null);
   };
 
-  const formatCurrency = (amount: string | number): string => {
-    const num = Number(amount);
-    if (isNaN(num)) return String(amount);
-    return num.toLocaleString('en-IN');
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formattedData = {
-      ...formData,
-      budget: formatCurrency(formData.budget),
-      progress: Number(formData.progress),
-      // Auto-update status if progress is 100, or if progress > 0 and status is Pending
-      status: Number(formData.progress) === 100 ? "Completed"
-        : (Number(formData.progress) > 0 && formData.status === "Pending Start") ? "Ongoing"
-          : formData.status
-    };
+    setIsSaving(true);
 
-    if (editingWorkId) {
-      setWorks(works.map(w => w.id === editingWorkId ? { ...formattedData, id: editingWorkId } : w));
-    } else {
-      const newId = `DW-24-0${works.length + 1}`;
-      setWorks([{ ...formattedData, id: newId }, ...works]);
+    const finalStatus = Number(formData.progress) === 100 ? "Completed"
+      : (Number(formData.progress) > 0 && formData.status === "Pending Start") ? "Ongoing"
+        : formData.status;
+
+    try {
+      if (editingWork) {
+        const res = await fetch("/api/development-works", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: editingWork.id, ...formData, progress: Number(formData.progress), status: finalStatus }),
+        });
+        if (res.ok) {
+          toast.success("Project updated successfully");
+          fetchWorks();
+        } else {
+          toast.error("Failed to update project");
+        }
+      } else {
+        const res = await fetch("/api/development-works", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ villageId, ...formData, progress: Number(formData.progress), status: finalStatus }),
+        });
+        if (res.ok) {
+          toast.success("Project registered successfully");
+          fetchWorks();
+        } else {
+          toast.error("Failed to register project");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("An error occurred");
+    } finally {
+      setIsSaving(false);
+      handleCloseModal();
     }
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to completely remove this project record?")) {
-      setWorks(works.filter(w => w.id !== id));
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to remove this project record?")) return;
+    try {
+      const res = await fetch(`/api/development-works?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Project deleted");
+        setWorks(works.filter(w => w.id !== id));
+      } else {
+        toast.error("Failed to delete");
+      }
+    } catch (err) {
+      toast.error("Error deleting project");
     }
   };
 
-  // Metrics
   const totalProjects = works.length;
   const completedProjects = works.filter(w => w.status === "Completed" || w.progress === 100).length;
   const ongoingProjects = works.filter(w => w.status === "Ongoing").length;
 
-  const filteredWorks = works.filter(w =>
-    w.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    w.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    w.contractor.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredWorks = works.filter(w => {
+    const matchesSearch = (w.projectId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (w.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (w.contractor || "").toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "All" || w.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const formatBudget = (val: string | number) => {
+    const num = Number(val);
+    if (isNaN(num)) return String(val);
+    return num.toLocaleString("en-IN");
+  };
 
   return (
     <>
@@ -104,36 +162,36 @@ export default function DevelopmentWorksPage() {
           className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
         >
           <Plus size={18} />
-          <span>New Project</span>
+          <span className="hidden sm:inline">New Project</span>
         </button>
       </section>
 
       {/* Metrics Row */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-full">
+          <div className="p-3 bg-blue-50 text-blue-600 rounded-full shrink-0">
             <Map size={24} />
           </div>
-          <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Total Projects</p>
+          <div className="min-w-0">
+            <p className="text-sm text-gray-500 font-semibold uppercase truncate">Total Projects</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{totalProjects}</p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-green-50 text-green-600 rounded-full">
+          <div className="p-3 bg-green-50 text-green-600 rounded-full shrink-0">
             <CheckCircle size={24} />
           </div>
-          <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Completed YTD</p>
+          <div className="min-w-0">
+            <p className="text-sm text-gray-500 font-semibold uppercase truncate">Completed</p>
             <p className="text-2xl font-bold text-green-600 mt-1">{completedProjects}</p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-orange-50 text-orange-600 rounded-full">
+          <div className="p-3 bg-orange-50 text-orange-600 rounded-full shrink-0">
             <TrendingUp size={24} />
           </div>
-          <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Ongoing Works</p>
+          <div className="min-w-0">
+            <p className="text-sm text-gray-500 font-semibold uppercase truncate">Ongoing Works</p>
             <p className="text-2xl font-bold text-[#FF9933] mt-1">{ongoingProjects}</p>
           </div>
         </div>
@@ -142,19 +200,32 @@ export default function DevelopmentWorksPage() {
       {/* Table Section */}
       <section className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
-          <div className="relative w-full sm:w-80">
+          <div className="relative w-full sm:max-w-md md:max-w-lg lg:w-[450px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
-              placeholder="Search projects by ID, Name or Contractor..."
+              placeholder="Search by Project ID, Name or Contractor..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border border-gray-300 bg-white rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto cursor-pointer"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Pending Start">Pending Start</option>
+              <option value="Ongoing">Ongoing</option>
+              <option value="Halted">Halted</option>
+              <option value="Completed">Completed</option>
+            </select>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto min-h-[200px]">
           <table className="w-full text-left text-sm">
             <thead className="bg-white text-gray-600 font-bold border-b border-gray-200 uppercase tracking-wider text-xs">
               <tr>
@@ -168,17 +239,30 @@ export default function DevelopmentWorksPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredWorks.map((work) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-20 text-center">
+                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-3" />
+                    <p className="text-gray-500 font-medium text-sm">Loading projects...</p>
+                  </td>
+                </tr>
+              ) : filteredWorks.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    No infrastructure projects found.
+                  </td>
+                </tr>
+              ) : filteredWorks.map((work) => (
                 <tr key={work.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">{work.id}</td>
+                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap text-xs">{work.projectId}</td>
                   <td className="px-6 py-4 font-bold text-[#2c5577]">{work.name}</td>
-                  <td className="px-6 py-4 text-gray-600 font-medium">{work.contractor}</td>
-                  <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">₹{work.budget}</td>
+                  <td className="px-6 py-4 text-gray-600 font-medium text-xs">{work.contractor || "-"}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">₹{formatBudget(work.budget)}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                         <div
-                          className={`h-2.5 rounded-full ${work.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
+                          className={`h-2 rounded-full ${work.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
                           style={{ width: `${work.progress}%` }}
                         ></div>
                       </div>
@@ -186,11 +270,15 @@ export default function DevelopmentWorksPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 flex justify-center py-1.5 rounded-full text-xs font-bold w-full max-w-[110px] mx-auto ${work.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                    <span className={`px-2 flex justify-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider max-w-[120px] mx-auto ${work.status === 'Completed' ? 'bg-green-100 text-green-800' :
                       work.status === 'Ongoing' ? 'bg-blue-100 text-blue-800' :
                         work.status === 'Halted' ? 'bg-red-100 text-red-800' :
                           'bg-gray-100 text-gray-800'
                       }`}>
+                      {work.status === 'Completed' && <CheckCircle size={12} className="mr-1.5" />}
+                      {work.status === 'Ongoing' && <TrendingUp size={12} className="mr-1.5" />}
+                      {work.status === 'Halted' && <X size={12} className="mr-1.5" />}
+                      {work.status === 'Pending Start' && <Clock size={12} className="mr-1.5" />}
                       {work.status}
                     </span>
                   </td>
@@ -212,13 +300,6 @@ export default function DevelopmentWorksPage() {
                   </td>
                 </tr>
               ))}
-              {filteredWorks.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
-                    No infrastructure projects found matching your search.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
@@ -231,13 +312,13 @@ export default function DevelopmentWorksPage() {
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                 <RefreshCw className="text-blue-600" size={20} />
-                {editingWorkId ? "Update Project Phase" : "Register New Project"}
+                {editingWork ? "Update Project Phase" : "Register New Project"}
               </h2>
               <button
                 onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-200"
+                className="text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-full hover:bg-gray-200"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
             </div>
 
@@ -252,6 +333,16 @@ export default function DevelopmentWorksPage() {
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Village Main Road Repair"
                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Brief description of the project scope..."
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm resize-none"
                   />
                 </div>
 
@@ -279,6 +370,27 @@ export default function DevelopmentWorksPage() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Start Date</label>
+                    <input
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Expected End Date</label>
+                    <input
+                      type="date"
+                      value={formData.expectedEndDate}
+                      onChange={(e) => setFormData({ ...formData, expectedEndDate: e.target.value })}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                    />
+                  </div>
+                </div>
+
                 <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100">
                   <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">Execution Status</h3>
                   <div className="space-y-5">
@@ -297,24 +409,22 @@ export default function DevelopmentWorksPage() {
                         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                       />
                     </div>
-
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1.5">Override Status</label>
                       <select
                         value={formData.status}
                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm cursor-pointer"
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm cursor-pointer bg-white"
                       >
                         <option value="Pending Start">Pending Start</option>
                         <option value="Ongoing">Ongoing</option>
                         <option value="Halted">Halted (Blocked)</option>
                         <option value="Completed">Completed</option>
                       </select>
-                      <p className="text-xs text-gray-500 mt-2 italic">* Setting progress to 100% will automatically mark the project as Completed upon saving.</p>
+                      <p className="text-xs text-gray-500 mt-2 italic">* Setting progress to 100% will automatically mark the project as Completed.</p>
                     </div>
                   </div>
                 </div>
-
               </form>
             </div>
 
@@ -329,9 +439,11 @@ export default function DevelopmentWorksPage() {
               <button
                 type="submit"
                 form="project-form"
-                className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                disabled={isSaving}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2"
               >
-                {editingWorkId ? "Save Updates" : "Register Project"}
+                {isSaving && <Loader2 size={16} className="animate-spin" />}
+                {editingWork ? "Save Updates" : "Register Project"}
               </button>
             </div>
           </div>

@@ -19,6 +19,7 @@ export function AdminSidebar() {
     { name: "Development Works", href: "/admin/development-works" },
     { name: "Suggestions", href: "/admin/suggestions" },
     { name: "Village Info", href: "/admin/village-info" },
+    { name: "Panchayat Members", href: "/admin/panchayat-members" },
   ];
 
   return (

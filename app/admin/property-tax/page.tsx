@@ -4,22 +4,46 @@ import React, { useState } from "react";
 import { Search, Eye, CheckCircle, XCircle, X, Filter } from "lucide-react";
 
 export default function PropertyTaxPage() {
-  const [taxes, setTaxes] = useState([
-    { id: "PT-2023-1042", owner: "Ramesh Sharma", propertyId: "P-104", amount: "₹1,200", paymentDate: "2023-12-15", financialYear: "2023-2024", status: "Paid" },
-    { id: "PT-2023-1043", owner: "Sita Devi", propertyId: "P-205", amount: "₹850", paymentDate: "2023-12-28", financialYear: "2023-2024", status: "Reviewing" },
-    { id: "PT-2022-0044", owner: "Vijay Kumar", propertyId: "P-302", amount: "₹2,100", paymentDate: "2022-10-15", financialYear: "2022-2023", status: "Paid" },
-    { id: "PT-2023-1045", owner: "Anita Patil", propertyId: "P-112", amount: "₹950", paymentDate: "2023-11-05", financialYear: "2023-2024", status: "Denied" },
-    { id: "PT-2023-1046", owner: "Mohan Lal", propertyId: "P-044", amount: "₹1,500", paymentDate: "2023-12-10", financialYear: "2023-2024", status: "Reviewing" },
-  ]);
+  type TaxRecord = {
+    id: number;
+    invoiceId: string;
+    ownerName: string;
+    propertyId: string;
+    amount: string;
+    paymentDate: string;
+    financialYear: string;
+    status: string;
+    referenceNumber: string | null;
+  };
+
+  const [taxes, setTaxes] = useState<TaxRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    async function fetchTaxes() {
+      try {
+        const res = await fetch("/api/property-tax");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data) setTaxes(json.data);
+        }
+      } catch (err) {
+        console.error("Fetch taxes error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchTaxes();
+  }, []);
 
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
-  const [selectedTaxId, setSelectedTaxId] = useState<string | null>(null);
+  const [selectedTaxId, setSelectedTaxId] = useState<number | null>(null);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
   const [financialYearFilter, setFinancialYearFilter] = useState("All");
 
-  const handleOpenProof = (id: string) => {
+  const handleOpenProof = (id: number) => {
     setSelectedTaxId(id);
     setIsProofModalOpen(true);
   };
@@ -29,27 +53,41 @@ export default function PropertyTaxPage() {
     setSelectedTaxId(null);
   };
 
+  const updateStatusApi = async (id: number, status: string) => {
+    try {
+      const res = await fetch("/api/property-tax", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status })
+      });
+      if (res.ok) {
+        setTaxes(taxes.map(tax => tax.id === id ? { ...tax, status } : tax));
+      } else {
+        alert("Failed to update status.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating status");
+    }
+  };
+
   const handleAccept = () => {
     if (selectedTaxId) {
-      setTaxes(taxes.map(tax =>
-        tax.id === selectedTaxId ? { ...tax, status: "Paid" } : tax
-      ));
+      updateStatusApi(selectedTaxId, "Paid");
       handleCloseProof();
     }
   };
 
   const handleReject = () => {
     if (selectedTaxId) {
-      setTaxes(taxes.map(tax =>
-        tax.id === selectedTaxId ? { ...tax, status: "Denied" } : tax
-      ));
+      updateStatusApi(selectedTaxId, "Denied");
       handleCloseProof();
     }
   };
 
   const filteredTaxes = taxes.filter(tax => {
-    const matchesSearch = tax.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tax.owner.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = tax.invoiceId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tax.ownerName?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesYear = financialYearFilter === "All" || tax.financialYear === financialYearFilter;
     return matchesSearch && matchesYear;
   });
@@ -108,11 +146,13 @@ export default function PropertyTaxPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredTaxes.map((tax) => (
+              {isLoading ? (
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-gray-500">Loading records...</td></tr>
+              ) : filteredTaxes.map((tax) => (
                 <tr key={tax.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">{tax.id}</td>
+                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">{tax.invoiceId}</td>
                   <td className="px-6 py-4 text-gray-600">{tax.propertyId}</td>
-                  <td className="px-6 py-4 font-medium text-[#2c5577]">{tax.owner}</td>
+                  <td className="px-6 py-4 font-medium text-[#2c5577]">{tax.ownerName}</td>
                   <td className="px-6 py-4 font-medium text-gray-700">{tax.financialYear}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                     <div className="flex items-center gap-2">
@@ -122,23 +162,23 @@ export default function PropertyTaxPage() {
                   <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">{tax.amount}</td>
                   <td className="px-6 py-4">
                     <span className={`px-3 flex items-center justify-center py-1.5 rounded-full text-xs font-bold ${tax.status === 'Paid' ? 'bg-green-100 text-green-800' :
-                        tax.status === 'Reviewing' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
+                      (tax.status === 'Reviewing' || tax.status === 'Pending') ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
                       }`}>
                       {tax.status === 'Paid' && <CheckCircle size={14} className="mr-1" />}
-                      {tax.status === 'Reviewing' && <Eye size={14} className="mr-1" />}
+                      {(tax.status === 'Reviewing' || tax.status === 'Pending') && <Eye size={14} className="mr-1" />}
                       {tax.status === 'Denied' && <XCircle size={14} className="mr-1" />}
                       {tax.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    {tax.status === 'Reviewing' ? (
+                    {(tax.status === 'Reviewing' || tax.status === 'Pending') ? (
                       <button
                         onClick={() => handleOpenProof(tax.id)}
                         className="inline-flex items-center gap-1.5 bg-[#2c5577] text-white px-3 py-1.5 rounded shadow-sm hover:bg-[#1a364d] transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-[#2c5577]"
                       >
                         <Eye size={14} />
-                        View Proof
+                        View Reference
                       </button>
                     ) : (
                       <span className="text-gray-400 text-xs font-medium italic">Action Completed</span>
@@ -146,7 +186,7 @@ export default function PropertyTaxPage() {
                   </td>
                 </tr>
               ))}
-              {filteredTaxes.length === 0 && (
+              {!isLoading && filteredTaxes.length === 0 && (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     No tax records found matching your criteria.
@@ -165,7 +205,7 @@ export default function PropertyTaxPage() {
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">Payment Proof Review</h2>
-                <p className="text-xs text-gray-500 mt-0.5">Invoice: {selectedTax.id}</p>
+                <p className="text-xs text-gray-500 mt-0.5">Invoice: {selectedTax.invoiceId}</p>
               </div>
               <button
                 onClick={handleCloseProof}
@@ -176,23 +216,16 @@ export default function PropertyTaxPage() {
             </div>
 
             <div className="p-6 bg-gray-100 flex flex-col items-center justify-center">
-              {/* Dummy Image for Proof */}
-              <div className="w-full bg-white border-2 border-dashed border-gray-300 rounded-lg p-2 aspect-[4/3] flex items-center justify-center relative group overflow-hidden shadow-sm">
-                <img
-                  src="https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?auto=format&fit=crop&q=80&w=800"
-                  alt="Payment Receipt Proof"
-                  className="w-full h-full object-cover rounded opacity-90 group-hover:opacity-100 transition-opacity"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="bg-white text-black px-3 py-1 text-sm font-bold rounded-full">Payment Receipt.jpg</span>
-                </div>
+              <div className="w-full bg-white border border-gray-200 rounded-lg p-6 shadow-sm flex flex-col items-center justify-center gap-2">
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Payment Reference Number</span>
+                <span className="text-2xl font-black text-[#138808] tracking-widest">{selectedTax.referenceNumber || "N/A"}</span>
               </div>
 
               <div className="w-full mt-6 bg-white border border-gray-200 rounded p-4 shadow-sm text-sm">
                 <div className="grid grid-cols-2 gap-y-3 gap-x-4">
                   <div>
                     <span className="text-gray-500 text-xs block">Property Owner</span>
-                    <span className="font-bold text-gray-900">{selectedTax.owner}</span>
+                    <span className="font-bold text-gray-900">{selectedTax.ownerName}</span>
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs block">Property ID</span>
@@ -220,10 +253,10 @@ export default function PropertyTaxPage() {
               </button>
               <button
                 onClick={handleAccept}
-                className="w-full py-2.5 bg-[#138808] text-white hover:bg-green-700 rounded-lg text-sm font-bold transition-colors flex justify-center items-center gap-2 shadow-sm"
+                className="w-full py-2.5 bg-[#138808] text-white hover:bg-green-700 rounded-md text-sm font-bold transition-colors flex justify-center items-center gap-2 shadow-sm"
               >
                 <CheckCircle size={18} />
-                Accept & Mark Paid
+                Accept & Verify
               </button>
             </div>
           </div>

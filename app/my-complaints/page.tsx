@@ -1,17 +1,59 @@
 "use client";
 
-import React from "react";
-import { FileText, Info } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { FileText, Info, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
 
 export default function MyComplaints() {
+  const { user } = useUser();
+  const [complaints, setComplaints] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      setIsLoading(true);
+      try {
+        const meta = user?.unsafeMetadata as any;
+        const villageId = meta?.village_id;
+        const res = await fetch(`/api/complaints${villageId ? `?villageId=${villageId}` : ''}`);
+        if (res.ok) {
+          const json = await res.json();
+          setComplaints(json.data || []);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (user) fetchComplaints();
+  }, [user]);
+
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "Complete": return "bg-green-100 text-green-800";
+      case "Progress": return "bg-blue-100 text-blue-800";
+      case "Pending": return "bg-yellow-100 text-yellow-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "Complete": return <CheckCircle className="w-4 h-4" />;
+      case "Progress": return <Clock className="w-4 h-4" />;
+      case "Pending": return <AlertCircle className="w-4 h-4" />;
+      default: return null;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col text-gray-800 font-sans bg-[#fcfcfc]">
-      {/* <Header /> */}
-
       <div className="flex flex-1 items-start">
         <Sidebar />
 
@@ -27,39 +69,64 @@ export default function MyComplaints() {
                   Track the status of your complaints
                 </p>
               </div>
+              <Link
+                href="/raise-complaint"
+                className="flex items-center gap-2 px-4 py-2 bg-[#138808] text-white text-xs font-bold hover:opacity-90 transition-colors rounded-sm"
+              >
+                <AlertCircle className="w-4 h-4" />
+                RAISE NEW COMPLAINT
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
-              <div className="lg:col-span-2 flex flex-col gap-6">
-                <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm">
-                  <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-                    <div className="bg-[#FF9933]/10 text-[#FF9933] p-2">
-                      <FileText className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700">
-                      Recent Complaints
-                    </h3>
+              <div className="lg:col-span-2 flex flex-col gap-4">
+                {isLoading ? (
+                  <div className="bg-white border border-gray-300 shadow-sm p-12 rounded-sm text-center">
+                    <p className="text-slate-500 font-medium">Loading your complaints...</p>
                   </div>
-                  <div className="space-y-4">
-                    <div className="p-4 border border-slate-200 rounded-sm">
-                      <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-bold text-slate-800">
-                          Water Supply Issue
+                ) : complaints.length === 0 ? (
+                  <div className="bg-white border border-gray-300 shadow-sm p-12 rounded-sm text-center">
+                    <FileText className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-500 font-medium">No complaints found.</p>
+                    <p className="text-sm text-slate-400 mt-1">You haven&apos;t raised any complaints yet.</p>
+                  </div>
+                ) : complaints.map((complaint: any) => (
+                  <div key={complaint.id} className="bg-white border border-gray-200 shadow-sm p-5 rounded-sm hover:border-gray-300 transition-colors">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{complaint.complaintId}</span>
+                          <span className="text-[10px] text-slate-300">•</span>
+                          <span className="text-[10px] font-medium text-slate-400">{complaint.category}</span>
+                        </div>
+                        <h4 className="font-bold text-slate-800 text-sm">
+                          {complaint.title}
                         </h4>
-                        <span className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded">
-                          In Progress
-                        </span>
                       </div>
-                      <p className="text-sm text-slate-600 mt-1">
-                        Complaint ID: #C-10293
-                      </p>
-                      <p className="text-sm text-slate-500 mt-2">
-                        No water supply for the last 2 days in Ward 12.
-                      </p>
+                      <span className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full ${getStatusStyle(complaint.status)}`}>
+                        {getStatusIcon(complaint.status)}
+                        {complaint.status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-3">
+                      {complaint.description}
+                    </p>
+                    <div className="flex items-center gap-4 text-[10px] text-slate-400">
+                      {complaint.location && (
+                        <span>📍 {complaint.location}</span>
+                      )}
+                      <span>📅 {new Date(complaint.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                      {complaint.priority && (
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${complaint.priority === 'Critical' ? 'bg-red-100 text-red-700' :
+                            complaint.priority === 'High' ? 'bg-orange-100 text-orange-700' :
+                              complaint.priority === 'Medium' ? 'bg-blue-100 text-blue-700' :
+                                'bg-gray-100 text-gray-700'
+                          }`}>{complaint.priority}</span>
+                      )}
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
 
               {/* Info Sidebar */}
@@ -74,6 +141,22 @@ export default function MyComplaints() {
                       <p className="text-[11px] text-slate-600 mt-2 leading-relaxed">
                         If a complaint is marked resolved but the issue
                         persists, you can re-open it within 3 days.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 border border-gray-200 shadow-sm p-6 border-l-4 border-l-[#138808] rounded-sm">
+                  <div className="flex gap-3">
+                    <Info className="w-5 h-5 text-[#138808] shrink-0" />
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                        Status Guide
+                      </h4>
+                      <p className="text-[11px] text-slate-600 mt-2 leading-relaxed">
+                        <span className="font-bold text-yellow-600">Pending</span> — Awaiting review<br />
+                        <span className="font-bold text-blue-600">Progress</span> — Being addressed<br />
+                        <span className="font-bold text-green-600">Complete</span> — Resolved
                       </p>
                     </div>
                   </div>

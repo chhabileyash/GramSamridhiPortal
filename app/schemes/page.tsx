@@ -1,195 +1,274 @@
 "use client";
 
-import React from "react";
-import { Award, Info } from "lucide-react";
-
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import React, { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { Search, Info, Calendar, ExternalLink, X, FileText, LayoutList, ListFilter } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 
-const schemes = [
-  {
-    id: 1,
-    title: "Pradhan Mantri Awaas Yojana (PMAY)",
-    description:
-      "Provides affordable housing to eligible urban and rural poor.",
-    url: "https://pmayg.dord.gov.in/netiayHome/home.aspx",
-  },
-  {
-    id: 2,
-    title: "Maharashtra State Rural Livelihoods Mission (UMED)",
-    description:
-      "Promotes sustainable livelihoods for rural households in Maharashtra.",
-    url: "https://www.umed.in",
-  },
-  {
-    id: 3,
-    title: "Rashtriya Gram Swaraj Abhiyan",
-    description:
-      "Strengthens Panchayati Raj Institutions for rural development.",
-    url: "https://www.mahargsa.in",
-  },
-  {
-    id: 4,
-    title: "Swachh Bharat Mission",
-    description: "National campaign for sanitation and cleanliness.",
-    url: "https://swachhbharatmission.ddws.gov.in/",
-  },
-  {
-    id: 5,
-    title: "Majhi Vasundhara (My Earth)",
-    description:
-      "Environmental conservation and sustainability initiative by Maharashtra.",
-    url: "https://majhivasundhara.in/en",
-  },
-  {
-    id: 6,
-    title: "Jal Jeevan Mission",
-    description: "Ensures tap water supply to every rural household in India.",
-    url: "https://jaljeevanmission.gov.in/",
-  },
-  {
-    id: 7,
-    title: "Pradhan Mantri Ujjwala Yojana (PMUY)",
-    description:
-      "Provides LPG connections to women from below poverty line households.",
-    url: "https://www.pmuy.gov.in/",
-  },
-  {
-    id: 8,
-    title: "Ayushman Bharat - Pradhan Mantri Jan Arogya Yojana (PMJAY)",
-    description:
-      "Provides health insurance coverage up to ₹5 lakh per family per year for secondary and tertiary care hospitalization.",
-    url: "https://pmjay.gov.in/",
-  },
-  {
-    id: 9,
-    title: "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
-    description:
-      "Provides income support of ₹6,000 per year to eligible farmer families.",
-    url: "https://pmkisan.gov.in/",
-  },
-  {
-    id: 10,
-    title: "Digital India Programme",
-    description:
-      "Aims to transform India into a digitally empowered society and knowledge economy.",
-    url: "https://www.digitalindia.gov.in/",
-  },
-  {
-    id: 11,
-    title: "Skill India Mission",
-    description:
-      "Focuses on skill development and vocational training to improve employability.",
-    url: "https://www.skillindia.gov.in/",
-  },
-  {
-    id: 12,
-    title: "Startup India Initiative",
-    description:
-      "Supports entrepreneurs and startups through funding, tax benefits, and ease of doing business.",
-    url: "https://www.startupindia.gov.in/",
-  },
-];
+export default function UserSchemesPage() {
+  const { user } = useUser();
+  const villageId = user?.publicMetadata?.villageId as string;
 
-export default function Schemes() {
+  const [schemes, setSchemes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [selectedScheme, setSelectedScheme] = useState<any | null>(null);
+
+  useEffect(() => {
+    const fetchSchemes = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/schemes${villageId ? `?villageId=${villageId}` : ""}`);
+        if (res.ok) {
+          const json = await res.json();
+          setSchemes(json.data || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch schemes:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSchemes();
+  }, [villageId]);
+
+  const filteredSchemes = schemes.filter(scheme => {
+    const matchesSearch =
+      scheme.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      scheme.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      scheme.category?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = activeCategory === "All" || scheme.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className="min-h-screen flex flex-col text-gray-800 font-sans bg-[#fcfcfc]">
-      {/* <Header /> */}
-
       <div className="flex flex-1 items-start">
         <Sidebar />
 
         <main className="flex-1 p-8 bg-white min-w-0">
-          <div className="mx-auto">
+          <div className="mx-auto max-w-6xl">
             {/* Page Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 border-b border-gray-200 pb-4 gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-                  Gram Panchayat <span className="text-[#ab7845]">Schemes</span>
+                  Available <span className="text-[#0052cc]">Schemes</span>
                 </h1>
                 <p className="text-slate-500 text-sm mt-1">
-                  Explore available government schemes and ongoing initiatives
+                  Browse and apply for Government and Panchayat schemes
                 </p>
+              </div>
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <div className="bg-[#0052cc]/10 text-[#0052cc] p-2 rounded-sm shrink-0">
+                    <ListFilter className="w-4 h-4" />
+                  </div>
+                  <select
+                    value={activeCategory}
+                    onChange={(e) => setActiveCategory(e.target.value)}
+                    className="w-full sm:w-auto pl-3 pr-8 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-[#0052cc] focus:border-[#0052cc] bg-white cursor-pointer"
+                  >
+                    <option value="All">All Categories</option>
+                    <option value="Central">Central Govt</option>
+                    <option value="State">State Govt</option>
+                    <option value="Village">Panchayat</option>
+                  </select>
+                </div>
+                <div className="relative w-full sm:w-80 md:w-[200px] lg:w-[450px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <input
+                    type="text"
+                    placeholder="Search schemes..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-[#0052cc] focus:border-[#0052cc]"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
-              {/* Form Sections */}
-              <div className="lg:col-span-2 flex flex-col gap-6">
-                <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm">
-                  <div className="overflow-x-auto border border-gray-200 rounded-sm">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="bg-slate-50 border-b border-gray-200">
-                          <th className="py-3 px-4 font-bold text-slate-700 text-sm w-16 border-r border-gray-200">
-                            Sr No.
-                          </th>
-                          <th className="py-3 px-4 font-bold text-slate-700 text-sm border-r border-gray-200">
-                            Scheme Name
-                          </th>
-                          <th className="py-3 px-4 font-bold text-slate-700 text-sm border-r border-gray-200">
-                            Description
-                          </th>
-                          <th className="py-3 px-4 font-bold text-slate-700 text-sm text-center w-40">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {schemes.map((scheme, index) => (
-                          <tr
-                            key={scheme.id}
-                            className="hover:bg-[#FF9933]/5 transition-colors group"
-                          >
-                            <td className="py-4 px-4 text-slate-500 font-medium align-middle border-r border-gray-200">
-                              {index + 1}
-                            </td>
-                            <td className="py-4 px-4 align-middle border-r border-gray-200">
-                              <h4 className="font-bold text-slate-800 text-sm md:text-base">
-                                {scheme.title}
-                              </h4>
-                            </td>
-                            <td className="py-4 px-4 align-middle border-r border-gray-200">
-                              <p className="text-sm text-slate-600">
-                                {scheme.description}
-                              </p>
-                            </td>
-                            <td className="py-4 px-4 align-middle text-center">
+            <div className="bg-white border border-gray-200 shadow-sm rounded-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-gray-200 text-xs text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-6 font-semibold">Scheme Name</th>
+                      <th className="py-3 px-6 font-semibold">Type</th>
+                      <th className="py-3 px-6 font-semibold">Important Dates</th>
+                      <th className="py-3 px-6 font-semibold">Apply Link</th>
+                      <th className="py-3 px-6 font-semibold text-right">Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {isLoading ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-slate-500">
+                          <p className="font-medium">Loading schemes...</p>
+                        </td>
+                      </tr>
+                    ) : filteredSchemes.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-slate-500">
+                          <FileText className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+                          <p className="font-medium">No schemes found.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredSchemes.map((scheme) => (
+                        <tr key={scheme.id} className="border-b border-gray-100 hover:bg-slate-50/50 transition-colors">
+                          <td className="py-4 px-6 align-top">
+                            <p className="font-bold text-sm text-slate-800 mb-1">{scheme.title}</p>
+                            <p className="text-xs text-slate-500 line-clamp-1 max-w-sm">{scheme.description}</p>
+                          </td>
+                          <td className="py-4 px-6 align-top">
+                            <span className={`inline-block px-2 py-1 rounded text-[12px] font-bold uppercase ${scheme.category === 'Central' ? 'bg-orange-100 text-orange-700' :
+                              scheme.category === 'State' ? 'bg-purple-100 text-purple-700' :
+                                'bg-teal-100 text-teal-700'
+                              }`}>
+                              {scheme.category}
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 align-top">
+                            {scheme.endDate ? (
+                              <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                                <Calendar className="w-3 h-3" />
+                                <span>Till {new Date(scheme.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-500 italic">Ongoing</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-6 align-top">
+                            {scheme.link ? (
                               <a
-                                href={scheme.url}
+                                href={scheme.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center bg-[#f8fafc] text-[#138808] border border-[#138808]/20 hover:bg-[#138808] hover:text-white px-4 py-2 text-[11px] font-bold uppercase tracking-wider rounded-sm transition-all duration-300 w-full whitespace-nowrap"
+                                className="inline-flex items-center gap-2 text-sm font-bold text-[#0052cc] hover:underline"
                               >
-                                View Details
-                                <svg
-                                  className="w-3.5 h-3.5 ml-1.5"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                  />
-                                </svg>
+                                Apply Here <ExternalLink className="w-3 h-3" />
                               </a>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                            ) : (
+                              <span className="text-xs text-slate-400 italic">Inquire at office</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-6 align-top text-right">
+                            <button
+                              onClick={() => setSelectedScheme(scheme)}
+                              className="inline-flex items-center justify-center gap-2 px-3 py-1.5 border border-slate-300 rounded-sm text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                            >
+                              <Info className="w-3 h-3" />
+                              View Info
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </main>
       </div>
-      <Footer />
+
+      {/* Modal for Scheme Info */}
+      {selectedScheme && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-md shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-gray-200 bg-slate-50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <LayoutList className="w-5 h-5 text-[#0052cc]" />
+                <h3 className="text-lg font-bold text-slate-800">Scheme Details</h3>
+              </div>
+              <button
+                onClick={() => setSelectedScheme(null)}
+                className="text-slate-400 hover:text-slate-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto">
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <h2 className="text-xl font-bold text-slate-900 leading-tight">
+                    {selectedScheme.title}
+                  </h2>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase shrink-0 ${selectedScheme.category === 'Central' ? 'bg-orange-100 text-orange-700' :
+                    selectedScheme.category === 'State' ? 'bg-purple-100 text-purple-700' :
+                      'bg-teal-100 text-teal-700'
+                    }`}>
+                    {selectedScheme.category}
+                  </span>
+                </div>
+                {selectedScheme.schemeId && (
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    Ref ID: {selectedScheme.schemeId}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">About the Scheme</h4>
+                  <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-sm border border-slate-100">
+                    {selectedScheme.description}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {selectedScheme.eligible && (
+                    <div className="p-4 border border-blue-100 bg-blue-50/50 rounded-sm">
+                      <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">Eligibility Features</h4>
+                      <p className="text-sm text-blue-900 font-medium">{selectedScheme.eligible}</p>
+                    </div>
+                  )}
+
+                  <div className="p-4 border border-slate-200 rounded-sm">
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Timeline</h4>
+                    <div className="text-sm font-medium text-slate-800 flex flex-col gap-1">
+                      {selectedScheme.startDate && (
+                        <span>Start: {new Date(selectedScheme.startDate).toLocaleDateString()}</span>
+                      )}
+                      <span>
+                        Deadline: {selectedScheme.endDate ? new Date(selectedScheme.endDate).toLocaleDateString() : 'Ongoing'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {selectedScheme.amount && (
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Benefit Amount</h4>
+                    <p className="text-lg font-bold text-green-700">₹{selectedScheme.amount}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-200 bg-slate-50 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setSelectedScheme(null)}
+                className="px-4 py-2 border border-gray-300 bg-white hover:bg-gray-50 text-slate-700 text-sm font-bold rounded-sm transition-colors"
+              >
+                Close
+              </button>
+              {selectedScheme.link && (
+                <a
+                  href={selectedScheme.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-2 bg-[#0052cc] text-black border text-sm font-bold rounded-sm hover:bg-[#0047b3] transition-colors flex items-center gap-2 shadow-sm"
+                >
+                  Proceed to Apply <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

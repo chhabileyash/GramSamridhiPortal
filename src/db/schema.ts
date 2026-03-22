@@ -12,6 +12,30 @@ import {
 } from "drizzle-orm/pg-core";
 
 // =====================================
+// USERS (Clerk user sync)
+// =====================================
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  clerkId: text("clerk_id").unique().notNull(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  email: text("email"),
+  imageUrl: text("image_url"),
+
+  district: text("district"),
+  legalAccepted: boolean("legal_accepted"),
+  phoneNumber: text("phone_number"),
+  role: text("role"),
+  taluka: text("taluka"),
+  village: text("village"),
+  villageId: text("village_id"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
 // VILLAGES
 // =====================================
 
@@ -371,9 +395,8 @@ export const admins = pgTable("admins", {
 export const propertyTaxes = pgTable("property_taxes", {
   id: serial("id").primaryKey(),
 
-  villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
-  }),
+  villageId: text("village_id"),
+  userId: text("user_id"),
 
   invoiceId: text("invoice_id"),
   propertyId: text("property_id"),
@@ -384,7 +407,188 @@ export const propertyTaxes = pgTable("property_taxes", {
   paymentDate: date("payment_date"),
 
   status: text("status").default("Pending"), // e.g. "Pending" / "Paid" / "Denied" / "Reviewing"
-  proofUrl: text("proof_url"), // Added proofUrl for storing images
+  referenceNumber: text("reference_number"), // Added referenceNumber for transaction ID
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// WATER TAXES
+// =====================================
+
+export const waterTaxes = pgTable("water_taxes", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+  userId: text("user_id"),
+
+  invoiceId: text("invoice_id"),
+  connectionId: text("connection_id"),
+  connectionType: text("connection_type"),
+  ownerName: text("owner_name"),
+  financialYear: text("financial_year"),
+
+  amount: numeric("amount", { precision: 10, scale: 2 }),
+  paymentDate: date("payment_date"),
+
+  status: text("status").default("Pending"),
+  referenceNumber: text("reference_number"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// ELECTRICITY BILLS
+// =====================================
+
+export const electricityBills = pgTable("electricity_bills", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+  userId: text("user_id"),
+
+  invoiceId: text("invoice_id"),
+  meterId: text("meter_id"),
+  meterType: text("meter_type"),
+  ownerName: text("owner_name"),
+  financialYear: text("financial_year"),
+  unitsConsumed: integer("units_consumed"),
+
+  amount: numeric("amount", { precision: 10, scale: 2 }),
+  paymentDate: date("payment_date"),
+
+  status: text("status").default("Pending"),
+  referenceNumber: text("reference_number"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// COMPLAINTS
+// =====================================
+
+export const complaints = pgTable("complaints", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+  userId: text("user_id"),
+
+  complaintId: text("complaint_id"),
+  title: text("title"),
+  description: text("description"),
+  category: text("category"),
+  location: text("location"),
+
+  citizenName: text("citizen_name"),
+  citizenContact: text("citizen_contact"),
+
+  priority: text("priority").default("Medium"),
+  status: text("status").default("Pending"), // "Pending" / "Progress" / "Complete"
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// PANCHAYAT MEMBERS
+// =====================================
+
+export const panchayatMembers = pgTable("panchayat_members", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+
+  name: text("name").notNull(),
+  position: text("position").notNull(),
+  imageUrl: text("image_url"),
+  phone: text("phone"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// SCHEMES
+// =====================================
+
+export const schemes = pgTable("schemes", {
+  id: serial("id").primaryKey(),
+  villageId: text("village_id"),
+  userId: text("user_id"),
+  schemeId: text("scheme_id").unique(),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category"),
+  amount: numeric("amount", { precision: 12, scale: 2 }),
+  startDate: date("start_date"),
+  endDate: date("end_date"),
+  eligible: text("eligible"),
+  link: text("link"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// SUGGESTIONS
+// =====================================
+
+export const suggestions = pgTable("suggestions", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+  userId: text("user_id"),
+
+  suggestionId: text("suggestion_id"),
+  subject: text("subject"),
+  message: text("message").notNull(),
+  category: text("category"),
+  citizenName: text("citizen_name"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// NOTIFICATIONS
+// =====================================
+
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+  userId: text("user_id"),
+
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  audience: text("audience").default("All"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// DEVELOPMENT WORKS
+// =====================================
+
+export const developmentWorks = pgTable("development_works", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+  userId: text("user_id"),
+
+  projectId: text("project_id").unique(),
+  name: text("name").notNull(),
+  description: text("description"),
+  contractor: text("contractor"),
+  budget: numeric("budget", { precision: 14, scale: 2 }),
+  progress: integer("progress").default(0),
+  status: text("status").default("Pending Start"),
+
+  startDate: date("start_date"),
+  expectedEndDate: date("expected_end_date"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

@@ -6,6 +6,7 @@ const isPublicRoute = createRouteMatcher([
   "/auth/sign-in(.*)",
   "/auth/signup(.*)",
   "/about",
+  "/api/webhooks(.*)",
 ]);
 
 const isApiRoute = createRouteMatcher(["/api/(.*)", "/trpc/(.*)"]);
@@ -24,7 +25,7 @@ export default clerkMiddleware(async (auth, req) => {
     req.nextUrl.pathname.startsWith("/auth/sign-in") ||
     req.nextUrl.pathname.startsWith("/auth/signup");
 
-  const homePage = role === "admin" ? "/admin/home" : "/home";  
+  const homePage = role === "admin" ? "/admin/home" : "/home";
 
   if (
     userId &&

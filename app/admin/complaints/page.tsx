@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import { Search, AlertCircle, CheckCircle, Clock, Filter, Eye, X, Save, FileText, Phone, User, Calendar, MapPin } from "lucide-react";
 
 export default function ComplaintsPage() {
-  const [complaints, setComplaints] = useState([
-    { id: "CMP-001", title: "Street Light Not Working", description: "The street light near the main square has been out for 4 days making it unsafe at night.", category: "Infrastructure", date: "2023-11-20", status: "Open", priority: "High", citizenName: "Rahul Sharma", citizenContact: "+91 9876543210", address: "Main Square, Ward 2" },
-    { id: "CMP-002", title: "Water Leakage in Main Pipe", description: "Significant water pipe burst near the school causing muddy roads and water waste.", category: "Water Supply", date: "2023-11-19", status: "In Progress", priority: "Critical", citizenName: "Amit Patel", citizenContact: "+91 9876543211", address: "Near ZP Primary School, Ward 4" },
-    { id: "CMP-003", title: "Garbage Collection Issue", description: "Garbage collection truck has not visited our street for the entire week.", category: "Sanitation", date: "2023-11-18", status: "Resolved", priority: "Medium", citizenName: "Sita Devi", citizenContact: "+91 9876543212", address: "Gandhi Road, Ward 1" },
-    { id: "CMP-004", title: "Road Damaged Near Panchayat", description: "Potholes have developed heavily due to recent rains.", category: "Infrastructure", date: "2023-11-15", status: "Open", priority: "High", citizenName: "Vijay Kumar", citizenContact: "+91 9876543213", address: "Panchayat Office Road" },
-    { id: "CMP-005", title: "Property Tax Receipt Missing", description: "Paid property tax yesterday but the online receipt was not generated.", category: "Administration", date: "2023-11-14", status: "Resolved", priority: "Low", citizenName: "Anita Patil", citizenContact: "+91 9876543214", address: "House 45, Ward 3" },
-  ]);
+  const { user } = useUser();
+  const [complaints, setComplaints] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null);
+  const [selectedComplaintId, setSelectedComplaintId] = useState<number | null>(null);
   const [editStatus, setEditStatus] = useState("");
   const [editPriority, setEditPriority] = useState("");
 
@@ -22,10 +19,28 @@ export default function ComplaintsPage() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
 
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch("/api/complaints");
+        if (res.ok) {
+          const json = await res.json();
+          setComplaints(json.data || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch complaints:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchComplaints();
+  }, []);
+
   const openDetailsModal = (complaint: any) => {
     setSelectedComplaintId(complaint.id);
     setEditStatus(complaint.status);
-    setEditPriority(complaint.priority);
+    setEditPriority(complaint.priority || "Medium");
     setIsModalOpen(true);
   };
 
@@ -34,24 +49,38 @@ export default function ComplaintsPage() {
     setSelectedComplaintId(null);
   };
 
-  const handleSaveChanges = () => {
-    if (selectedComplaintId) {
-      setComplaints(complaints.map(cmp =>
-        cmp.id === selectedComplaintId ? { ...cmp, status: editStatus, priority: editPriority } : cmp
-      ));
-      closeDetailsModal();
+  const handleSaveChanges = async () => {
+    if (selectedComplaintId === null) return;
+    try {
+      const res = await fetch("/api/complaints", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedComplaintId,
+          status: editStatus,
+          priority: editPriority,
+        }),
+      });
+      if (res.ok) {
+        setComplaints(complaints.map(cmp =>
+          cmp.id === selectedComplaintId ? { ...cmp, status: editStatus, priority: editPriority } : cmp
+        ));
+      }
+    } catch (err) {
+      console.error("Failed to update complaint:", err);
     }
+    closeDetailsModal();
   };
 
   // Derived Metrics
   const totalReports = complaints.length;
-  const openReports = complaints.filter(c => c.status === "Open").length;
-  const inProgressReports = complaints.filter(c => c.status === "In Progress").length;
-  const resolvedReports = complaints.filter(c => c.status === "Resolved").length;
+  const pendingReports = complaints.filter(c => c.status === "Pending").length;
+  const progressReports = complaints.filter(c => c.status === "Progress").length;
+  const completeReports = complaints.filter(c => c.status === "Complete").length;
 
   const filteredComplaints = complaints.filter(cmp => {
-    const matchesSearch = cmp.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cmp.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (cmp.complaintId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (cmp.title || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "All" || cmp.status === statusFilter;
     const matchesCategory = categoryFilter === "All" || cmp.category === categoryFilter;
     return matchesSearch && matchesStatus && matchesCategory;
@@ -80,21 +109,21 @@ export default function ComplaintsPage() {
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-red-50 text-red-600 rounded-full">
+          <div className="p-3 bg-yellow-50 text-yellow-600 rounded-full">
             <AlertCircle size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Open</p>
-            <p className="text-2xl font-bold text-red-600 mt-1">{openReports}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase">Pending</p>
+            <p className="text-2xl font-bold text-yellow-600 mt-1">{pendingReports}</p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-orange-50 text-orange-600 rounded-full">
+          <div className="p-3 bg-blue-50 text-blue-600 rounded-full">
             <Clock size={24} />
           </div>
           <div>
             <p className="text-sm text-gray-500 font-semibold uppercase">In Progress</p>
-            <p className="text-2xl font-bold text-[#FF9933] mt-1">{inProgressReports}</p>
+            <p className="text-2xl font-bold text-blue-600 mt-1">{progressReports}</p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
@@ -102,8 +131,8 @@ export default function ComplaintsPage() {
             <CheckCircle size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Resolved</p>
-            <p className="text-2xl font-bold text-[#138808] mt-1">{resolvedReports}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase">Complete</p>
+            <p className="text-2xl font-bold text-[#138808] mt-1">{completeReports}</p>
           </div>
         </div>
       </section>
@@ -132,10 +161,15 @@ export default function ComplaintsPage() {
               className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer min-w-max"
             >
               <option value="All">All Categories</option>
-              <option value="Infrastructure">Infrastructure</option>
               <option value="Water Supply">Water Supply</option>
-              <option value="Sanitation">Sanitation</option>
+              <option value="Street Lights">Street Lights</option>
+              <option value="Sanitation & Garbage">Sanitation & Garbage</option>
+              <option value="Roads">Roads</option>
+              <option value="Drainage">Drainage</option>
+              <option value="Electricity">Electricity</option>
+              <option value="Public Property">Public Property</option>
               <option value="Administration">Administration</option>
+              <option value="Other">Other</option>
             </select>
             <select
               value={statusFilter}
@@ -143,10 +177,9 @@ export default function ComplaintsPage() {
               className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer min-w-max"
             >
               <option value="All">All Statuses</option>
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
-              <option value="Rejected">Rejected</option>
+              <option value="Pending">Pending</option>
+              <option value="Progress">Progress</option>
+              <option value="Complete">Complete</option>
             </select>
           </div>
         </div>
@@ -164,29 +197,41 @@ export default function ComplaintsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredComplaints.map((complaint) => (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    Loading complaints...
+                  </td>
+                </tr>
+              ) : filteredComplaints.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    No complaints found matching your criteria.
+                  </td>
+                </tr>
+              ) : filteredComplaints.map((complaint) => (
                 <tr key={complaint.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">{complaint.id}</td>
+                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">{complaint.complaintId}</td>
                   <td className="px-6 py-4">
                     <p className="font-bold text-[#2c5577] mb-1">{complaint.title}</p>
                     <p className="text-xs text-gray-500">{complaint.category}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-600 font-medium">
-                    {complaint.date}
+                    {complaint.createdAt ? new Date(complaint.createdAt).toLocaleDateString('en-IN') : '-'}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 flex justify-center items-center rounded-md text-xs font-bold w-full mx-auto max-w-[90px] ${complaint.priority === 'Critical' ? 'bg-red-100 text-red-800 border fill-red-200 border-red-200' :
+                    <span className={`px-2 py-1 flex justify-center items-center rounded-md text-xs font-bold w-full mx-auto max-w-[90px] ${complaint.priority === 'Critical' ? 'bg-red-100 text-red-800 border border-red-200' :
                         complaint.priority === 'High' ? 'bg-orange-100 text-orange-800 border border-orange-200' :
                           complaint.priority === 'Medium' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
                             'bg-gray-100 text-gray-800 border border-gray-200'
                       }`}>
-                      {complaint.priority}
+                      {complaint.priority || "Medium"}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 flex justify-center py-1.5 rounded-full text-xs font-bold w-full mx-auto max-w-[100px] ${complaint.status === 'Resolved' ? 'bg-green-100 text-green-800' :
-                        complaint.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                          complaint.status === 'Open' ? 'bg-red-100 text-red-800' :
+                    <span className={`px-2 flex justify-center py-1.5 rounded-full text-xs font-bold w-full mx-auto max-w-[100px] ${complaint.status === 'Complete' ? 'bg-green-100 text-green-800' :
+                        complaint.status === 'Progress' ? 'bg-blue-100 text-blue-800' :
+                          complaint.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
                             'bg-gray-100 text-gray-800'
                       }`}>
                       {complaint.status}
@@ -203,13 +248,6 @@ export default function ComplaintsPage() {
                   </td>
                 </tr>
               ))}
-              {filteredComplaints.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                    No complaints found matching your criteria.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
@@ -225,7 +263,7 @@ export default function ComplaintsPage() {
                   <AlertCircle className="text-red-500" size={20} />
                   Complaint Review
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5">Ticket: {selectedComplaint.id}</p>
+                <p className="text-xs text-gray-500 mt-0.5">Ticket: {selectedComplaint.complaintId}</p>
               </div>
               <button
                 onClick={closeDetailsModal}
@@ -251,7 +289,9 @@ export default function ComplaintsPage() {
                     <Calendar size={18} className="text-gray-400 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-500 font-medium">Logged Date</p>
-                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.date}</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {selectedComplaint.createdAt ? new Date(selectedComplaint.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '-'}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -268,17 +308,19 @@ export default function ComplaintsPage() {
                     <User size={18} className="text-gray-400 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-500 font-medium">Complainant Contact</p>
-                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.citizenName}</p>
-                      <p className="text-xs text-[#2c5577] font-medium flex items-center gap-1 mt-0.5">
-                        <Phone size={10} /> {selectedComplaint.citizenContact}
-                      </p>
+                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.citizenName || "Not provided"}</p>
+                      {selectedComplaint.citizenContact && (
+                        <p className="text-xs text-[#2c5577] font-medium flex items-center gap-1 mt-0.5">
+                          <Phone size={10} /> {selectedComplaint.citizenContact}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <MapPin size={18} className="text-gray-400 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-500 font-medium">Location</p>
-                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.address}</p>
+                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.location || "Not specified"}</p>
                     </div>
                   </div>
                 </div>
@@ -295,10 +337,9 @@ export default function ComplaintsPage() {
                       onChange={(e) => setEditStatus(e.target.value)}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                     >
-                      <option value="Open">Open</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Resolved">Resolved</option>
-                      <option value="Rejected">Rejected</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Progress">Progress</option>
+                      <option value="Complete">Complete</option>
                     </select>
                   </div>
                   <div>
@@ -316,7 +357,6 @@ export default function ComplaintsPage() {
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="px-6 py-4 border-t border-gray-200 bg-white flex justify-end gap-3">
@@ -328,7 +368,7 @@ export default function ComplaintsPage() {
               </button>
               <button
                 onClick={handleSaveChanges}
-                className="px-5 py-2 border border-gray-300 rounded-md font-bold text-sm hover:bg-red-700 transition-colors flex items-center gap-2 shadow-sm"
+                className="px-5 py-2 bg-[#138808] text-white rounded-md font-bold text-sm hover:bg-green-700 transition-colors flex items-center gap-2 shadow-sm"
               >
                 <Save size={16} />
                 Save Updates
