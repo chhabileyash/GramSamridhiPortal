@@ -69,6 +69,9 @@ const HeaderContent = memo(function HeaderContent({
   isLoaded: boolean;
 }) {
   const isRoot = pathname === "/";
+  const {user} = useUser();
+  const isAdmin = user?.unsafeMetadata?.role === "admin";
+  
 
   const zoomOut = useCallback(
     () =>
@@ -89,17 +92,24 @@ const HeaderContent = memo(function HeaderContent({
     [setZoomLevel],
   );
 
-  const navLinks = useMemo(
-    () => [
+  const navLinks = useMemo(() => {
+    if (isAdmin) {
+      return [
+        { path: "/admin/home", label: "Dashboard" },
+        { path: "/admin/users", label: "Users" },
+        { path: "/admin/schemes", label: "Schemes" },
+        { path: "/admin/complaints", label: "Complaints" },
+      ];
+    }
+    return [
       { path: isSignedIn ? "/home" : "/", label: "Home" },
       { path: "/about", label: "About Us" },
       { path: "/schemes", label: "Schemes" },
       { path: "/services", label: "Services" },
       { path: "/gallery", label: "Gallery" },
       { path: "/contact", label: "Contact Us" },
-    ],
-    [isSignedIn],
-  );
+    ];
+  }, [isSignedIn, isAdmin]);
 
   const isAuthPage = useMemo(() => pathname?.includes("/auth"), [pathname]);
 
@@ -542,6 +552,7 @@ export default memo(function Header() {
       }
     };
   }, []);
+
 
   return (
     <HeaderContent

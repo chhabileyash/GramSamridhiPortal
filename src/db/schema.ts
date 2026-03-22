@@ -7,6 +7,8 @@ import {
   numeric,
   date,
   index,
+  jsonb,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 // =====================================
@@ -313,4 +315,77 @@ export const villageMembers = pgTable("village_members", {
   }),
 
   username: text("username"),
+});
+
+// =====================================
+// CUSTOM VILLAGE INFO (User Configured)
+// =====================================
+
+export const customVillageInfo = pgTable("custom_village_info", {
+  id: serial("id").primaryKey(),
+  villageIdString: text("village_id_string").unique(), // Mapped to output.json UUID
+
+  about: text("about"),
+
+  // Population stats
+  totalPopulation: integer("total_population"),
+  malePopulation: integer("male_population"),
+  femalePopulation: integer("female_population"),
+
+  // Distribution
+  childrenCount: integer("children_count"),
+  youthCount: integer("youth_count"),
+  adultsCount: integer("adults_count"),
+  seniorsCount: integer("seniors_count"),
+
+  // Contact
+  address: text("address"),
+  phone: text("phone"),
+  email: text("email"),
+
+  // Images stored as JSONB
+  images: jsonb("images").$type<Array<{ url: string; title: string; type: string; isPrimary: boolean }>>(),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// =====================================
+// ADMINS (Stub to prevent accidental drop)
+// =====================================
+
+export const admins = pgTable("admins", {
+  id: serial("id").primaryKey(),
+  email: text("email"),
+  password: text("password"),
+  name: text("name"),
+  isActive: boolean("is_active"),
+  createdAt: timestamp("created_at"),
+  updatedAt: timestamp("updated_at"),
+});
+
+// =====================================
+// PROPERTY TAXES
+// =====================================
+
+export const propertyTaxes = pgTable("property_taxes", {
+  id: serial("id").primaryKey(),
+
+  villageId: integer("village_id").references(() => villages.id, {
+    onDelete: "cascade",
+  }),
+
+  invoiceId: text("invoice_id"),
+  propertyId: text("property_id"),
+  ownerName: text("owner_name"),
+  financialYear: text("financial_year"),
+
+  amount: numeric("amount", { precision: 10, scale: 2 }),
+  paymentDate: date("payment_date"),
+
+  status: text("status").default("Pending"), // e.g. "Pending" / "Paid" / "Denied" / "Reviewing"
+  proofUrl: text("proof_url"), // Added proofUrl for storing images
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });

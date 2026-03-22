@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
-import locationData from "@/data.json";
+import locationData from "@/output.json";
 import { useSignUp, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
@@ -92,12 +92,13 @@ export default function SignupPage() {
 
   const locationDataset = useMemo(
     () =>
-      locationData as {
-        districts?: Array<{
-          district: string;
-          subDistricts: Array<{ subDistrict: string; villages: string[] }>;
-        }>;
-      },
+      locationData as Array<{
+        id: string;
+        state: string;
+        district: string;
+        subDistrict: string;
+        village: string;
+      }>,
     [],
   );
 
@@ -196,7 +197,9 @@ export default function SignupPage() {
             district,
             taluka,
             village,
+            village_id: locationDataset.find((item) => item.village === village)?.id,
             legalAccepted: acceptedTerms,
+            role: "user",
           },
         };
 
@@ -257,7 +260,7 @@ export default function SignupPage() {
         if (error) {
           toast.error(
             error.message ||
-              "OTP is invalid or expired. Please enter the latest OTP sent to your email.",
+            "OTP is invalid or expired. Please enter the latest OTP sent to your email.",
           );
           setVerifying(false);
           return;
@@ -355,26 +358,33 @@ export default function SignupPage() {
   );
 
   // Memoize location data calculations
-  const districts = useMemo(
-    () => locationDataset.districts || [],
-    [locationDataset],
-  );
-  const selectedDistrictObj = useMemo(
-    () => districts.find((d: any) => d.district === district),
-    [districts, district],
-  );
-  const talukas = useMemo(
-    () => (selectedDistrictObj ? selectedDistrictObj.subDistricts : []),
-    [selectedDistrictObj],
-  );
-  const selectedTalukaObj = useMemo(
-    () => talukas.find((t: any) => t.subDistrict === taluka),
-    [talukas, taluka],
-  );
-  const villages = useMemo(
-    () => (selectedTalukaObj ? selectedTalukaObj.villages : []),
-    [selectedTalukaObj],
-  );
+  const districts = useMemo(() => {
+    const uniqueDistricts = new Set<string>();
+    locationDataset.forEach(item => {
+      if (item.district) uniqueDistricts.add(item.district);
+    });
+    return Array.from(uniqueDistricts).sort();
+  }, [locationDataset]);
+
+  const talukas = useMemo(() => {
+    if (!district) return [];
+    const uniqueTalukas = new Set<string>();
+    locationDataset.forEach(item => {
+      if (item.district === district && item.subDistrict) uniqueTalukas.add(item.subDistrict);
+    });
+    return Array.from(uniqueTalukas).sort();
+  }, [locationDataset, district]);
+
+  const villages = useMemo(() => {
+    if (!district || !taluka) return [];
+    const uniqueVillages = new Set<string>();
+    locationDataset.forEach(item => {
+      if (item.district === district && item.subDistrict === taluka && item.village) {
+        uniqueVillages.add(item.village);
+      }
+    });
+    return Array.from(uniqueVillages).sort();
+  }, [locationDataset, district, taluka]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 lg:bg-white text-gray-900">
@@ -556,9 +566,9 @@ export default function SignupPage() {
                           <option value="" disabled className="text-gray-400">
                             Select District
                           </option>
-                          {districts.map((d: any) => (
-                            <option key={d.district} value={d.district}>
-                              {d.district}
+                          {districts.map((d: string) => (
+                            <option key={d} value={d}>
+                              {d}
                             </option>
                           ))}
                         </select>
@@ -576,9 +586,9 @@ export default function SignupPage() {
                           <option value="" disabled className="text-gray-400">
                             Select Taluka
                           </option>
-                          {talukas.map((t: any) => (
-                            <option key={t.subDistrict} value={t.subDistrict}>
-                              {t.subDistrict}
+                          {talukas.map((t: string) => (
+                            <option key={t} value={t}>
+                              {t}
                             </option>
                           ))}
                         </select>
@@ -766,11 +776,10 @@ export default function SignupPage() {
                       type="button"
                       onClick={handleResendOtp}
                       disabled={countdown > 0}
-                      className={`text-[13px] font-bold transition-colors ${
-                        countdown > 0
+                      className={`text-[13px] font-bold transition-colors ${countdown > 0
                           ? "text-gray-400 cursor-not-allowed"
                           : "text-gray-500 hover:text-[#F28C28]"
-                      }`}
+                        }`}
                     >
                       Resend OTP {countdown > 0 && `(${countdown}s)`}
                     </button>

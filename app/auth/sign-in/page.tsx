@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 import {
   Landmark,
   Mail,
@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
-import Header from "../../../components/Header";
+import { useSignIn } from "@clerk/nextjs";
+
+type MfaStrategy = "email_code" | "phone_code" | null;
 
 export default function LoginPage() {
   const { signIn, fetchStatus } = useSignIn();
-  const { signUp } = useSignUp();
   const router = useRouter();
 
   const [identifier, setIdentifier] = useState("");
@@ -25,30 +25,108 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isOtpLogin, setIsOtpLogin] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [countdown, setCountdown] = useState(30);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /** After password succeeds, Clerk may require a second factor (e.g. email OTP). */
+  const [awaitingSecondFactor, setAwaitingSecondFactor] = useState(false);
+  const [mfaStrategy, setMfaStrategy] = useState<MfaStrategy>(null);
   const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [infoMsg, setInfoMsg] = useState("");
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isOtpSent && countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
+  const extractClerkError = (err: any) => {
+    const code = err?.errors?.[0]?.code || err?.code || "";
+    const message =
+      err?.errors?.[0]?.longMessage ||
+      err?.longMessage ||
+      err?.message ||
+      "An error occurred during login.";
+    return { code, message };
+  };
+
+  const handleKnownAuthErrors = (code: string, message: string) => {
+    const normalized = (message || "").toLowerCase();
+
+    if (code === "session_exists") {
+      router.push("/");
+      return true;
     }
-    return () => clearInterval(timer);
-  }, [isOtpSent, countdown]);
+    if (code === "form_identifier_not_found") {
+      setErrorMsg("User not found.");
+      return true;
+    }
+    if (
+      code === "form_password_incorrect" ||
+      normalized.includes("password is incorrect")
+    ) {
+      setErrorMsg("Invalid password. Please try again.");
+      return true;
+    }
+    setErrorMsg(message);
+    return true;
+  };
+
+  const finalizeSignIn = async () => {
+    if (!signIn) return;
+    await signIn.finalize({
+      navigate: ({ session, decorateUrl }) => {
+        if (session?.currentTask) return;
+        const url = decorateUrl("/");
+        if (url.startsWith("http")) {
+          window.location.href = url;
+        } else {
+          router.push(url);
+        }
+      },
+    });
+  };
+
+  const sendSecondFactorCode = async (): Promise<MfaStrategy> => {
+    if (!signIn) return null;
+
+    const factors = signIn.supportedSecondFactors ?? [];
+    const emailFactor = factors.find(
+      (f: { strategy: string }) => f.strategy === "email_code",
+    );
+    const phoneFactor = factors.find(
+      (f: { strategy: string }) => f.strategy === "phone_code",
+    );
+
+    if (emailFactor) {
+      const { error } = await signIn.mfa.sendEmailCode();
+      if (error) {
+        const { code, message } = extractClerkError(error);
+        handleKnownAuthErrors(code, message);
+        return null;
+      }
+      setMfaStrategy("email_code");
+      return "email_code";
+    }
+
+    if (phoneFactor) {
+      const { error } = await signIn.mfa.sendPhoneCode();
+      if (error) {
+        const { code, message } = extractClerkError(error);
+        handleKnownAuthErrors(code, message);
+        return null;
+      }
+      setMfaStrategy("phone_code");
+      return "phone_code";
+    }
+
+    setErrorMsg(
+      "Two-factor authentication is required, but no supported method (email or SMS) is available.",
+    );
+    return null;
+  };
 
   const handleOtpChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
-    const newOtpValues = [...otpValues];
-    newOtpValues[index] = value;
-    setOtpValues(newOtpValues);
-    if (value !== "" && index < 5) {
-      inputRefs.current[index + 1]?.focus();
+    const next = [...otpValues];
+    next[index] = value.slice(-1);
+    setOtpValues(next);
+    if (value && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
     }
   };
 
@@ -56,15 +134,152 @@ export default function LoginPage() {
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (e.key === "Backspace" && otpValues[index] === "" && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
     }
   };
 
+  const resetLoginFlow = () => {
+    setAwaitingSecondFactor(false);
+    setMfaStrategy(null);
+    setOtpValues(["", "", "", "", "", ""]);
+    setErrorMsg("");
+    setInfoMsg("");
+    router.refresh();
+  };
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setErrorMsg("");
+    setInfoMsg("");
+
+    if (!signIn || isSubmitting || fetchStatus === "fetching") return;
+
+    // Step 2: verify email/SMS OTP after password step
+    if (awaitingSecondFactor) {
+      const code = otpValues.join("");
+      if (code.length !== 6) {
+        setErrorMsg("Please enter the complete 6-digit code.");
+        return;
+      }
+
+      setIsSubmitting(true);
+      try {
+        let verifyResult: { error: unknown } | undefined;
+        if (mfaStrategy === "email_code") {
+          verifyResult = await signIn.mfa.verifyEmailCode({ code });
+        } else if (mfaStrategy === "phone_code") {
+          verifyResult = await signIn.mfa.verifyPhoneCode({ code });
+        } else {
+          setErrorMsg("Missing second-factor method. Please start over.");
+          return;
+        }
+
+        if (verifyResult?.error) {
+          const { code: errCode, message } = extractClerkError(verifyResult.error);
+          handleKnownAuthErrors(errCode, message);
+          return;
+        }
+
+        if (signIn.status === "complete") {
+          await finalizeSignIn();
+          return;
+        }
+
+        setErrorMsg("Verification incomplete. Please try again.");
+      } catch (err: any) {
+        const { code: errCode, message } = extractClerkError(err);
+        handleKnownAuthErrors(errCode, message);
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
+    // Step 1: email + password
+    const trimmedIdentifier = identifier.trim();
+    const trimmedPassword = password;
+
+    if (!trimmedIdentifier) {
+      setErrorMsg("Please enter your email or Aadhar number");
+      return;
+    }
+
+    if (!trimmedPassword) {
+      setErrorMsg("Please enter your password");
+      return;
+    }
+
+    const looksLikeEmail = /\S+@\S+\.\S+/.test(trimmedIdentifier);
+    if (!looksLikeEmail) {
+      setErrorMsg(
+        "Please enter a valid email address. Aadhar login is not enabled in this form.",
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await signIn.password({
+        emailAddress: trimmedIdentifier,
+        password: trimmedPassword,
+      });
+
+      if (error) {
+        const { code, message } = extractClerkError(error);
+        handleKnownAuthErrors(code, message);
+        return;
+      }
+
+      if (signIn.status === "complete") {
+        await finalizeSignIn();
+        return;
+      }
+
+      if (signIn.status === "needs_second_factor") {
+        const strategyUsed = await sendSecondFactorCode();
+        if (strategyUsed) {
+          setAwaitingSecondFactor(true);
+          setOtpValues(["", "", "", "", "", ""]);
+          setInfoMsg(
+            strategyUsed === "phone_code"
+              ? "We sent a code to your phone. Enter it below."
+              : "We sent a code to your email. Enter it below.",
+          );
+        }
+        return;
+      }
+
+      setErrorMsg("Login could not be completed. Please try again.");
+    } catch (err: any) {
+      const { code, message } = extractClerkError(err);
+      handleKnownAuthErrors(code, message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleResendOtp() {
+    setErrorMsg("");
+    setInfoMsg("");
+    if (!signIn || isSubmitting || fetchStatus === "fetching") return;
+    setIsSubmitting(true);
+    try {
+      const strategyUsed = await sendSecondFactorCode();
+      if (strategyUsed) {
+        setInfoMsg(
+          strategyUsed === "phone_code"
+            ? "A new code was sent to your phone."
+            : "A new code was sent to your email.",
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 lg:bg-white text-gray-900">
-      {/* <Header /> */}
-
       <div className="flex-1 flex flex-col lg:grid lg:grid-cols-2 w-full">
         {/* Left Side - Hero/Branding */}
         <div className="hidden lg:flex flex-col justify-between bg-[#1F4E79] relative overflow-hidden text-white p-12">
@@ -137,133 +352,16 @@ export default function LoginPage() {
                     {errorMsg}
                   </p>
                 )}
+                {infoMsg && (
+                  <p className="text-sm text-green-700 font-semibold">
+                    {infoMsg}
+                  </p>
+                )}
               </div>
 
               <form
                 className="space-y-5 text-left"
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  setErrorMsg("");
-                  if (fetchStatus === "fetching") return;
-
-                  // Input validation
-                  const trimmedIdentifier = identifier.trim();
-                  const trimmedPassword = password.trim();
-
-                  if (!trimmedIdentifier) {
-                    setErrorMsg("Please enter your email or Aadhar number");
-                    return;
-                  }
-
-                  if (isOtpLogin && !isOtpSent) {
-                    setErrorMsg("Please use email/password for now");
-                    // Implement OTP request here if possible,
-                    // user's reference doesn't define first-factor OTP login yet
-                  } else if (isOtpLogin && isOtpSent) {
-                    try {
-                      const code = otpValues.join("");
-                      if (!code || code.length !== 6) {
-                        setErrorMsg("Please enter the complete 6-digit code");
-                        return;
-                      }
-                      const { error } = await signIn.mfa.verifyEmailCode({
-                        code,
-                      });
-                      if (error) {
-                        const err = error as any;
-                        setErrorMsg(
-                          err.errors?.[0]?.longMessage ||
-                            err.longMessage ||
-                            "Invalid OTP",
-                        );
-                        return;
-                      }
-                      if (signIn.status === "complete") {
-                        await signIn.finalize({
-                          navigate: ({ session, decorateUrl }) => {
-                            if (session?.currentTask) return;
-                            const url = decorateUrl("/home");
-                            router.push(url);
-                          },
-                        });
-                      }
-                    } catch (err: any) {
-                      console.error("OTP verification error:", err);
-                      setErrorMsg(
-                        err?.errors?.[0]?.longMessage ||
-                          err?.message ||
-                          "An error occurred during OTP verification",
-                      );
-                    }
-                  } else {
-                    // Password Login
-                    if (!trimmedPassword) {
-                      setErrorMsg("Please enter your password");
-                      return;
-                    }
-
-                    try {
-                      await signIn.password({
-                        emailAddress: trimmedIdentifier,
-                        password: trimmedPassword,
-                      });
-
-                      // Check signIn status after password attempt
-                      if (signIn.status === "complete") {
-                        await signIn.finalize({
-                          navigate: ({ session, decorateUrl }) => {
-                            if (session?.currentTask) return;
-                            const url = decorateUrl("/home");
-                            router.push(url);
-                          },
-                        });
-                      } else if (signIn.status === "needs_first_factor") {
-                        setErrorMsg(
-                          "Authentication started. Please complete the login process.",
-                        );
-                      } else if (signIn.status === "needs_second_factor") {
-                        const emailCodeFactor =
-                          signIn.supportedSecondFactors?.find(
-                            (factor: any) => factor.strategy === "email_code",
-                          );
-                        if (emailCodeFactor) {
-                          await signIn.mfa.sendEmailCode();
-                          setIsOtpLogin(true);
-                          setIsOtpSent(true);
-                          setCountdown(30);
-                        } else {
-                          setErrorMsg(
-                            "Two-factor authentication is required but not supported",
-                          );
-                        }
-                      } else {
-                        setErrorMsg(
-                          "Login process incomplete. Please try again.",
-                        );
-                      }
-                    } catch (err: any) {
-                      // Handle only errors - extract error code and message from error object
-                      const errorCode = err?.code || err?.errors?.[0]?.code;
-                      const errorMsg =
-                        err?.longMessage ||
-                        err?.errors?.[0]?.longMessage ||
-                        err?.message;
-
-                      if (errorCode === "session_exists") {
-                        router.push("/home");
-                      } else if (errorCode === "form_identifier_not_found") {
-                        setErrorMsg("User not found or invalid identifier.");
-                      } else if (errorCode === "form_password_incorrect") {
-                        setErrorMsg("Invalid password. Please try again.");
-                      } else {
-                        setErrorMsg(
-                          errorMsg ||
-                            "An error occurred during login. Please try again.",
-                        );
-                      }
-                    }
-                  }
-                }}
+                onSubmit={handleSubmit}
               >
                 {/* Email / Aadhar */}
                 <div className="space-y-1.5">
@@ -279,20 +377,21 @@ export default function LoginPage() {
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="Enter email or 12-digit Aadhar No"
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400 text-base"
+                      disabled={awaitingSecondFactor}
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400 text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
 
-                {/* Password */}
-                {!isOtpLogin && (
+                {/* Password — hidden while entering OTP */}
+                {!awaitingSecondFactor && (
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-center">
                       <label className="text-[14px] font-bold text-[#1F4E79]">
                         Password
                       </label>
                       <Link
-                        href="#"
+                        href="/forgot-password"
                         className="text-[13px] font-bold text-[#F28C28] hover:underline"
                       >
                         Forgot Password?
@@ -323,70 +422,69 @@ export default function LoginPage() {
                   </div>
                 )}
 
-                {/* OTP Input Section */}
-                {isOtpLogin && isOtpSent && (
-                  <div className="space-y-3 pt-2">
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="text-[14px] font-bold text-[#1F4E79] tracking-wider uppercase">
-                        Enter 6-Digit Code
+                {/* OTP (second factor) */}
+                {awaitingSecondFactor && (
+                  <div className="space-y-3 pt-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[14px] font-bold text-[#1F4E79] uppercase tracking-wide">
+                        Verification code
                       </label>
                       <button
                         type="button"
-                        onClick={() => {
-                          if (countdown === 0) {
-                            setCountdown(30);
-                            // Could add logic to resend OTP here
-                          }
-                        }}
-                        className={`text-[13px] font-bold ${
-                          countdown > 0
-                            ? "text-gray-400 cursor-not-allowed"
-                            : "text-[#F28C28] hover:underline"
-                        }`}
-                        disabled={countdown > 0}
+                        onClick={handleResendOtp}
+                        disabled={isSubmitting || fetchStatus === "fetching"}
+                        className="text-[13px] font-bold text-[#F28C28] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {countdown > 0
-                          ? `Resend in ${countdown}s`
-                          : "Resend OTP"}
+                        Resend code
                       </button>
                     </div>
                     <div className="flex justify-center gap-2 sm:gap-3">
-                      {otpValues.map((value, index) => (
+                      {otpValues.map((digit, index) => (
                         <input
                           key={index}
                           ref={(el) => {
-                            inputRefs.current[index] = el;
+                            otpInputRefs.current[index] = el;
                           }}
                           type="text"
                           inputMode="numeric"
                           maxLength={1}
-                          value={value}
-                          onChange={(e) =>
-                            handleOtpChange(index, e.target.value)
-                          }
+                          value={digit}
+                          onChange={(e) => handleOtpChange(index, e.target.value)}
                           onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                          autoComplete={`off`}
-                          className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-black text-[#1F4E79] border-2 border-gray-200 rounded-sm focus:outline-none focus:border-[#F28C28] transition-all bg-gray-50/50 shadow-inner text-base"
+                          autoComplete="one-time-code"
+                          className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-black text-[#1F4E79] border-2 border-gray-200 rounded-sm focus:outline-none focus:border-[#F28C28] bg-gray-50/50"
                         />
                       ))}
                     </div>
+                    <button
+                      type="button"
+                      onClick={resetLoginFlow}
+                      className="text-sm font-semibold text-gray-600 hover:text-[#1F4E79] underline"
+                    >
+                      Use a different account
+                    </button>
                   </div>
                 )}
 
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={fetchStatus === "fetching" || !identifier.trim()}
+                  disabled={
+                    isSubmitting ||
+                    fetchStatus === "fetching" ||
+                    !identifier.trim() ||
+                    (!awaitingSecondFactor && !password)
+                  }
                   className="w-full flex items-center justify-center gap-2 bg-[#F28C28] hover:bg-[#E67D1A] active:bg-[#D97016] text-white py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-lg shadow-stone-700/10 disabled:opacity-75 disabled:cursor-not-allowed min-h-[48px] text-base"
                 >
-                  {fetchStatus === "fetching" ? (
+                  {isSubmitting ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Loading...
                     </>
                   ) : (
                     <>
-                      {isOtpLogin && !isOtpSent ? "Send OTP" : "Login"}
+                      {awaitingSecondFactor ? "Verify & sign in" : "Login"}
                       <ArrowRight className="w-5 h-5 ml-1" />
                     </>
                   )}
@@ -401,18 +499,6 @@ export default function LoginPage() {
                   <div className="grow border-t border-gray-200"></div>
                 </div>
 
-                {/* OTP Toggle */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsOtpLogin(!isOtpLogin);
-                    setIsOtpSent(false); // Reset OTP state when toggling
-                    setOtpValues(["", "", "", "", "", ""]); // Clear OTP values
-                  }}
-                  className="w-full flex items-center justify-center gap-2 bg-white border-2 border-[#1F4E79] text-[#1F4E79] hover:bg-gray-50 active:bg-gray-100 py-3 px-4 rounded-sm font-black uppercase tracking-wider transition-colors shadow-sm min-h-[48px] text-base"
-                >
-                  {isOtpLogin ? "Login with Password" : "Login with OTP"}
-                </button>
               </form>
 
               <div className="text-center pt-4">
