@@ -21,7 +21,7 @@ import {
   Info,
   BadgeHelpIcon,
 } from "lucide-react";
-import data from "./data.json";
+import data from "../data.json";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnimatedCounter from "@/components/AnimatedCounter";
