@@ -60,7 +60,7 @@ export default function NotificationsPage() {
       const res = await fetch("/api/notifications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, message, audience }),
+        body: JSON.stringify({villageId, userId: user?.id || null, title, message, audience }),
       });
       if (res.ok) {
         toast.success("Broadcast sent successfully!");
