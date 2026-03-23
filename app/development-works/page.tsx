@@ -21,7 +21,7 @@ type Work = {
 };
 
 export default function DevelopmentWorks() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [works, setWorks] = useState<Work[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,10 +31,10 @@ export default function DevelopmentWorks() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchWorks = async () => {
+    const fetchWorks = async (villageId: string | undefined) => {
       setIsLoading(true);
       try {
-        const res = await fetch("/api/development-works");
+        const res = await fetch(`/api/development-works?villageId=${villageId}`);
         if (res.ok) {
           const json = await res.json();
           setWorks(json.data || []);
@@ -45,7 +45,9 @@ export default function DevelopmentWorks() {
         setIsLoading(false);
       }
     };
-    fetchWorks();
+    const meta = user?.unsafeMetadata as any;
+    const villageId = meta?.village_id;
+    fetchWorks(villageId);
   }, []);
 
   const filteredWorks = works.filter(w => {
