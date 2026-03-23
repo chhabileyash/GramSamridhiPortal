@@ -16,9 +16,7 @@ export async function GET(req: Request) {
                 .from(developmentWorks)
                 .where(eq(developmentWorks.villageId, villageIdParam))
                 .orderBy(desc(developmentWorks.createdAt));
-        } else {
-            data = await db.select().from(developmentWorks).orderBy(desc(developmentWorks.createdAt));
-        }
+        } 
         return NextResponse.json({ data: data || [] });
     } catch (error: any) {
         console.error("Development Works GET Error:", error);

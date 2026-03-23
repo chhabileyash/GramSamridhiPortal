@@ -24,9 +24,7 @@ export async function GET(req: Request) {
                 .from(schemes)
                 .where(eq(schemes.userId, userIdParam))
                 .orderBy(desc(schemes.createdAt));
-        } else {
-            data = await db.select().from(schemes).orderBy(desc(schemes.createdAt));
-        }
+        } 
         return NextResponse.json({ data: data || [] });
     } catch (error: any) {
         console.error("Schemes GET Error:", error);

@@ -5,20 +5,22 @@ import { useUser } from "@clerk/nextjs";
 import { MessageSquare, Calendar, User, Search, Trash2, Filter } from "lucide-react";
 
 export default function SuggestionsPage() {
-    const { user } = useUser();
+    const { user, isLoaded } = useUser();
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("All");
 
     useEffect(() => {
-        fetchSuggestions();
+        const meta = user?.unsafeMetadata as any;
+        const villageId = meta?.village_id;
+        fetchSuggestions(villageId);
     }, []);
 
-    const fetchSuggestions = async () => {
+    const fetchSuggestions = async (villageId: string | null) => {
         setIsLoading(true);
         try {
-            const res = await fetch("/api/suggestions");
+            const res = await fetch(`/api/suggestions?villageId=${villageId}`);
             if (res.ok) {
                 const json = await res.json();
                 setSuggestions(json.data || []);

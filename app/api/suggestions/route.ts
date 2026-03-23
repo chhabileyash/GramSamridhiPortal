@@ -7,15 +7,12 @@ import { auth } from "@clerk/nextjs/server";
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const villageIdParam = searchParams.get("villageId");
+    if (!villageIdParam) {
+        return NextResponse.json({ error: "Missing villageId parameter" }, { status: 400 });
+    }
 
     try {
-        let data;
-        if (villageIdParam) {
-            data = await db.select().from(suggestions).where(eq(suggestions.villageId, villageIdParam)).orderBy(desc(suggestions.createdAt));
-        } else {
-            data = await db.select().from(suggestions).orderBy(desc(suggestions.createdAt));
-        }
-
+        let  data = await db.select().from(suggestions).where(eq(suggestions.villageId, villageIdParam)).orderBy(desc(suggestions.createdAt));
         return NextResponse.json({ data: data || [] });
     } catch (error: any) {
         console.error("Suggestions GET Error:", error);

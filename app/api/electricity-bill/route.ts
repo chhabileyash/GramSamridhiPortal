@@ -25,9 +25,7 @@ export async function GET(req: Request) {
                     !isAdmin ? eq(electricityBills.userId, userId) : undefined
                 )
             ).orderBy(desc(electricityBills.createdAt));
-        } else {
-            data = await db.select().from(electricityBills).where(eq(electricityBills.userId, userId)).orderBy(desc(electricityBills.createdAt));
-        }
+        } 
 
         return NextResponse.json({ data: data || [] });
     } catch (error: any) {
