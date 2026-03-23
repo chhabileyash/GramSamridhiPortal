@@ -15,7 +15,7 @@ export default function AboutPage() {
                 About The Digital Portal
               </h1>
               <p className="text-[16px] text-[#4B5563] leading-relaxed">
-                Welcome to the Gram Samriddhi Portal, the official digital
+                Welcome to the Gram Samridhi Portal, the official digital
                 gateway designed to bring administration closer to our citizens.
                 This platform is a unified initiative to ensure transparency,
                 accessibility, and efficiency in the delivery of rural services.

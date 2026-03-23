@@ -69,9 +69,8 @@ const HeaderContent = memo(function HeaderContent({
   isLoaded: boolean;
 }) {
   const isRoot = pathname === "/";
-  const {user} = useUser();
+  const { user } = useUser();
   const isAdmin = user?.unsafeMetadata?.role === "admin";
-  
 
   const zoomOut = useCallback(
     () =>
@@ -333,7 +332,7 @@ const HeaderContent = memo(function HeaderContent({
                     isRoot ? "text-xl sm:text-2xl" : "text-lg sm:text-xl"
                   } font-extrabold leading-tight text-white mb-1 tracking-wide transition-all duration-300`}
                 >
-                  Gram Samruthi Portal
+                  Gram Samridhi Portal
                 </h2>
                 <p
                   className={`${
@@ -552,7 +551,6 @@ export default memo(function Header() {
       }
     };
   }, []);
-
 
   return (
     <HeaderContent

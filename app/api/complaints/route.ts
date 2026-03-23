@@ -18,25 +18,16 @@ export async function GET(req: Request) {
 
     try {
         let data;
-        if (isAdmin) {
-            if (villageIdParam) {
-                data = await db.select().from(complaints).where(eq(complaints.villageId, villageIdParam)).orderBy(desc(complaints.createdAt));
-            } else {
-                data = await db.select().from(complaints).orderBy(desc(complaints.createdAt));
-            }
+        if (villageIdParam) {
+            data = await db.select().from(complaints).where(
+                and(
+                    eq(complaints.villageId, villageIdParam),
+                    eq(complaints.userId, userId)
+                )
+            ).orderBy(desc(complaints.createdAt));
         } else {
-            if (villageIdParam) {
-                data = await db.select().from(complaints).where(
-                    and(
-                        eq(complaints.villageId, villageIdParam),
-                        eq(complaints.userId, userId)
-                    )
-                ).orderBy(desc(complaints.createdAt));
-            } else {
-                data = await db.select().from(complaints).where(eq(complaints.userId, userId)).orderBy(desc(complaints.createdAt));
-            }
+            data = await db.select().from(complaints).where(eq(complaints.userId, userId)).orderBy(desc(complaints.createdAt));
         }
-
         return NextResponse.json({ data: data || [] });
     } catch (error: any) {
         console.error("Complaints GET Error:", error);

@@ -197,7 +197,8 @@ export default function SignupPage() {
             district,
             taluka,
             village,
-            village_id: locationDataset.find((item) => item.village === village)?.id,
+            village_id: locationDataset.find((item) => item.village === village)
+              ?.id,
             legalAccepted: acceptedTerms,
             role: "user",
           },
@@ -260,7 +261,7 @@ export default function SignupPage() {
         if (error) {
           toast.error(
             error.message ||
-            "OTP is invalid or expired. Please enter the latest OTP sent to your email.",
+              "OTP is invalid or expired. Please enter the latest OTP sent to your email.",
           );
           setVerifying(false);
           return;
@@ -360,7 +361,7 @@ export default function SignupPage() {
   // Memoize location data calculations
   const districts = useMemo(() => {
     const uniqueDistricts = new Set<string>();
-    locationDataset.forEach(item => {
+    locationDataset.forEach((item) => {
       if (item.district) uniqueDistricts.add(item.district);
     });
     return Array.from(uniqueDistricts).sort();
@@ -369,8 +370,9 @@ export default function SignupPage() {
   const talukas = useMemo(() => {
     if (!district) return [];
     const uniqueTalukas = new Set<string>();
-    locationDataset.forEach(item => {
-      if (item.district === district && item.subDistrict) uniqueTalukas.add(item.subDistrict);
+    locationDataset.forEach((item) => {
+      if (item.district === district && item.subDistrict)
+        uniqueTalukas.add(item.subDistrict);
     });
     return Array.from(uniqueTalukas).sort();
   }, [locationDataset, district]);
@@ -378,8 +380,12 @@ export default function SignupPage() {
   const villages = useMemo(() => {
     if (!district || !taluka) return [];
     const uniqueVillages = new Set<string>();
-    locationDataset.forEach(item => {
-      if (item.district === district && item.subDistrict === taluka && item.village) {
+    locationDataset.forEach((item) => {
+      if (
+        item.district === district &&
+        item.subDistrict === taluka &&
+        item.village
+      ) {
         uniqueVillages.add(item.village);
       }
     });
@@ -776,10 +782,11 @@ export default function SignupPage() {
                       type="button"
                       onClick={handleResendOtp}
                       disabled={countdown > 0}
-                      className={`text-[13px] font-bold transition-colors ${countdown > 0
+                      className={`text-[13px] font-bold transition-colors ${
+                        countdown > 0
                           ? "text-gray-400 cursor-not-allowed"
                           : "text-gray-500 hover:text-[#F28C28]"
-                        }`}
+                      }`}
                     >
                       Resend OTP {countdown > 0 && `(${countdown}s)`}
                     </button>

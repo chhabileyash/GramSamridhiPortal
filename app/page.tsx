@@ -29,19 +29,25 @@ export default function Home() {
             <div className="col-span-1 md:col-span-8 lg:col-span-7 text-center md:text-left pl-0 md:pl-8 py-16 md:py-0">
               <h1 className="text-[#1F4E79] text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight drop-shadow-sm">
                 Welcome to <br className="hidden sm:block" />
-                <span className="text-[#F28C28]">Gram Samruthi</span> Portal!
+                <span className="text-[#F28C28]">Gram Samridhi Portal</span>!
               </h1>
               <p className="mt-2 text-lg sm:text-xl text-gray-800 mb-8 font-medium md:max-w-[80%] mx-auto md:mx-0 drop-shadow-sm">
                 Empowering our villages with digital transparent information and
                 essential localized services.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <button className="bg-[#F28C28] text-white px-8 py-[14px] rounded-md font-bold hover:bg-[#e07b1e] transition-all shadow-lg hover:shadow-xl active:scale-95 text-lg w-full sm:w-auto">
+                <a
+                  href="/about"
+                  className="bg-[#F28C28] text-white px-8 py-3.5 rounded-md font-bold hover:bg-[#e07b1e] transition-all shadow-lg hover:shadow-xl active:scale-95 text-lg w-full sm:w-auto flex items-center justify-center"
+                >
                   Learn More
-                </button>
-                <button className="bg-white text-[#1F4E79] border-2 border-[#1F4E79] px-8 py-[14px] rounded-md font-bold hover:bg-gray-50 transition-all shadow-sm hover:shadow-md active:scale-95 text-lg w-full sm:w-auto">
+                </a>
+                <a
+                  href="/schemes"
+                  className="bg-white text-[#1F4E79] border-2 border-[#1F4E79] px-8 py-3.5 rounded-md font-bold hover:bg-gray-50 transition-all shadow-sm hover:shadow-md active:scale-95 text-lg w-full sm:w-auto flex items-center justify-center"
+                >
                   Discover Schemes
-                </button>
+                </a>
               </div>
             </div>
             <div className="hidden md:flex col-span-1 md:col-span-4 lg:col-span-5 justify-end items-end h-full"></div>
@@ -53,7 +59,7 @@ export default function Home() {
           className="py-12 -mt-20 relative z-20"
           data-purpose="service-cards"
         >
-          <div className="max-w-[1200px] mx-auto px-4">
+          <div className="max-w-300 mx-auto px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Card 1 */}
               <div className="bg-white p-6 rounded-sm shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 flex flex-col h-[320px] relative overflow-hidden group">
@@ -118,15 +124,18 @@ export default function Home() {
                     </h3>
                   </div>
                 </div>
-                <div className="text-[15px] text-[#4A4A4A] mb-6 flex-grow leading-[1.6] relative z-10 font-medium pr-2">
+                <div className="text-[15px] text-[#4A4A4A] mb-6 grow leading-[1.6] relative z-10 font-medium pr-2">
                   <p className="m-0">Discover various government</p>
                   <p className="m-0">schemes available for</p>
                   <p className="m-0">rural development.</p>
                 </div>
                 <div className="relative z-10 mt-auto pb-1">
-                  <button className="w-full bg-gradient-to-b from-[#F28C28] to-[#E67E22] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(242,140,40,0.3)] hover:brightness-110 transition border border-[#D35400]/20">
+                  <a
+                    href="/schemes"
+                    className="w-full bg-linear-to-b from-[#F28C28] to-[#E67E22] text-white py-2.75 rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(242,140,40,0.3)] hover:brightness-110 transition border border-[#D35400]/20 flex items-center justify-center"
+                  >
                     Explore Schemes
-                  </button>
+                  </a>
                 </div>
               </div>
               {/* Card 2 */}
@@ -213,9 +222,12 @@ export default function Home() {
                   <p className="m-0">panchayat services.</p>
                 </div>
                 <div className="relative z-10 mt-auto pb-1">
-                  <button className="w-full bg-gradient-to-b from-[#4CAF50] to-[#2E7D32] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(46,125,50,0.3)] hover:brightness-110 transition border border-[#1B5E20]/20">
+                  <a
+                    href="/property-tax-filling"
+                    className="w-full bg-gradient-to-b from-[#4CAF50] to-[#2E7D32] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(46,125,50,0.3)] hover:brightness-110 transition border border-[#1B5E20]/20 flex items-center justify-center"
+                  >
                     Apply Now
-                  </button>
+                  </a>
                 </div>
               </div>
               {/* Card 3 */}
@@ -302,9 +314,12 @@ export default function Home() {
                   <p className="m-0">updates.</p>
                 </div>
                 <div className="relative z-10 mt-auto pb-1">
-                  <button className="w-full bg-gradient-to-b from-[#345B8E] to-[#1F4E79] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(31,78,121,0.3)] hover:brightness-110 transition border border-[#112E4A]/20">
+                  <a
+                    href="/notifications"
+                    className="w-full bg-gradient-to-b from-[#345B8E] to-[#1F4E79] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(31,78,121,0.3)] hover:brightness-110 transition border border-[#112E4A]/20 flex items-center justify-center"
+                  >
                     View Updates
-                  </button>
+                  </a>
                 </div>
               </div>
               {/* Card 4 */}
@@ -385,12 +400,15 @@ export default function Home() {
                   <p className="m-0">representatives.</p>
                 </div>
                 <div className="relative z-10 mt-auto pb-1">
-                  <button className="w-full bg-gradient-to-b from-[#F28C28] to-[#E67E22] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(242,140,40,0.3)] flex justify-between items-center px-6 hover:brightness-110 transition border border-[#D35400]/20">
+                  <a
+                    href="/panchayat-members"
+                    className="w-full bg-gradient-to-b from-[#F28C28] to-[#E67E22] text-white py-[11px] rounded-sm text-[15px] font-bold shadow-[0_4px_10px_rgba(242,140,40,0.3)] flex justify-between items-center px-6 hover:brightness-110 transition border border-[#D35400]/20"
+                  >
                     <span>Read More</span>{" "}
                     <span className="font-black text-lg leading-none">
                       &gt;
                     </span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>

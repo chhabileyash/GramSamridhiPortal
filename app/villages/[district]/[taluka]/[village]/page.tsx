@@ -489,7 +489,7 @@ export default function VillagePage() {
     date: trimValue(basicInfo.Date),
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCz5QVEB-Axe1tqFxx2kNZVjyxK3xzIwIrrTjQRNc8jsKf7eoUjrMhbY_6L9hAgLXKNZQW5YdJZ5B-TOb6RjxIvPFbMTEoLP4HIEXhTQuY3RKY-oau85eI_5MiLw1vs57mCIYKr20THAeXJRMtsUaHWobyQvTxeNyCZpISyNsj2RYNuqTAeH4mIg3xyw-NnCfq25Am3dCoDiXqeGZdJZoUwnkxRAoHhaa8SuTBO9dN9TL_uSM45EDYH2zZcMxy0WYUSCNPbAwGmMWya",
-    description: "Latest update from the Gram Panchayat portal.",
+    description: "Latest update from the Gram Samridhi Portal.",
   }));
 
   const villagePhotos = [

@@ -19,25 +19,16 @@ export async function GET(req: Request) {
 
     try {
         let data;
-        if (isAdmin) {
-            // Admins see all for village
-            if (villageIdParam) {
-                data = await db.select().from(propertyTaxes).where(eq(propertyTaxes.villageId, villageIdParam)).orderBy(desc(propertyTaxes.createdAt));
-            } else {
-                data = await db.select().from(propertyTaxes).orderBy(desc(propertyTaxes.createdAt));
-            }
+        
+        if (villageIdParam) {
+            data = await db.select().from(propertyTaxes).where(
+                and(
+                    eq(propertyTaxes.villageId, villageIdParam),
+                    eq(propertyTaxes.userId, userId)
+                )
+            ).orderBy(desc(propertyTaxes.createdAt));
         } else {
-            // Normal users see only theirs
-            if (villageIdParam) {
-                data = await db.select().from(propertyTaxes).where(
-                    and(
-                        eq(propertyTaxes.villageId, villageIdParam),
-                        eq(propertyTaxes.userId, userId)
-                    )
-                ).orderBy(desc(propertyTaxes.createdAt));
-            } else {
-                data = await db.select().from(propertyTaxes).where(eq(propertyTaxes.userId, userId)).orderBy(desc(propertyTaxes.createdAt));
-            }
+            data = await db.select().from(propertyTaxes).where(eq(propertyTaxes.userId, userId)).orderBy(desc(propertyTaxes.createdAt));
         }
 
         return NextResponse.json({ data: data || [] });

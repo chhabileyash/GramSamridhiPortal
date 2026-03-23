@@ -176,7 +176,9 @@ export default function LoginPage() {
         }
 
         if (verifyResult?.error) {
-          const { code: errCode, message } = extractClerkError(verifyResult.error);
+          const { code: errCode, message } = extractClerkError(
+            verifyResult.error,
+          );
           handleKnownAuthErrors(errCode, message);
           return;
         }
@@ -308,7 +310,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <h3 className="text-[28px] font-semibold leading-[1.2] tracking-wide uppercase">
-                    Gram Samruthi <br /> Portal
+                    Gram Samridhi <br /> Portal
                   </h3>
                   <p className="text-xs text-[#F28C28] font-bold tracking-[0.2em] uppercase mt-0.5">
                     Govt. of Maharashtra
@@ -359,10 +361,7 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <form
-                className="space-y-5 text-left"
-                onSubmit={handleSubmit}
-              >
+              <form className="space-y-5 text-left" onSubmit={handleSubmit}>
                 {/* Email / Aadhar */}
                 <div className="space-y-1.5">
                   <label className="text-[14px] font-bold text-[#1F4E79]">
@@ -449,7 +448,9 @@ export default function LoginPage() {
                           inputMode="numeric"
                           maxLength={1}
                           value={digit}
-                          onChange={(e) => handleOtpChange(index, e.target.value)}
+                          onChange={(e) =>
+                            handleOtpChange(index, e.target.value)
+                          }
                           onKeyDown={(e) => handleOtpKeyDown(index, e)}
                           autoComplete="one-time-code"
                           className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-black text-[#1F4E79] border-2 border-gray-200 rounded-sm focus:outline-none focus:border-[#F28C28] bg-gray-50/50"
@@ -498,7 +499,6 @@ export default function LoginPage() {
                   </span>
                   <div className="grow border-t border-gray-200"></div>
                 </div>
-
               </form>
 
               <div className="text-center pt-4">

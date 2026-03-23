@@ -34,8 +34,8 @@ export default function HomePage() {
         const villageId = (user.unsafeMetadata as any).village_id;
         if (villageId) {
           fetch(`/api/village-info?villageId=${villageId}`)
-            .then(r => r.json())
-            .then(d => {
+            .then((r) => r.json())
+            .then((d) => {
               if (d.data) setDbData(d.data);
               setIsLoading(false);
             })
@@ -54,12 +54,15 @@ export default function HomePage() {
     ? `${(user.unsafeMetadata as any).village} ${(user.unsafeMetadata as any).taluka} ${(user.unsafeMetadata as any).district} Maharashtra India`
     : "Takarkhed Nandura Buldhana Maharashtra India";
 
-  const primaryBanner = dbData?.images?.find((img: any) => img.isPrimary)?.url
-    || dbData?.images?.[0]?.url
-    || "https://lh3.googleusercontent.com/aida-public/AB6AXuDJPGBY_I7f-SH3oiZiJZ0vb23rHOhXjXOexTEpuYvdseJxVQ-1mYJowlZR2YFbsPRBY6ZFaPsZY1tDaROhsLKUvSzYI0h1bqUdyBZywK1BnfPJHGFpXHYMhyyP_pptDNRmd2nUgzZARexAYP8QAcjMXFcrAVt7EhHhcDtG9L3NFR9-IADfg50WYrpY4E8JbLeGcFeKYT8QKw9Pisp4y17YdsdoR5bvT5MdzcMJKD-udRBleamLo87IFjAQNt0TcA466rr72RKQxZI";
+  const primaryBanner =
+    dbData?.images?.find((img: any) => img.isPrimary)?.url ||
+    dbData?.images?.[0]?.url ||
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuDJPGBY_I7f-SH3oiZiJZ0vb23rHOhXjXOexTEpuYvdseJxVQ-1mYJowlZR2YFbsPRBY6ZFaPsZY1tDaROhsLKUvSzYI0h1bqUdyBZywK1BnfPJHGFpXHYMhyyP_pptDNRmd2nUgzZARexAYP8QAcjMXFcrAVt7EhHhcDtG9L3NFR9-IADfg50WYrpY4E8JbLeGcFeKYT8QKw9Pisp4y17YdsdoR5bvT5MdzcMJKD-udRBleamLo87IFjAQNt0TcA466rr72RKQxZI";
 
   // Unified Data processing logic using strictly village-info
-  const aboutText = dbData?.about || "Takarkhed is a Village in Nandura Taluka in Buldhana District of Maharashtra State, India. It belongs to Vidarbha region. It belongs to Amravati Division. It is located 26 KM towards North from District head quarters Buldhana. 19 KM from Nandura. 474 KM from State capital Mumbai Takarkhed Pin code is 443103 and postal head office is Motala . Fuli ( 3 KM ) , Khaira ( 4 KM ) , Advihir ( 5 KM ) , Pimpalkhuta Bk ( 5 KM ) , Jawala Bazar ( 6 KM ) are the nearby Villages to Takarkhed. Takarkhed is surrounded by Nandura Taluka towards East , Malkapur Taluka towards North , Buldhana Taluka towards South , Khamgaon Taluka towards East .";
+  const aboutText =
+    dbData?.about ||
+    "Takarkhed is a Village in Nandura Taluka in Buldhana District of Maharashtra State, India. It belongs to Vidarbha region. It belongs to Amravati Division. It is located 26 KM towards North from District head quarters Buldhana. 19 KM from Nandura. 474 KM from State capital Mumbai Takarkhed Pin code is 443103 and postal head office is Motala . Fuli ( 3 KM ) , Khaira ( 4 KM ) , Advihir ( 5 KM ) , Pimpalkhuta Bk ( 5 KM ) , Jawala Bazar ( 6 KM ) are the nearby Villages to Takarkhed. Takarkhed is surrounded by Nandura Taluka towards East , Malkapur Taluka towards North , Buldhana Taluka towards South , Khamgaon Taluka towards East .";
 
   const totalPop = dbData?.totalPopulation ?? 1258897;
   const femalePop = dbData?.femalePopulation ?? 12897;
@@ -70,9 +73,11 @@ export default function HomePage() {
   const reqAdults = dbData?.adultsCount ?? "256k";
   const reqSeniors = dbData?.seniorsCount ?? "256k";
 
-  const addr = dbData?.address || "Panchayat Bhavan, Main Road,\nGram Samruthi, Pune - 411001";
+  const addr =
+    dbData?.address ||
+    "Panchayat Bhavan, Main Road,\nGram Samridhi, Pune - 411001";
   const phone = dbData?.phone || "+91 20 2345 6789";
-  const email = dbData?.email || "contact@gramsamruthi.gov.in";
+  const email = dbData?.email || "contact@gramsamridhi.gov.in";
 
   return (
     <div className="min-h-screen flex flex-col text-gray-800 font-sans bg-[#fcfcfc]">
@@ -119,13 +124,19 @@ export default function HomePage() {
                     className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/40 hover:bg-white/60 p-2 rounded flex items-center justify-center backdrop-blur-sm"
                     suppressHydrationWarning
                   >
-                    <ChevronLeft className="text-black w-8 h-8" strokeWidth={3} />
+                    <ChevronLeft
+                      className="text-black w-8 h-8"
+                      strokeWidth={3}
+                    />
                   </button>
                   <button
                     className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/40 hover:bg-white/60 p-2 rounded flex items-center justify-center backdrop-blur-sm"
                     suppressHydrationWarning
                   >
-                    <ChevronRight className="text-black w-8 h-8" strokeWidth={3} />
+                    <ChevronRight
+                      className="text-black w-8 h-8"
+                      strokeWidth={3}
+                    />
                   </button>
                 </div>
               </section>
@@ -170,8 +181,9 @@ export default function HomePage() {
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2">
                     Total Population
                   </p>
-                  <h4 className="text-2xl font-bold text-gray-900">{totalPop.toLocaleString('en-IN')}</h4>
-
+                  <h4 className="text-2xl font-bold text-gray-900">
+                    {totalPop.toLocaleString("en-IN")}
+                  </h4>
                 </div>
                 <div className="bg-white p-6 border border-gray-200 flex items-center justify-center space-x-4 shadow-sm">
                   <div className="w-10 h-10 flex items-center justify-center border border-[#FF9933]/20 bg-[#FF9933]/5 rounded">
@@ -181,8 +193,9 @@ export default function HomePage() {
                     <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
                       Male Demographic
                     </p>
-                    <h4 className="text-2xl font-bold text-gray-900">{malePop.toLocaleString('en-IN')}</h4>
-
+                    <h4 className="text-2xl font-bold text-gray-900">
+                      {malePop.toLocaleString("en-IN")}
+                    </h4>
                   </div>
                 </div>
                 <div className="bg-white p-6 border border-gray-200 flex items-center justify-center space-x-4 shadow-sm">
@@ -193,8 +206,9 @@ export default function HomePage() {
                     <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
                       Female Demographic
                     </p>
-                    <h4 className="text-2xl font-bold text-gray-900">{femalePop.toLocaleString('en-IN')}</h4>
-
+                    <h4 className="text-2xl font-bold text-gray-900">
+                      {femalePop.toLocaleString("en-IN")}
+                    </h4>
                   </div>
                 </div>
               </section>
@@ -217,7 +231,11 @@ export default function HomePage() {
                           Children
                         </span>
                       </div>
-                      <p className="text-2xl font-bold">{typeof reqChildren === "number" ? reqChildren.toLocaleString('en-IN') : reqChildren}</p>
+                      <p className="text-2xl font-bold">
+                        {typeof reqChildren === "number"
+                          ? reqChildren.toLocaleString("en-IN")
+                          : reqChildren}
+                      </p>
                     </div>
                     <div className="border border-gray-100 p-4 rounded-sm">
                       <div className="flex items-center space-x-2 mb-2">
@@ -226,7 +244,11 @@ export default function HomePage() {
                           Youth
                         </span>
                       </div>
-                      <p className="text-2xl font-bold">{typeof reqYouth === "number" ? reqYouth.toLocaleString('en-IN') : reqYouth}</p>
+                      <p className="text-2xl font-bold">
+                        {typeof reqYouth === "number"
+                          ? reqYouth.toLocaleString("en-IN")
+                          : reqYouth}
+                      </p>
                     </div>
                     <div className="border border-gray-100 p-4 rounded-sm">
                       <div className="flex items-center space-x-2 mb-2">
@@ -235,7 +257,11 @@ export default function HomePage() {
                           Adults
                         </span>
                       </div>
-                      <p className="text-2xl font-bold">{typeof reqAdults === "number" ? reqAdults.toLocaleString('en-IN') : reqAdults}</p>
+                      <p className="text-2xl font-bold">
+                        {typeof reqAdults === "number"
+                          ? reqAdults.toLocaleString("en-IN")
+                          : reqAdults}
+                      </p>
                     </div>
                     <div className="border border-gray-100 p-4 rounded-sm">
                       <div className="flex items-center space-x-2 mb-2">
@@ -244,7 +270,11 @@ export default function HomePage() {
                           Seniors
                         </span>
                       </div>
-                      <p className="text-2xl font-bold">{typeof reqSeniors === "number" ? reqSeniors.toLocaleString('en-IN') : reqSeniors}</p>
+                      <p className="text-2xl font-bold">
+                        {typeof reqSeniors === "number"
+                          ? reqSeniors.toLocaleString("en-IN")
+                          : reqSeniors}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -357,8 +387,8 @@ export default function HomePage() {
                       Contact Gram Panchayat
                     </h3>
                     <p className="text-[#2c5577]/80 mb-8">
-                      Reach out to us for any queries, grievances, or suggestions
-                      regarding village development.
+                      Reach out to us for any queries, grievances, or
+                      suggestions regarding village development.
                     </p>
                     <div className="space-y-6">
                       <div className="flex items-start space-x-4">
@@ -374,18 +404,14 @@ export default function HomePage() {
                         <Phone className="w-6 h-6 mt-1 text-[#FF9933]" />
                         <div>
                           <p className="font-bold">Phone</p>
-                          <p className="text-sm text-[#2c5577]/80">
-                            {phone}
-                          </p>
+                          <p className="text-sm text-[#2c5577]/80">{phone}</p>
                         </div>
                       </div>
                       <div className="flex items-start space-x-4">
                         <Mail className="w-6 h-6 mt-1 text-[#FF9933]" />
                         <div>
                           <p className="font-bold">Email</p>
-                          <p className="text-sm text-[#2c5577]/80">
-                            {email}
-                          </p>
+                          <p className="text-sm text-[#2c5577]/80">{email}</p>
                         </div>
                       </div>
                     </div>

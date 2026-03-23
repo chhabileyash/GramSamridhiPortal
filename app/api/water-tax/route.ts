@@ -18,23 +18,15 @@ export async function GET(req: Request) {
 
     try {
         let data;
-        if (isAdmin) {
-            if (villageIdParam) {
-                data = await db.select().from(waterTaxes).where(eq(waterTaxes.villageId, villageIdParam)).orderBy(desc(waterTaxes.createdAt));
-            } else {
-                data = await db.select().from(waterTaxes).orderBy(desc(waterTaxes.createdAt));
-            }
+        if (villageIdParam) {
+            data = await db.select().from(waterTaxes).where(
+                and(
+                    eq(waterTaxes.villageId, villageIdParam),
+                    eq(waterTaxes.userId, userId)
+                )
+            ).orderBy(desc(waterTaxes.createdAt));
         } else {
-            if (villageIdParam) {
-                data = await db.select().from(waterTaxes).where(
-                    and(
-                        eq(waterTaxes.villageId, villageIdParam),
-                        eq(waterTaxes.userId, userId)
-                    )
-                ).orderBy(desc(waterTaxes.createdAt));
-            } else {
-                data = await db.select().from(waterTaxes).where(eq(waterTaxes.userId, userId)).orderBy(desc(waterTaxes.createdAt));
-            }
+            data = await db.select().from(waterTaxes).where(eq(waterTaxes.userId, userId)).orderBy(desc(waterTaxes.createdAt));
         }
 
         return NextResponse.json({ data: data || [] });

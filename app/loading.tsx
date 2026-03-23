@@ -8,7 +8,7 @@ export default function Loading() {
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#082b57]/20 border-t-[#f58320]" />
         <div className="space-y-2 text-center">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#f58320]">
-            Gram Panchayat Portal
+            Gram Samridhi Portal
           </p>
           <h2 className="text-2xl font-extrabold uppercase text-[#082b57]">
             Loading Page

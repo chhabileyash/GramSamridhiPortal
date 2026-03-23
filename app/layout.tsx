@@ -5,16 +5,15 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import Script from "next/script"; // ✅ Add this import
 
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Gram Panchayat Digital Portal - Government of Maharashtra",
+  title: "Gram Samridhi Portal - Government of Maharashtra",
   description:
-    "Digital portal for Gram Panchayat services, schemes, grievances, and village information in Maharashtra.",
+    "Gram Samridhi Portal for Panchayat services, schemes, grievances, and village information in Maharashtra.",
 };
 
 export default function RootLayout({
@@ -28,7 +27,7 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning
       >
-         <Script
+        <Script
           src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
           strategy="afterInteractive"
         />
