@@ -28,11 +28,7 @@ export default function NotificationsPage() {
   const fetchNotifications = async (villageId?: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch(
-        villageId
-          ? `/api/notifications?villageId=${encodeURIComponent(villageId)}`
-          : "/api/notifications",
-      );
+      const res = await fetch(`/api/notifications?villageId=${encodeURIComponent(villageId||"")}`);
       if (res.ok) {
         const json = await res.json();
         setNotifications(json.data || []);
