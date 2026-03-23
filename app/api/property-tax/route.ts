@@ -24,7 +24,7 @@ export async function GET(req: Request) {
             data = await db.select().from(propertyTaxes).where(
                 and(
                     eq(propertyTaxes.villageId, villageIdParam),
-                    eq(propertyTaxes.userId, userId)
+                    !isAdmin ? eq(propertyTaxes.userId, userId) : undefined
                 )
             ).orderBy(desc(propertyTaxes.createdAt));
         } else {

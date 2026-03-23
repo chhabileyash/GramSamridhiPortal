@@ -15,16 +15,18 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const villageIdParam = searchParams.get("villageId");
-
+    
     try {
         let data;
         if (villageIdParam) {
             data = await db.select().from(complaints).where(
                 and(
                     eq(complaints.villageId, villageIdParam),
-                    eq(complaints.userId, userId)
+                    isAdmin ? undefined : eq(complaints.userId, userId)
                 )
             ).orderBy(desc(complaints.createdAt));
+            console.log(data);
+            
         } else {
             data = await db.select().from(complaints).where(eq(complaints.userId, userId)).orderBy(desc(complaints.createdAt));
         }

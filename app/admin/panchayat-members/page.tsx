@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { Users, Plus, Trash2, X, Save, Phone, Image as ImageIcon } from "lucide-react";
 
 export default function PanchayatMembersAdmin() {
-    const { user } = useUser();
+    const { user , isLoaded } = useUser();
     const [members, setMembers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -19,13 +19,19 @@ export default function PanchayatMembersAdmin() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        fetchMembers();
-    }, []);
+        const meta = user?.unsafeMetadata as any;
+        const villageId = meta?.village_id;
+        fetchMembers(villageId);
+    }, [user, isLoaded]);
 
-    const fetchMembers = async () => {
+    const fetchMembers = async (villageId?: string) => {
         setIsLoading(true);
         try {
-            const res = await fetch("/api/panchayat-members");
+            const res = await fetch(
+                villageId
+                    ? `/api/panchayat-members?villageId=${encodeURIComponent(villageId)}`
+                    : "/api/panchayat-members"
+            );
             if (res.ok) {
                 const json = await res.json();
                 setMembers(json.data || []);
@@ -69,7 +75,7 @@ export default function PanchayatMembersAdmin() {
 
             setFormData({ name: "", position: "Sarpanch", imageUrl: "", phone: "" });
             setShowAddForm(false);
-            fetchMembers();
+            fetchMembers(villageId);
         } catch (err) {
             console.error(err);
             alert("Error adding member.");

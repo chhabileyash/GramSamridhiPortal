@@ -22,7 +22,7 @@ export async function GET(req: Request) {
             data = await db.select().from(waterTaxes).where(
                 and(
                     eq(waterTaxes.villageId, villageIdParam),
-                    eq(waterTaxes.userId, userId)
+                    !isAdmin ? eq(waterTaxes.userId, userId) : undefined
                 )
             ).orderBy(desc(waterTaxes.createdAt));
         } else {

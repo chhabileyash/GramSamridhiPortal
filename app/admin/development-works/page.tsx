@@ -6,7 +6,7 @@ import { Search, Plus, Map, CheckCircle, TrendingUp, Edit3, Trash2, X, RefreshCw
 import toast from "react-hot-toast";
 
 export default function DevelopmentWorksPage() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const villageId = (user?.unsafeMetadata as any)?.village_id as string;
 
   const [works, setWorks] = useState<any[]>([]);
@@ -30,10 +30,12 @@ export default function DevelopmentWorksPage() {
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  const fetchWorks = async () => {
+
+
+  const fetchWorks = async (villageId?: string) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/development-works");
+      const res = await fetch(`/api/development-works?villageId=${villageId}`);
       if (res.ok) {
         const json = await res.json();
         setWorks(json.data || []);
@@ -46,8 +48,10 @@ export default function DevelopmentWorksPage() {
   };
 
   useEffect(() => {
-    fetchWorks();
-  }, []);
+    const meta = user?.unsafeMetadata as any;
+    const villageId = meta?.village_id;
+    fetchWorks(villageId);
+  }, [isLoaded, user]);
 
   const handleOpenModal = (work: any = null) => {
     if (work) {
@@ -91,7 +95,7 @@ export default function DevelopmentWorksPage() {
         });
         if (res.ok) {
           toast.success("Project updated successfully");
-          fetchWorks();
+          fetchWorks(villageId);
         } else {
           toast.error("Failed to update project");
         }
@@ -103,7 +107,7 @@ export default function DevelopmentWorksPage() {
         });
         if (res.ok) {
           toast.success("Project registered successfully");
-          fetchWorks();
+          fetchWorks(villageId);
         } else {
           toast.error("Failed to register project");
         }

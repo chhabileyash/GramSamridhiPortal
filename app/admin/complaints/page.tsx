@@ -2,15 +2,31 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Search, AlertCircle, CheckCircle, Clock, Filter, Eye, X, Save, FileText, Phone, User, Calendar, MapPin } from "lucide-react";
+import {
+  Search,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Filter,
+  Eye,
+  X,
+  Save,
+  FileText,
+  Phone,
+  User,
+  Calendar,
+  MapPin,
+} from "lucide-react";
 
 export default function ComplaintsPage() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [complaints, setComplaints] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedComplaintId, setSelectedComplaintId] = useState<number | null>(null);
+  const [selectedComplaintId, setSelectedComplaintId] = useState<number | null>(
+    null,
+  );
   const [editStatus, setEditStatus] = useState("");
   const [editPriority, setEditPriority] = useState("");
 
@@ -18,13 +34,14 @@ export default function ComplaintsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
-
   useEffect(() => {
-    const villageid = user?.unsafeMetadata?.village_id;
+    if (!isLoaded || !user) return; // Wait until user is loaded and exists
+    const meta = user?.unsafeMetadata as any;
+    const villageId = meta?.village_id;
     const fetchComplaints = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/complaints?villageId=${villageid}`);
+        const res = await fetch(`/api/complaints?villageId=${villageId}`);
         if (res.ok) {
           const json = await res.json();
           setComplaints(json.data || []);
@@ -36,7 +53,7 @@ export default function ComplaintsPage() {
       }
     };
     fetchComplaints();
-  }, []);
+  }, [isLoaded, user]);
 
   const openDetailsModal = (complaint: any) => {
     setSelectedComplaintId(complaint.id);
@@ -63,9 +80,13 @@ export default function ComplaintsPage() {
         }),
       });
       if (res.ok) {
-        setComplaints(complaints.map(cmp =>
-          cmp.id === selectedComplaintId ? { ...cmp, status: editStatus, priority: editPriority } : cmp
-        ));
+        setComplaints(
+          complaints.map((cmp) =>
+            cmp.id === selectedComplaintId
+              ? { ...cmp, status: editStatus, priority: editPriority }
+              : cmp,
+          ),
+        );
       }
     } catch (err) {
       console.error("Failed to update complaint:", err);
@@ -75,26 +96,43 @@ export default function ComplaintsPage() {
 
   // Derived Metrics
   const totalReports = complaints.length;
-  const pendingReports = complaints.filter(c => c.status === "Pending").length;
-  const progressReports = complaints.filter(c => c.status === "Progress").length;
-  const completeReports = complaints.filter(c => c.status === "Complete").length;
+  const pendingReports = complaints.filter(
+    (c) => c.status === "Pending",
+  ).length;
+  const progressReports = complaints.filter(
+    (c) => c.status === "Progress",
+  ).length;
+  const completeReports = complaints.filter(
+    (c) => c.status === "Complete",
+  ).length;
 
-  const filteredComplaints = complaints.filter(cmp => {
-    const matchesSearch = (cmp.complaintId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredComplaints = complaints.filter((cmp) => {
+    const matchesSearch =
+      (cmp.complaintId || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
       (cmp.title || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "All" || cmp.status === statusFilter;
-    const matchesCategory = categoryFilter === "All" || cmp.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === "All" || cmp.category === categoryFilter;
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
-  const selectedComplaint = complaints.find(c => c.id === selectedComplaintId);
+  const selectedComplaint = complaints.find(
+    (c) => c.id === selectedComplaintId,
+  );
 
   return (
     <>
       <section className="bg-white p-6 border-l-4 border-red-500 shadow-sm flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Complaints Management</h1>
-          <p className="text-sm text-gray-700">Track, update, and resolve citizen grievances and infrastructure issues.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Complaints Management
+          </h1>
+          <p className="text-sm text-gray-700">
+            Track, update, and resolve citizen grievances and infrastructure
+            issues.
+          </p>
         </div>
       </section>
 
@@ -105,8 +143,12 @@ export default function ComplaintsPage() {
             <FileText size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Total Reports</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{totalReports}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase">
+              Total Reports
+            </p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">
+              {totalReports}
+            </p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
@@ -114,8 +156,12 @@ export default function ComplaintsPage() {
             <AlertCircle size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Pending</p>
-            <p className="text-2xl font-bold text-yellow-600 mt-1">{pendingReports}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase">
+              Pending
+            </p>
+            <p className="text-2xl font-bold text-yellow-600 mt-1">
+              {pendingReports}
+            </p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
@@ -123,8 +169,12 @@ export default function ComplaintsPage() {
             <Clock size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">In Progress</p>
-            <p className="text-2xl font-bold text-blue-600 mt-1">{progressReports}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase">
+              In Progress
+            </p>
+            <p className="text-2xl font-bold text-blue-600 mt-1">
+              {progressReports}
+            </p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
@@ -132,8 +182,12 @@ export default function ComplaintsPage() {
             <CheckCircle size={24} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-semibold uppercase">Complete</p>
-            <p className="text-2xl font-bold text-[#138808] mt-1">{completeReports}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase">
+              Complete
+            </p>
+            <p className="text-2xl font-bold text-[#138808] mt-1">
+              {completeReports}
+            </p>
           </div>
         </div>
       </section>
@@ -142,7 +196,10 @@ export default function ComplaintsPage() {
       <section className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="text"
               placeholder="Search complaints by ID or Title..."
@@ -154,7 +211,9 @@ export default function ComplaintsPage() {
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
             <div className="flex items-center gap-1.5 min-w-max">
               <Filter size={16} className="text-gray-500" />
-              <span className="text-sm font-medium text-gray-600 mr-1">Filter:</span>
+              <span className="text-sm font-medium text-gray-600 mr-1">
+                Filter:
+              </span>
             </div>
             <select
               value={categoryFilter}
@@ -200,55 +259,88 @@ export default function ComplaintsPage() {
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
                     Loading complaints...
                   </td>
                 </tr>
               ) : filteredComplaints.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
                     No complaints found matching your criteria.
                   </td>
                 </tr>
-              ) : filteredComplaints.map((complaint) => (
-                <tr key={complaint.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">{complaint.complaintId}</td>
-                  <td className="px-6 py-4">
-                    <p className="font-bold text-[#2c5577] mb-1">{complaint.title}</p>
-                    <p className="text-xs text-gray-500">{complaint.category}</p>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-600 font-medium">
-                    {complaint.createdAt ? new Date(complaint.createdAt).toLocaleDateString('en-IN') : '-'}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 flex justify-center items-center rounded-md text-xs font-bold w-full mx-auto max-w-[90px] ${complaint.priority === 'Critical' ? 'bg-red-100 text-red-800 border border-red-200' :
-                        complaint.priority === 'High' ? 'bg-orange-100 text-orange-800 border border-orange-200' :
-                          complaint.priority === 'Medium' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                            'bg-gray-100 text-gray-800 border border-gray-200'
-                      }`}>
-                      {complaint.priority || "Medium"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 flex justify-center py-1.5 rounded-full text-xs font-bold w-full mx-auto max-w-[100px] ${complaint.status === 'Complete' ? 'bg-green-100 text-green-800' :
-                        complaint.status === 'Progress' ? 'bg-blue-100 text-blue-800' :
-                          complaint.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                      }`}>
-                      {complaint.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => openDetailsModal(complaint)}
-                      className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded shadow-sm hover:bg-red-100 transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-red-500"
-                    >
-                      <Eye size={14} />
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              ) : (
+                filteredComplaints.map((complaint) => (
+                  <tr
+                    key={complaint.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
+                      {complaint.complaintId}
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-bold text-[#2c5577] mb-1">
+                        {complaint.title}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {complaint.category}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-600 font-medium">
+                      {complaint.createdAt
+                        ? new Date(complaint.createdAt).toLocaleDateString(
+                            "en-IN",
+                          )
+                        : "-"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2 py-1 flex justify-center items-center rounded-md text-xs font-bold w-full mx-auto max-w-[90px] ${
+                          complaint.priority === "Critical"
+                            ? "bg-red-100 text-red-800 border border-red-200"
+                            : complaint.priority === "High"
+                              ? "bg-orange-100 text-orange-800 border border-orange-200"
+                              : complaint.priority === "Medium"
+                                ? "bg-blue-100 text-blue-800 border border-blue-200"
+                                : "bg-gray-100 text-gray-800 border border-gray-200"
+                        }`}
+                      >
+                        {complaint.priority || "Medium"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2 flex justify-center py-1.5 rounded-full text-xs font-bold w-full mx-auto max-w-[100px] ${
+                          complaint.status === "Complete"
+                            ? "bg-green-100 text-green-800"
+                            : complaint.status === "Progress"
+                              ? "bg-blue-100 text-blue-800"
+                              : complaint.status === "Pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {complaint.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => openDetailsModal(complaint)}
+                        className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded shadow-sm hover:bg-red-100 transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-red-500"
+                      >
+                        <Eye size={14} />
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -264,7 +356,9 @@ export default function ComplaintsPage() {
                   <AlertCircle className="text-red-500" size={20} />
                   Complaint Review
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5">Ticket: {selectedComplaint.complaintId}</p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Ticket: {selectedComplaint.complaintId}
+                </p>
               </div>
               <button
                 onClick={closeDetailsModal}
@@ -277,7 +371,9 @@ export default function ComplaintsPage() {
             <div className="p-6 overflow-y-auto">
               {/* Complaint Info */}
               <div className="mb-6">
-                <h3 className="text-lg font-bold text-[#2c5577] mb-2">{selectedComplaint.title}</h3>
+                <h3 className="text-lg font-bold text-[#2c5577] mb-2">
+                  {selectedComplaint.title}
+                </h3>
                 <p className="text-sm text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-md border border-gray-100">
                   {selectedComplaint.description}
                 </p>
@@ -289,17 +385,31 @@ export default function ComplaintsPage() {
                   <div className="flex items-start gap-3">
                     <Calendar size={18} className="text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Logged Date</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Logged Date
+                      </p>
                       <p className="text-sm font-semibold text-gray-900">
-                        {selectedComplaint.createdAt ? new Date(selectedComplaint.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '-'}
+                        {selectedComplaint.createdAt
+                          ? new Date(
+                              selectedComplaint.createdAt,
+                            ).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            })
+                          : "-"}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <FileText size={18} className="text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Category</p>
-                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.category}</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Category
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {selectedComplaint.category}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -308,8 +418,12 @@ export default function ComplaintsPage() {
                   <div className="flex items-start gap-3">
                     <User size={18} className="text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Complainant Contact</p>
-                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.citizenName || "Not provided"}</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Complainant Contact
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {selectedComplaint.citizenName || "Not provided"}
+                      </p>
                       {selectedComplaint.citizenContact && (
                         <p className="text-xs text-[#2c5577] font-medium flex items-center gap-1 mt-0.5">
                           <Phone size={10} /> {selectedComplaint.citizenContact}
@@ -320,8 +434,12 @@ export default function ComplaintsPage() {
                   <div className="flex items-start gap-3">
                     <MapPin size={18} className="text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-500 font-medium">Location</p>
-                      <p className="text-sm font-semibold text-gray-900">{selectedComplaint.location || "Not specified"}</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Location
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {selectedComplaint.location || "Not specified"}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -329,10 +447,14 @@ export default function ComplaintsPage() {
 
               {/* Admin Controls */}
               <div className="bg-blue-50/50 p-5 rounded-lg border border-blue-100">
-                <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Admin Controls Update</h4>
+                <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
+                  Admin Controls Update
+                </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">Update Status</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                      Update Status
+                    </label>
                     <select
                       value={editStatus}
                       onChange={(e) => setEditStatus(e.target.value)}
@@ -344,7 +466,9 @@ export default function ComplaintsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">Update Priority</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                      Update Priority
+                    </label>
                     <select
                       value={editPriority}
                       onChange={(e) => setEditPriority(e.target.value)}

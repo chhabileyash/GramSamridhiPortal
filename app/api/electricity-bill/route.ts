@@ -22,7 +22,7 @@ export async function GET(req: Request) {
             data = await db.select().from(electricityBills).where(
                 and(
                     eq(electricityBills.villageId, villageIdParam),
-                    eq(electricityBills.userId, userId)
+                    !isAdmin ? eq(electricityBills.userId, userId) : undefined
                 )
             ).orderBy(desc(electricityBills.createdAt));
         } else {

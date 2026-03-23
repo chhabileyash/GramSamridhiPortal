@@ -2,10 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Search, Eye, CheckCircle, XCircle, X, Filter, Droplet, Wallet, Clock, Loader2 } from "lucide-react";
+import {
+  Search,
+  Eye,
+  CheckCircle,
+  XCircle,
+  X,
+  Filter,
+  Droplet,
+  Wallet,
+  Clock,
+  Loader2,
+} from "lucide-react";
 
 export default function WaterTaxPage() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [taxes, setTaxes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -17,10 +28,11 @@ export default function WaterTaxPage() {
   const [financialYearFilter, setFinancialYearFilter] = useState("All");
 
   useEffect(() => {
-    const fetchTaxes = async () => {
+    
+    const fetchTaxes = async (villageId?: string) => {
       setIsLoading(true);
       try {
-        const res = await fetch("/api/water-tax");
+        const res = await fetch(`/api/water-tax?villageId=${villageId}`);
         if (res.ok) {
           const json = await res.json();
           setTaxes(json.data || []);
@@ -31,8 +43,10 @@ export default function WaterTaxPage() {
         setIsLoading(false);
       }
     };
-    fetchTaxes();
-  }, []);
+    const meta = user?.unsafeMetadata as any;
+    const villageId = meta?.village_id;
+    fetchTaxes(villageId);
+  }, [user, isLoaded]);
 
   const handleOpenProof = (id: number) => {
     setSelectedTaxId(id);
@@ -53,9 +67,11 @@ export default function WaterTaxPage() {
         body: JSON.stringify({ id: selectedTaxId, status: newStatus }),
       });
       if (res.ok) {
-        setTaxes(taxes.map(tax =>
-          tax.id === selectedTaxId ? { ...tax, status: newStatus } : tax
-        ));
+        setTaxes(
+          taxes.map((tax) =>
+            tax.id === selectedTaxId ? { ...tax, status: newStatus } : tax,
+          ),
+        );
       }
     } catch (err) {
       console.error("Failed to update status:", err);
@@ -66,27 +82,39 @@ export default function WaterTaxPage() {
   const handleAccept = () => handleUpdateStatus("Paid");
   const handleReject = () => handleUpdateStatus("Denied");
 
-  const filteredTaxes = taxes.filter(tax => {
-    const matchesSearch = (tax.invoiceId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredTaxes = taxes.filter((tax) => {
+    const matchesSearch =
+      (tax.invoiceId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (tax.ownerName || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesYear = financialYearFilter === "All" || tax.financialYear === financialYearFilter;
+    const matchesYear =
+      financialYearFilter === "All" ||
+      tax.financialYear === financialYearFilter;
     return matchesSearch && matchesYear;
   });
 
-  const selectedTax = taxes.find(t => t.id === selectedTaxId);
+  const selectedTax = taxes.find((t) => t.id === selectedTaxId);
 
   // Metrics Logic
   const totalInvoices = taxes.length;
-  const totalRevenue = taxes.filter(t => t.status === "Paid").reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
-  const pendingRequests = taxes.filter(t => t.status === "Reviewing" || t.status === "Pending").length;
-  const paidCount = taxes.filter(t => t.status === "Paid").length;
+  const totalRevenue = taxes
+    .filter((t) => t.status === "Paid")
+    .reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
+  const pendingRequests = taxes.filter(
+    (t) => t.status === "Reviewing" || t.status === "Pending",
+  ).length;
+  const paidCount = taxes.filter((t) => t.status === "Paid").length;
 
   return (
     <>
       <section className="bg-white p-6 border-l-4 border-cyan-500 shadow-sm flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Water Tax Management</h1>
-          <p className="text-sm text-gray-700">Review water tax payment proofs, accept or deny submissions, and track collections.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Water Tax Management
+          </h1>
+          <p className="text-sm text-gray-700">
+            Review water tax payment proofs, accept or deny submissions, and
+            track collections.
+          </p>
         </div>
       </section>
 
@@ -97,8 +125,12 @@ export default function WaterTaxPage() {
             <Droplet size={24} />
           </div>
           <div className="min-w-0">
-            <p className="text-sm text-gray-500 font-semibold uppercase truncate">Total Records</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1 truncate">{totalInvoices}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase truncate">
+              Total Records
+            </p>
+            <p className="text-2xl font-bold text-gray-900 mt-1 truncate">
+              {totalInvoices}
+            </p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
@@ -106,8 +138,12 @@ export default function WaterTaxPage() {
             <Wallet size={24} />
           </div>
           <div className="min-w-0">
-            <p className="text-sm text-gray-500 font-semibold uppercase truncate">Total Revenue</p>
-            <p className="text-2xl font-bold text-green-600 mt-1 truncate">₹{totalRevenue.toLocaleString('en-IN')}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase truncate">
+              Total Revenue
+            </p>
+            <p className="text-2xl font-bold text-green-600 mt-1 truncate">
+              ₹{totalRevenue.toLocaleString("en-IN")}
+            </p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
@@ -115,8 +151,12 @@ export default function WaterTaxPage() {
             <Clock size={24} />
           </div>
           <div className="min-w-0">
-            <p className="text-sm text-gray-500 font-semibold uppercase truncate">Pending Verification</p>
-            <p className="text-2xl font-bold text-yellow-600 mt-1 truncate">{pendingRequests}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase truncate">
+              Pending Verification
+            </p>
+            <p className="text-2xl font-bold text-yellow-600 mt-1 truncate">
+              {pendingRequests}
+            </p>
           </div>
         </div>
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
@@ -124,8 +164,12 @@ export default function WaterTaxPage() {
             <CheckCircle size={24} />
           </div>
           <div className="min-w-0">
-            <p className="text-sm text-gray-500 font-semibold uppercase truncate">Verified Payments</p>
-            <p className="text-2xl font-bold text-blue-600 mt-1 truncate">{paidCount}</p>
+            <p className="text-sm text-gray-500 font-semibold uppercase truncate">
+              Verified Payments
+            </p>
+            <p className="text-2xl font-bold text-blue-600 mt-1 truncate">
+              {paidCount}
+            </p>
           </div>
         </div>
       </section>
@@ -134,7 +178,10 @@ export default function WaterTaxPage() {
       <section className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
           <div className="relative w-full sm:max-w-md md:max-w-lg lg:w-[450px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="text"
               placeholder="Search by Invoice ID or Owner Name..."
@@ -146,7 +193,9 @@ export default function WaterTaxPage() {
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="flex items-center gap-1.5 min-w-max hidden sm:flex">
               <Filter size={16} className="text-gray-500" />
-              <span className="text-sm font-medium text-gray-600 mr-1">Filter:</span>
+              <span className="text-sm font-medium text-gray-600 mr-1">
+                Filter:
+              </span>
             </div>
             <select
               value={financialYearFilter}
@@ -180,47 +229,84 @@ export default function WaterTaxPage() {
                 <tr>
                   <td colSpan={7} className="px-6 py-20 text-center">
                     <Loader2 className="w-8 h-8 text-cyan-500 animate-spin mx-auto mb-3" />
-                    <p className="text-gray-500 font-medium text-sm">Loading water tax records...</p>
+                    <p className="text-gray-500 font-medium text-sm">
+                      Loading water tax records...
+                    </p>
                   </td>
                 </tr>
               ) : filteredTaxes.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td
+                    colSpan={7}
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
                     No tax records found matching your criteria.
                   </td>
                 </tr>
-              ) : filteredTaxes.map((tax) => (
-                <tr key={tax.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap text-xs">{tax.invoiceId}</td>
-                  <td className="px-6 py-4 text-gray-600 text-xs font-semibold">{tax.connectionId}</td>
-                  <td className="px-6 py-4 font-bold text-[#2c5577]">{tax.ownerName}</td>
-                  <td className="px-6 py-4 font-medium text-gray-700 text-xs">{tax.financialYear}</td>
-                  <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">₹ {parseFloat(tax.amount).toFixed(2)}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 flex items-center justify-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider max-w-[120px] mx-auto ${tax.status === 'Paid' ? 'bg-green-100 text-green-800' :
-                      (tax.status === 'Reviewing' || tax.status === 'Pending') ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                      {tax.status === 'Paid' && <CheckCircle size={12} className="mr-1.5" />}
-                      {(tax.status === 'Reviewing' || tax.status === 'Pending') && <Clock size={12} className="mr-1.5" />}
-                      {tax.status === 'Denied' && <XCircle size={12} className="mr-1.5" />}
-                      {tax.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {(tax.status === 'Reviewing' || tax.status === 'Pending') ? (
-                      <button
-                        onClick={() => handleOpenProof(tax.id)}
-                        className="inline-flex items-center gap-1.5 bg-[#2c5577] text-white px-3 py-1.5 rounded shadow-sm hover:bg-[#1a364d] transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-[#2c5577]"
+              ) : (
+                filteredTaxes.map((tax) => (
+                  <tr
+                    key={tax.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap text-xs">
+                      {tax.invoiceId}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600 text-xs font-semibold">
+                      {tax.connectionId}
+                    </td>
+                    <td className="px-6 py-4 font-bold text-[#2c5577]">
+                      {tax.ownerName}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-700 text-xs">
+                      {tax.financialYear}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">
+                      ₹ {parseFloat(tax.amount).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2 flex items-center justify-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider max-w-[120px] mx-auto ${
+                          tax.status === "Paid"
+                            ? "bg-green-100 text-green-800"
+                            : tax.status === "Reviewing" ||
+                                tax.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
                       >
-                        <Eye size={14} />
-                        View Proof </button>
-                    ) : (
-                      <span className="text-gray-400 text-[11px] font-bold italic uppercase">Action Completed</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                        {tax.status === "Paid" && (
+                          <CheckCircle size={12} className="mr-1.5" />
+                        )}
+                        {(tax.status === "Reviewing" ||
+                          tax.status === "Pending") && (
+                          <Clock size={12} className="mr-1.5" />
+                        )}
+                        {tax.status === "Denied" && (
+                          <XCircle size={12} className="mr-1.5" />
+                        )}
+                        {tax.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {tax.status === "Reviewing" ||
+                      tax.status === "Pending" ? (
+                        <button
+                          onClick={() => handleOpenProof(tax.id)}
+                          className="inline-flex items-center gap-1.5 bg-[#2c5577] text-white px-3 py-1.5 rounded shadow-sm hover:bg-[#1a364d] transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-[#2c5577]"
+                        >
+                          <Eye size={14} />
+                          View Proof{" "}
+                        </button>
+                      ) : (
+                        <span className="text-gray-400 text-[11px] font-bold italic uppercase">
+                          Action Completed
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -236,7 +322,9 @@ export default function WaterTaxPage() {
                   <Search className="text-cyan-500" size={20} />
                   Payment Proof Review
                 </h2>
-                <p className="text-xs text-gray-500 mt-1">Invoice: {selectedTax.invoiceId}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Invoice: {selectedTax.invoiceId}
+                </p>
               </div>
               <button
                 onClick={handleCloseProof}
@@ -248,29 +336,48 @@ export default function WaterTaxPage() {
 
             <div className="p-6 bg-gray-50 flex flex-col items-center justify-center">
               <div className="w-full bg-white border border-gray-200 rounded-lg p-6 shadow-sm flex flex-col items-center justify-center gap-2">
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Payment Reference Number</span>
-                <span className="text-2xl font-black text-cyan-600 tracking-widest">{selectedTax.referenceNumber || "N/A"}</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">
+                  Payment Reference Number
+                </span>
+                <span className="text-2xl font-black text-cyan-600 tracking-widest">
+                  {selectedTax.referenceNumber || "N/A"}
+                </span>
               </div>
 
               <div className="w-full mt-6 bg-white border border-gray-200 rounded p-5 shadow-sm text-sm">
                 <div className="grid grid-cols-2 gap-y-4 gap-x-4">
                   <div>
-                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">Property Owner</span>
-                    <span className="font-bold text-gray-900">{selectedTax.ownerName}</span>
+                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">
+                      Property Owner
+                    </span>
+                    <span className="font-bold text-gray-900">
+                      {selectedTax.ownerName}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">Connection ID</span>
-                    <span className="font-bold text-gray-900">{selectedTax.connectionId}</span>
+                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">
+                      Connection ID
+                    </span>
+                    <span className="font-bold text-gray-900">
+                      {selectedTax.connectionId}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">Declared Amount</span>
-                    <span className="font-black text-cyan-600 text-lg">₹ {parseFloat(selectedTax.amount).toFixed(2)}</span>
+                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">
+                      Declared Amount
+                    </span>
+                    <span className="font-black text-cyan-600 text-lg">
+                      ₹ {parseFloat(selectedTax.amount).toFixed(2)}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">Payment Date</span>
-                    <span className="font-semibold text-gray-900">{selectedTax.paymentDate}</span>
+                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider block mb-0.5">
+                      Payment Date
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {selectedTax.paymentDate}
+                    </span>
                   </div>
-
                 </div>
               </div>
             </div>
