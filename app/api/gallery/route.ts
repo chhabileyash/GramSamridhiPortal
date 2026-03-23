@@ -21,7 +21,7 @@ export async function GET(req: Request) {
       (village.images || []).map((img) => ({
         ...img,
         villageId: village.villageIdString,
-        villageName: village.name || undefined,
+        villageName:  undefined,
       })),
     )
     .filter((img) => img.url);
