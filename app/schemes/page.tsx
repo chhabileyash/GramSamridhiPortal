@@ -6,8 +6,8 @@ import { Search, Info, Calendar, ExternalLink, X, FileText, LayoutList, ListFilt
 import { Sidebar } from "@/components/Sidebar";
 
 export default function UserSchemesPage() {
-  const { user } = useUser();
-  const villageId = user?.publicMetadata?.villageId as string;
+  const { user,isLoaded } = useUser();
+  
 
   const [schemes, setSchemes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -16,10 +16,11 @@ export default function UserSchemesPage() {
   const [selectedScheme, setSelectedScheme] = useState<any | null>(null);
 
   useEffect(() => {
+    const villageId = user?.unsafeMetadata?.village_id as string;
     const fetchSchemes = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/schemes${villageId ? `?villageId=${villageId}` : ""}`);
+        const res = await fetch(`/api/schemes?villageId=${encodeURIComponent(villageId)}`);
         if (res.ok) {
           const json = await res.json();
           setSchemes(json.data || []);
@@ -31,7 +32,7 @@ export default function UserSchemesPage() {
       }
     };
     fetchSchemes();
-  }, [villageId]);
+  }, [ isLoaded, user]);
 
   const filteredSchemes = schemes.filter(scheme => {
     const matchesSearch =

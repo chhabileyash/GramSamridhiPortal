@@ -15,7 +15,7 @@ type Notification = {
 };
 
 export default function Notifications() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,10 +25,10 @@ export default function Notifications() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const fetchNotifications = async (villageId?: string) => {
       setIsLoading(true);
       try {
-        const res = await fetch("/api/notifications");
+        const res = await fetch(`/api/notifications${villageId ? `?villageId=${villageId}` : ""}`);
         if (res.ok) {
           const json = await res.json();
           setNotifications(json.data || []);
@@ -39,8 +39,10 @@ export default function Notifications() {
         setIsLoading(false);
       }
     };
-    fetchNotifications();
-  }, []);
+    const meta = user?.unsafeMetadata as any;
+    const villageId = meta?.village_id;
+    fetchNotifications(villageId);
+  }, [isLoaded, user]);
 
   const filteredNotifications = notifications.filter(notif =>
     notif.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
