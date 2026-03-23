@@ -47,8 +47,10 @@ export default function DevelopmentWorks() {
     };
     const meta = user?.unsafeMetadata as any;
     const villageId = meta?.village_id;
+    console.log();
+    
     fetchWorks(villageId);
-  }, []);
+  }, [user, isLoaded]);
 
   const filteredWorks = works.filter(w => {
     const matchesSearch = (w.projectId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
