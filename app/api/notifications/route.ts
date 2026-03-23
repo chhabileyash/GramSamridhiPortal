@@ -16,9 +16,7 @@ export async function GET(req: Request) {
                 .from(notifications)
                 .where(eq(notifications.villageId, villageIdParam))
                 .orderBy(desc(notifications.createdAt));
-        } else {
-            data = await db.select().from(notifications).orderBy(desc(notifications.createdAt));
-        }
+        } 
         return NextResponse.json({ data: data || [] });
     } catch (error: any) {
         console.error("Notifications GET Error:", error);
