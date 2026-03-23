@@ -20,10 +20,11 @@ export default function ComplaintsPage() {
   const [categoryFilter, setCategoryFilter] = useState("All");
 
   useEffect(() => {
+    const villageid = user?.unsafeMetadata?.village_id;
     const fetchComplaints = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch("/api/complaints");
+        const res = await fetch(`/api/complaints?villageId=${villageid}`);
         if (res.ok) {
           const json = await res.json();
           setComplaints(json.data || []);
