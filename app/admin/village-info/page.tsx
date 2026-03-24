@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Save, Map, Users, Phone, Image as ImageIcon, Trash2, Upload } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { CldUploadWidget } from "next-cloudinary";
 
 export default function VillageInfoPage() {
   const { user, isLoaded } = useUser();
@@ -120,21 +121,6 @@ export default function VillageInfoPage() {
   };
 
   // Image Multi-Upload Management
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const selectedFiles = Array.from(e.target.files);
-      const newImages = selectedFiles.map((file, index) => ({
-        file: file,
-        url: URL.createObjectURL(file), // Generate local preview URL
-        title: file.name.split('.')[0], // Use filename as default title
-        type: "gallery",
-        isPrimary: images.length === 0 && index === 0 // First ever image is primary by default
-      }));
-      setImages(prev => [...prev, ...newImages]);
-    }
-    // Reset file input so the exact same files can be selected again if needed
-    e.target.value = '';
-  };
 
   const removeImage = (index: number) => {
     setImages(prev => {
@@ -366,17 +352,34 @@ export default function VillageInfoPage() {
                 <ImageIcon className="text-blue-500 w-5 h-5" />
                 <h2 className="text-lg font-bold text-gray-900">4. Display Images</h2>
               </div>
-              <label className="border-2 border-blue-600 text-black hover:bg-blue-700  px-3 py-1.5 rounded text-sm font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
-                <Upload size={16} />
-                <span>Upload</span>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
+              <CldUploadWidget 
+                signatureEndpoint="/api/cloudinary-sign"
+                options={{ multiple: true }}
+                onSuccess={(result: any) => {
+                  if (result.event !== "success") return;
+                  const url = result.info.secure_url;
+                  setImages(prev => {
+                    const newImage = {
+                      file: null,
+                      url: url,
+                      title: result.info.original_filename || "Untitled",
+                      type: "gallery",
+                      isPrimary: prev.length === 0
+                    };
+                    return [...prev, newImage];
+                  });
+                }}
+              >
+                {({ open }) => (
+                  <button
+                    onClick={(e) => { e.preventDefault(); open(); }}
+                    className="border-2 border-blue-600 text-black hover:bg-blue-800 px-3 py-1.5 rounded text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <Upload size={16} />
+                    <span>Upload Media</span>
+                  </button>
+                )}
+              </CldUploadWidget>
             </div>
 
             <div className="p-4 space-y-4 overflow-y-auto bg-gray-50 flex-1">

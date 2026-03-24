@@ -3,6 +3,7 @@ import React from "react";
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { Trash2 } from "lucide-react";
 
 type GalleryImage = {
   url: string;
@@ -21,6 +22,26 @@ export default function GalleryPage() {
   
   const meta = user?.unsafeMetadata as any;
   const villageId = meta?.village_id;
+
+  const handleDelete = async (e: React.MouseEvent, imgUrl: string, imgVillageId: string) => {
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this image?")) return;
+
+    try {
+      const res = await fetch("/api/gallery", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: imgUrl, villageId: imgVillageId }),
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete");
+      
+      setImages(prev => prev.filter(img => img.url !== imgUrl));
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -52,25 +73,41 @@ export default function GalleryPage() {
             No images found.
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
             {images.map((img, idx) => (
               <div
                 key={idx}
-                className="mb-6 break-inside-avoid bg-white rounded shadow border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                className="group relative mb-6 break-inside-avoid bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-2xl transition-all duration-500 cursor-pointer"
               >
+                {/* True masonry requires natural image heights */}
                 <img
                   src={img.url}
                   alt={img.title || `Gallery Image ${idx + 1}`}
-                  className="w-full object-cover hover:scale-[1.03] transition-transform duration-300"
-                  style={{ maxHeight: 340, minHeight: 180 }}
+                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
-                <div className="p-3 text-center text-[#1F4E79] font-medium text-base border-t border-gray-50 bg-[#FAF9F5]">
-                  {img.title || "Untitled"}
+                
+                {/* Delete Button (Only for authorized village admin) */}
+                {user && img.villageId === villageId && (
+                  <button
+                    onClick={(e) => handleDelete(e, img.url, img.villageId!)}
+                    className="absolute top-4 right-4 z-10 bg-red-500/80 hover:bg-red-600 shadow-md text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm"
+                    title="Delete Image"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
+                
+                {/* Gradient Data Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020817]/90 via-[#020817]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
+                  <h3 className="text-white font-bold text-lg transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+                    {img.title || "Untitled"}
+                  </h3>
                   {img.villageName && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <p className="text-blue-100 text-sm mt-1 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 delay-75 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
                       {img.villageName}
-                    </div>
+                    </p>
                   )}
                 </div>
               </div>

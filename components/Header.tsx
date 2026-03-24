@@ -95,7 +95,6 @@ const HeaderContent = memo(function HeaderContent({
     if (isAdmin) {
       return [
         { path: "/admin/home", label: "Dashboard" },
-        { path: "/admin/users", label: "Users" },
         { path: "/admin/schemes", label: "Schemes" },
         { path: "/admin/complaints", label: "Complaints" },
       ];

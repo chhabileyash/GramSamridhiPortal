@@ -2,8 +2,13 @@ import { db } from "@/src";
 import { customVillageInfo } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: Request) {
     try {
@@ -19,8 +24,6 @@ export async function POST(req: Request) {
 
         // Process Images
         const imagesList: any[] = [];
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        await fs.mkdir(uploadDir, { recursive: true });
 
         // Handle up to 20 images
         for (let i = 0; i < 20; i++) {
@@ -32,9 +35,20 @@ export async function POST(req: Request) {
 
             if (file && file.size > 0) {
                 const buffer = Buffer.from(await file.arrayBuffer());
-                const filename = `${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
-                await fs.writeFile(path.join(uploadDir, filename), buffer);
-                meta.url = `/uploads/${filename}`;
+                
+                // Upload to Cloudinary using upload_stream
+                const uploadResult = await new Promise((resolve, reject) => {
+                    const uploadStream = cloudinary.uploader.upload_stream(
+                        { folder: "village-info" },
+                        (error, result) => {
+                            if (error) return reject(error);
+                            resolve(result);
+                        }
+                    );
+                    uploadStream.end(buffer);
+                }) as any;
+                
+                meta.url = uploadResult.secure_url;
             }
             imagesList.push({
                 url: meta.url,
