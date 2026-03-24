@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { Search, Map, TrendingUp, CheckCircle, Clock, X, ChevronRight, Calendar, Info } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Work = {
   id: number;
@@ -155,14 +156,21 @@ export default function DevelopmentWorks() {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {isLoading ? (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="w-6 h-6 border-2 border-[#0052cc] border-t-transparent rounded-full animate-spin"></div>
-                            <span>Loading projects...</span>
-                          </div>
-                        </td>
-                      </tr>
+                      [...Array(5)].map((_, i) => (
+                        <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-100">
+                          <td className="px-6 py-4"><Skeleton className="h-4 w-12" /></td>
+                          <td className="px-6 py-4"><Skeleton className="h-4 w-40 mb-2" /><Skeleton className="h-3 w-24" /></td>
+                          <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <Skeleton className="h-2 w-full rounded-full" />
+                              <Skeleton className="h-3 w-8 shrink-0" />
+                            </div>
+                          </td>
+                          <td className="px-6 py-4"><Skeleton className="h-6 w-24 mx-auto rounded-md" /></td>
+                          <td className="px-6 py-4 text-right"><Skeleton className="h-4 w-16 ml-auto" /></td>
+                        </tr>
+                      ))
                     ) : filteredWorks.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-slate-400">

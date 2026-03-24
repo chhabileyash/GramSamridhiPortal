@@ -8,6 +8,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminHomePage() {
   const { user, isLoaded } = useUser();
@@ -61,52 +62,52 @@ export default function AdminHomePage() {
         <div className="p-6 bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col justify-center items-center">
           <Users className="w-10 h-10 text-[#FF9933] mb-2" />
           <h2 className="text-lg font-semibold text-gray-600">Total Users</h2>
-          <p className="text-3xl text-gray-900 font-bold mt-1">
+          <div className="mt-1 h-9 flex items-center justify-center">
             {loading ? (
-              <Loader2 className="animate-spin" />
+              <Skeleton className="h-8 w-16" />
             ) : (
-              (stats?.totalUsers ?? "-")
+              <span className="text-3xl text-gray-900 font-bold">{stats?.totalUsers ?? "-"}</span>
             )}
-          </p>
+          </div>
         </div>
         <div className="p-6 bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col justify-center items-center">
           <AlertTriangle className="w-10 h-10 text-red-500 mb-2" />
           <h2 className="text-lg font-semibold text-gray-600">
             Pending Complaints
           </h2>
-          <p className="text-3xl text-gray-900 font-bold mt-1">
+          <div className="mt-1 h-9 flex items-center justify-center">
             {loading ? (
-              <Loader2 className="animate-spin" />
+              <Skeleton className="h-8 w-16" />
             ) : (
-              (stats?.pendingComplaints ?? "-")
+              <span className="text-3xl text-gray-900 font-bold">{stats?.pendingComplaints ?? "-"}</span>
             )}
-          </p>
+          </div>
         </div>
         <div className="p-6 bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col justify-center items-center">
           <FileText className="w-10 h-10 text-blue-500 mb-2" />
           <h2 className="text-lg font-semibold text-gray-600">
             Active Schemes
           </h2>
-          <p className="text-3xl text-gray-900 font-bold mt-1">
+          <div className="mt-1 h-9 flex items-center justify-center">
             {loading ? (
-              <Loader2 className="animate-spin" />
+              <Skeleton className="h-8 w-16" />
             ) : (
-              (stats?.activeSchemes ?? "-")
+              <span className="text-3xl text-gray-900 font-bold">{stats?.activeSchemes ?? "-"}</span>
             )}
-          </p>
+          </div>
         </div>
         <div className="p-6 bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col justify-center items-center">
           <CheckCircle className="w-10 h-10 text-green-500 mb-2" />
           <h2 className="text-lg font-semibold text-gray-600">
             Ongoing Dev. Works
           </h2>
-          <p className="text-3xl text-gray-900 font-bold mt-1">
+          <div className="mt-1 h-9 flex items-center justify-center">
             {loading ? (
-              <Loader2 className="animate-spin" />
+              <Skeleton className="h-8 w-16" />
             ) : (
-              (stats?.ongoingDevelopmentWorks ?? "-")
+              <span className="text-3xl text-gray-900 font-bold">{stats?.ongoingDevelopmentWorks ?? "-"}</span>
             )}
-          </p>
+          </div>
         </div>
       </section>
 
@@ -115,8 +116,14 @@ export default function AdminHomePage() {
           Recent Complaints
         </h2>
         {loading ? (
-          <div className="flex items-center gap-2 text-gray-500">
-            <Loader2 className="animate-spin" /> Loading...
+          <div className="flex flex-col gap-3 mt-2">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-3 pt-1">
+                <Skeleton className="h-5 w-48 bg-gray-200" />
+                <Skeleton className="h-4 w-24 bg-gray-200" />
+                <Skeleton className="h-4 w-20 bg-gray-200 md:ml-auto" />
+              </div>
+            ))}
           </div>
         ) : error ? (
           <div className="text-red-500">{error}</div>

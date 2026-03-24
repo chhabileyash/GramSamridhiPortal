@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Search, Info, Calendar, ExternalLink, X, FileText, LayoutList, ListFilter } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserSchemesPage() {
   const { user,isLoaded } = useUser();
@@ -103,11 +104,15 @@ export default function UserSchemesPage() {
                   </thead>
                   <tbody>
                     {isLoading ? (
-                      <tr>
-                        <td colSpan={5} className="py-12 text-center text-slate-500">
-                          <p className="font-medium">Loading schemes...</p>
-                        </td>
-                      </tr>
+                      [...Array(4)].map((_, i) => (
+                        <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-100">
+                          <td className="py-4 px-6"><Skeleton className="h-4 w-3/4 mb-2" /><Skeleton className="h-3 w-full" /></td>
+                          <td className="py-4 px-6"><Skeleton className="h-6 w-16" /></td>
+                          <td className="py-4 px-6"><Skeleton className="h-4 w-24" /></td>
+                          <td className="py-4 px-6"><Skeleton className="h-4 w-20" /></td>
+                          <td className="py-4 px-6 text-right"><Skeleton className="h-8 w-24 ml-auto" /></td>
+                        </tr>
+                      ))
                     ) : filteredSchemes.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="py-12 text-center text-slate-500">

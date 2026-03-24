@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { Save, Map, Users, Phone, Image as ImageIcon, Trash2, Upload } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { CldUploadWidget } from "next-cloudinary";
+import dynamic from "next/dynamic";
+
+const CldUploadWidget = dynamic(() => import("next-cloudinary").then(m => m.CldUploadWidget), { ssr: false });
 
 export default function VillageInfoPage() {
   const { user, isLoaded } = useUser();

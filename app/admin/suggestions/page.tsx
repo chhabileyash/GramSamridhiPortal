@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { MessageSquare, Calendar, User, Search, Trash2, Filter } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SuggestionsPage() {
     const { user, isLoaded } = useUser();
@@ -106,7 +107,27 @@ export default function SuggestionsPage() {
             <div className="bg-white border border-gray-200 rounded-sm shadow-sm">
                 <div className="divide-y divide-gray-100">
                     {isLoading ? (
-                        <div className="p-12 text-center text-gray-500">Loading suggestions...</div>
+                        <div className="animate-in fade-in duration-500">
+                            {[...Array(4)].map((_, i) => (
+                                <div key={i} className="p-5">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div className="flex items-center gap-3">
+                                            <Skeleton className="h-4 w-32" />
+                                            <Skeleton className="h-3 w-4" />
+                                            <Skeleton className="h-4 w-24" />
+                                            <Skeleton className="h-3 w-4" />
+                                            <Skeleton className="h-4 w-20 rounded-full" />
+                                        </div>
+                                        <Skeleton className="h-4 w-16" />
+                                    </div>
+                                    <Skeleton className="h-4 w-48 mb-2" />
+                                    <div className="space-y-2 mt-2">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-5/6" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     ) : filteredSuggestions.length === 0 ? (
                         <div className="p-12 text-center text-gray-500">
                             <MessageSquare className="w-10 h-10 text-gray-200 mx-auto mb-3" />

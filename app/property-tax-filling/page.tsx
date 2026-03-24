@@ -14,6 +14,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PropertyTaxFiling() {
   const { user } = useUser();
@@ -170,7 +171,17 @@ export default function PropertyTaxFiling() {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {isLoadingReceipts ? (
-                        <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-500 font-medium">Loading receipts...</td></tr>
+                        [...Array(3)].map((_, i) => (
+                          <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-50">
+                            <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                            <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                            <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
+                            <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                            <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                            <td className="px-6 py-4"><Skeleton className="h-4 w-16 ml-auto" /></td>
+                            <td className="px-6 py-4"><Skeleton className="h-6 w-16 mx-auto rounded-full" /></td>
+                          </tr>
+                        ))
                       ) : pastReceipts.length === 0 ? (
                         <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-500 font-medium">No past receipts found.</td></tr>
                       ) : pastReceipts.map((tax: any) => (

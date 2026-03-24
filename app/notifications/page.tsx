@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { Bell, Info, Search, Calendar, Clock, X, Eye, ChevronRight } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Notification = {
   id: number;
@@ -110,14 +111,23 @@ export default function Notifications() {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {isLoading ? (
-                      <tr>
-                        <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="w-6 h-6 border-2 border-[#0052cc] border-t-transparent rounded-full animate-spin"></div>
-                            <span>Fetching announcements...</span>
-                          </div>
-                        </td>
-                      </tr>
+                      [...Array(4)].map((_, i) => (
+                        <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-100">
+                          <td className="px-6 py-4">
+                            <Skeleton className="h-4 w-64 mb-1.5" />
+                            <Skeleton className="h-3 w-full max-w-md" />
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Skeleton className="h-5 w-20 rounded-full" />
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Skeleton className="h-4 w-28" />
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <Skeleton className="h-4 w-16 ml-auto" />
+                          </td>
+                        </tr>
+                      ))
                     ) : filteredNotifications.length === 0 ? (
                       <tr>
                         <td colSpan={4} className="px-6 py-12 text-center text-slate-400">

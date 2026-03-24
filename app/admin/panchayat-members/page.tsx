@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Users, Plus, Trash2, X, Save, Phone, Image as ImageIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PanchayatMembersAdmin() {
     const { user , isLoaded } = useUser();
@@ -202,7 +203,18 @@ export default function PanchayatMembersAdmin() {
                 </div>
                 <div className="p-6">
                     {isLoading ? (
-                        <p className="text-center text-gray-500 py-12">Loading members...</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-500">
+                            {[...Array(6)].map((_, i) => (
+                                <div key={i} className="border border-gray-200 rounded-sm p-4 flex items-start gap-4">
+                                    <Skeleton className="w-14 h-14 rounded-full flex-shrink-0" />
+                                    <div className="flex-1 space-y-2 mt-1">
+                                        <Skeleton className="h-4 w-32" />
+                                        <Skeleton className="h-3 w-24" />
+                                        <Skeleton className="h-3 w-28 mt-2" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     ) : members.length === 0 ? (
                         <div className="text-center py-12">
                             <Users className="w-12 h-12 text-slate-200 mx-auto mb-3" />

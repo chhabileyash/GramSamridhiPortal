@@ -7,6 +7,7 @@ import { Users, Info, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PanchayatMembers() {
   const { user } = useUser();
@@ -66,7 +67,18 @@ export default function PanchayatMembers() {
                   </div>
 
                   {isLoading ? (
-                    <p className="text-center text-slate-500 py-8">Loading members...</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-500">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className="p-4 border border-slate-200 rounded-sm flex items-center gap-4">
+                          <Skeleton className="w-14 h-14 rounded-full flex-shrink-0" />
+                          <div className="flex-1 space-y-2">
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-3 w-1/2" />
+                            <Skeleton className="h-2 w-1/3" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   ) : members.length === 0 ? (
                     <div className="text-center py-8">
                       <Users className="w-10 h-10 text-slate-200 mx-auto mb-2" />

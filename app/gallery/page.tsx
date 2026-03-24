@@ -4,6 +4,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Trash2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type GalleryImage = {
   url: string;
@@ -65,8 +66,12 @@ export default function GalleryPage() {
           A glimpse into the vibrant life and development of our villages.
         </p>
         {loading ? (
-          <div className="text-center text-gray-500 py-12">
-            Loading images...
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="mb-6 break-inside-avoid">
+                <Skeleton className={`w-full rounded-xl ${i % 3 === 0 ? 'h-64' : i % 2 === 0 ? 'h-96' : 'h-48'}`} />
+              </div>
+            ))}
           </div>
         ) : images.length === 0 ? (
           <div className="text-center text-gray-500 py-12">
@@ -86,30 +91,9 @@ export default function GalleryPage() {
                   className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
+
                 
-                {/* Delete Button (Only for authorized village admin) */}
-                {user && img.villageId === villageId && (
-                  <button
-                    onClick={(e) => handleDelete(e, img.url, img.villageId!)}
-                    className="absolute top-4 right-4 z-10 bg-red-500/80 hover:bg-red-600 shadow-md text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm"
-                    title="Delete Image"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
-                
-                {/* Gradient Data Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#020817]/90 via-[#020817]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-5">
-                  <h3 className="text-white font-bold text-lg transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-                    {img.title || "Untitled"}
-                  </h3>
-                  {img.villageName && (
-                    <p className="text-blue-100 text-sm mt-1 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 delay-75 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                      {img.villageName}
-                    </p>
-                  )}
-                </div>
+                {/* Gradient Data Overlay removed */}
               </div>
             ))}
           </div>

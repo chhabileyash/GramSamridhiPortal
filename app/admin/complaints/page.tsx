@@ -17,6 +17,7 @@ import {
   Calendar,
   MapPin,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ComplaintsPage() {
   const { user, isLoaded } = useUser();
@@ -258,14 +259,19 @@ export default function ComplaintsPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-gray-500"
-                  >
-                    Loading complaints...
-                  </td>
-                </tr>
+                [...Array(5)].map((_, i) => (
+                  <tr key={i} className="hover:bg-gray-50 transition-colors animate-in fade-in duration-500">
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-5 w-40 mb-1" />
+                      <Skeleton className="h-3 w-24" />
+                    </td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-20 mx-auto rounded-md" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-24 mx-auto rounded-full" /></td>
+                    <td className="px-6 py-4 text-right"><Skeleton className="h-8 w-28 ml-auto rounded" /></td>
+                  </tr>
+                ))
               ) : filteredComplaints.length === 0 ? (
                 <tr>
                   <td

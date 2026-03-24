@@ -16,6 +16,7 @@ import {
 
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const chartData = [
   { name: "Ongoing", value: 45, color: "#FF9933" },
@@ -89,24 +90,24 @@ export default function HomePage() {
         {/* BEGIN: MainContentArea */}
         <main className="flex-1 p-6 space-y-6 min-w-0">
           {isLoading || !isLoaded ? (
-            <div className="animate-pulse space-y-6 w-full">
-              <div className="w-full h-80 bg-gray-200 rounded-sm"></div>
+            <div className="animate-in fade-in duration-500 space-y-6 w-full">
+              <Skeleton className="w-full h-80 rounded-sm" />
               <div className="flex flex-col gap-4 bg-white p-6 border border-gray-200">
-                <div className="h-6 bg-gray-200 w-1/4 rounded-sm"></div>
-                <div className="h-4 bg-gray-200 w-full rounded-sm"></div>
-                <div className="h-4 bg-gray-200 w-5/6 rounded-sm"></div>
-                <div className="h-4 bg-gray-200 w-2/3 rounded-sm"></div>
+                <Skeleton className="h-6 w-1/4 rounded-sm" />
+                <Skeleton className="h-4 w-full rounded-sm" />
+                <Skeleton className="h-4 w-5/6 rounded-sm" />
+                <Skeleton className="h-4 w-2/3 rounded-sm" />
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                  <div className="h-24 bg-gray-200 rounded-sm w-full"></div>
-                  <div className="h-24 bg-gray-200 rounded-sm w-full"></div>
-                  <div className="h-24 bg-gray-200 rounded-sm w-full"></div>
+                  <Skeleton className="h-24 rounded-sm w-full" />
+                  <Skeleton className="h-24 rounded-sm w-full" />
+                  <Skeleton className="h-24 rounded-sm w-full" />
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="h-24 bg-gray-200 rounded-sm shadow-sm w-full"></div>
-                <div className="h-24 bg-gray-200 rounded-sm shadow-sm w-full"></div>
-                <div className="h-24 bg-gray-200 rounded-sm shadow-sm w-full"></div>
-                <div className="h-24 bg-gray-200 rounded-sm shadow-sm w-full"></div>
+                <Skeleton className="h-24 rounded-sm shadow-sm w-full" />
+                <Skeleton className="h-24 rounded-sm shadow-sm w-full" />
+                <Skeleton className="h-24 rounded-sm shadow-sm w-full" />
+                <Skeleton className="h-24 rounded-sm shadow-sm w-full" />
               </div>
             </div>
           ) : (

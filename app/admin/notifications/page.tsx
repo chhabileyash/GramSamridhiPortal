@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Send, Bell, Trash2, Loader2, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Notification = {
   id: number;
@@ -202,12 +203,28 @@ export default function NotificationsPage() {
           </div>
           <div className="divide-y divide-gray-100 overflow-y-auto max-h-[600px]">
             {isLoading ? (
-              <div className="p-10 flex flex-col items-center justify-center text-gray-400">
-                <Loader2
-                  size={32}
-                  className="animate-spin mb-3 text-yellow-500"
-                />
-                <p>Loading broadcast history...</p>
+              <div className="animate-in fade-in duration-500">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="p-5 flex gap-4">
+                    <div className="mt-1 shrink-0">
+                      <Skeleton className="w-10 h-10 rounded-full" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap justify-between items-start mb-2 gap-2">
+                        <Skeleton className="h-5 w-48" />
+                        <Skeleton className="h-6 w-24 rounded-full" />
+                      </div>
+                      <div className="space-y-2 mb-3">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-4/5" />
+                      </div>
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                    <div className="shrink-0 flex items-start">
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-10 flex flex-col items-center justify-center text-gray-400">

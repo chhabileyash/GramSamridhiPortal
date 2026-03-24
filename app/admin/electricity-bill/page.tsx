@@ -14,6 +14,7 @@ import {
   Clock,
   Loader2,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ElectricityBillAdminPage() {
   const { user, isLoaded } = useUser();
@@ -231,14 +232,18 @@ export default function ElectricityBillAdminPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
-                <tr>
-                  <td colSpan={8} className="px-6 py-20 text-center">
-                    <Loader2 className="w-8 h-8 text-amber-500 animate-spin mx-auto mb-3" />
-                    <p className="text-gray-500 font-medium text-sm">
-                      Loading electricity bill records...
-                    </p>
-                  </td>
-                </tr>
+                [...Array(5)].map((_, i) => (
+                  <tr key={i} className="border-b border-gray-50 last:border-0 animate-in fade-in duration-500">
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-20 mx-auto rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="flex justify-end"><Skeleton className="h-8 w-24 rounded" /></div></td>
+                  </tr>
+                ))
               ) : filteredBills.length === 0 ? (
                 <tr>
                   <td

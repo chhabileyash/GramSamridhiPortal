@@ -1,21 +1,41 @@
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-[#f9f9f9] text-[#082b57]">
-      <div className="fixed inset-x-0 top-0 z-50 h-1 overflow-hidden bg-[#082b57]/15">
-        <div className="h-full w-1/3 animate-[pulse_1s_ease-in-out_infinite] bg-[#f58320]" />
-      </div>
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center justify-center gap-6 px-6">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#082b57]/20 border-t-[#f58320]" />
-        <div className="space-y-2 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#f58320]">
-            Gram Samridhi Portal
-          </p>
-          <h2 className="text-2xl font-extrabold uppercase text-[#082b57]">
-            Loading Page
-          </h2>
-          <p className="text-sm text-green-700">
-            Please wait while we fetch the latest data.
-          </p>
+    <main className="min-h-screen flex flex-col text-gray-800 font-sans bg-[#fcfcfc]">
+      <div className="flex flex-1 items-start">
+        {/* Placeholder Sidebar */}
+        <div className="hidden md:flex flex-col w-64 border-r border-gray-200 bg-white h-screen shrink-0">
+          <div className="p-6 border-b border-gray-200">
+            <div className="animate-pulse bg-slate-200 h-8 w-3/4 rounded-sm"></div>
+          </div>
+          <div className="p-4 space-y-4 flex-1 mt-4">
+            <div className="animate-pulse bg-slate-100 h-10 w-full rounded-sm"></div>
+            <div className="animate-pulse bg-slate-100 h-10 w-full rounded-sm"></div>
+            <div className="animate-pulse bg-slate-100 h-10 w-full rounded-sm"></div>
+            <div className="animate-pulse bg-slate-100 h-10 w-full rounded-sm"></div>
+          </div>
+        </div>
+        
+        {/* Placeholder Main Content */}
+        <div className="flex-1 p-8 min-w-0">
+          <div className="mx-auto max-w-6xl">
+            <div className="flex justify-between items-end mb-8 border-b border-gray-200 pb-4 animate-in fade-in duration-300">
+              <div className="space-y-3 w-full">
+                <div className="animate-pulse bg-slate-200 h-8 w-64 rounded-sm"></div>
+                <div className="animate-pulse bg-slate-100 h-4 w-96 max-w-full rounded-sm"></div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-6">
+                <div className="animate-pulse bg-white h-[300px] w-full rounded-sm border border-gray-200 shadow-sm"></div>
+                <div className="animate-pulse bg-white h-[200px] w-full rounded-sm border border-gray-200 shadow-sm"></div>
+              </div>
+              <div className="lg:col-span-1 space-y-6 hidden lg:block">
+                <div className="animate-pulse bg-white h-[150px] w-full rounded-sm border border-gray-200 shadow-sm"></div>
+                <div className="animate-pulse bg-white h-[150px] w-full rounded-sm border border-gray-200 shadow-sm"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Search, Eye, CheckCircle, XCircle, X, Filter } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PropertyTaxPage() {
   const { user, isLoaded } = useUser();
@@ -167,14 +168,18 @@ export default function PropertyTaxPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="px-6 py-12 text-center text-gray-500"
-                  >
-                    Loading records...
-                  </td>
-                </tr>
+                [...Array(5)].map((_, i) => (
+                  <tr key={i} className="border-b border-gray-50 last:border-0 animate-in fade-in duration-500">
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-20 mx-auto rounded-md" /></td>
+                    <td className="px-6 py-4"><div className="flex justify-end"><Skeleton className="h-8 w-24 rounded" /></div></td>
+                  </tr>
+                ))
               ) : (
                 filteredTaxes.map((tax) => (
                   <tr

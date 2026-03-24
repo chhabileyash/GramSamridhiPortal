@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Profile() {
   const { user, isLoaded } = useUser();
@@ -32,14 +33,6 @@ export default function Profile() {
       });
     }
   }, [user]);
-
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
-      </div>
-    );
-  }
 
   const email = user?.primaryEmailAddress?.emailAddress || "";
 
@@ -103,8 +96,36 @@ export default function Profile() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Form Sections */}
               <div className="lg:col-span-2 flex flex-col gap-6">
-                {/* Section 1: Profile Details */}
-                <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm">
+                {!isLoaded ? (
+                  <>
+                    <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm animate-in fade-in duration-500">
+                      <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                        <Skeleton className="w-9 h-9 rounded-sm" />
+                        <Skeleton className="h-4 w-40" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2"><Skeleton className="h-3 w-20"/><Skeleton className="h-10 w-full rounded-sm"/></div>
+                        <div className="space-y-2"><Skeleton className="h-3 w-24"/><Skeleton className="h-10 w-full rounded-sm"/></div>
+                        <div className="md:col-span-2 space-y-2"><Skeleton className="h-3 w-28"/><Skeleton className="h-10 w-full rounded-sm"/></div>
+                      </div>
+                    </div>
+                    <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm animate-in fade-in duration-500">
+                      <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                        <Skeleton className="w-9 h-9 rounded-sm" />
+                        <Skeleton className="h-4 w-40" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2"><Skeleton className="h-3 w-16"/><Skeleton className="h-10 w-full rounded-sm"/></div>
+                        <div className="space-y-2"><Skeleton className="h-3 w-16"/><Skeleton className="h-10 w-full rounded-sm"/></div>
+                        <div className="md:col-span-2 space-y-2"><Skeleton className="h-3 w-16"/><Skeleton className="h-10 w-full rounded-sm"/></div>
+                        <div className="md:col-span-2 mt-4"><Skeleton className="h-10 w-48 rounded-sm"/></div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Section 1: Profile Details */}
+                    <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm">
                   <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
                     <div className="bg-[#FF9933]/10 text-[#FF9933] p-2">
                       <User className="w-5 h-5" />
@@ -224,6 +245,8 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
+                </>
+                )}
               </div>
             </div>
           </div>

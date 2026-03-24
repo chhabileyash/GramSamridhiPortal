@@ -8,6 +8,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MyComplaints() {
   const { user } = useUser();
@@ -82,8 +83,24 @@ export default function MyComplaints() {
               {/* Main Content */}
               <div className="lg:col-span-2 flex flex-col gap-4">
                 {isLoading ? (
-                  <div className="bg-white border border-gray-300 shadow-sm p-12 rounded-sm text-center">
-                    <p className="text-slate-500 font-medium">Loading your complaints...</p>
+                  <div className="space-y-4 animate-in fade-in duration-500">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="bg-white border border-gray-200 shadow-sm p-5 rounded-sm">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <Skeleton className="h-3 w-32 mb-2" />
+                            <Skeleton className="h-4 w-64" />
+                          </div>
+                          <Skeleton className="h-6 w-20 rounded-full" />
+                        </div>
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-3/4 mb-3" />
+                        <div className="flex gap-4">
+                          <Skeleton className="h-3 w-24" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : complaints.length === 0 ? (
                   <div className="bg-white border border-gray-300 shadow-sm p-12 rounded-sm text-center">

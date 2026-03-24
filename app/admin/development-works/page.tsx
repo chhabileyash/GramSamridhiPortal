@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Search, Plus, Map, CheckCircle, TrendingUp, Edit3, Trash2, X, RefreshCw, Loader2, Clock } from "lucide-react";
 import toast from "react-hot-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DevelopmentWorksPage() {
   const { user, isLoaded } = useUser();
@@ -244,12 +245,27 @@ export default function DevelopmentWorksPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-20 text-center">
-                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-3" />
-                    <p className="text-gray-500 font-medium text-sm">Loading projects...</p>
-                  </td>
-                </tr>
+                [...Array(5)].map((_, i) => (
+                  <tr key={i} className="border-b border-gray-50 animate-in fade-in duration-500">
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-5 w-40" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-2 w-full rounded-full" />
+                        <Skeleton className="h-4 w-8" />
+                      </div>
+                    </td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-24 mx-auto rounded-md" /></td>
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end gap-2">
+                         <Skeleton className="h-8 w-20 rounded" />
+                         <Skeleton className="h-8 w-8 rounded" />
+                      </div>
+                    </td>
+                  </tr>
+                ))
               ) : filteredWorks.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-gray-500">

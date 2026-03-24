@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Plus, Trash2, Edit2, X, FileText, Calendar, Loader2, Filter, Layers, CheckCircle } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SchemesPage() {
   const { user } = useUser();
@@ -222,8 +223,24 @@ export default function SchemesPage() {
 
         <div className="overflow-x-auto min-h-[200px]">
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="animate-spin text-[#0052cc]" size={32} />
+            <div className="w-full text-left">
+              <div className="hidden sm:grid grid-cols-5 gap-4 px-6 py-4 bg-white text-gray-600 font-bold border-b border-gray-200 uppercase tracking-wider text-xs">
+                 <span>Ref ID</span><span>Scheme Name</span><span>Entity Type</span><span>Registration Window</span><span className="text-right">Actions</span>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex flex-col sm:grid sm:grid-cols-5 gap-4 px-6 py-4 animate-in fade-in duration-500">
+                    <div><Skeleton className="h-4 w-20" /></div>
+                    <div>
+                      <Skeleton className="h-5 w-48 mb-2" />
+                      <Skeleton className="h-3 w-64" />
+                    </div>
+                    <div><Skeleton className="h-6 w-20 rounded-md" /></div>
+                    <div><Skeleton className="h-4 w-32" /></div>
+                    <div className="flex sm:justify-end gap-3"><Skeleton className="h-8 w-8 rounded" /><Skeleton className="h-8 w-8 rounded" /></div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <>
