@@ -191,7 +191,7 @@ export default function SignupPage() {
           password: formData.password,
           firstName: formData.fullName.split(" ")[0],
           lastName: formData.fullName.split(" ").slice(1).join(" "),
-          username: numberToAlphabet(formData.aadhar),
+          username: formData.aadhar+"a",
           unsafeMetadata: {
             phoneNumber: normalizedPhone,
             district,

@@ -375,7 +375,7 @@ export default function LoginPage() {
                       inputMode="email"
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
-                      placeholder="Enter email or 12-digit Aadhar No"
+                      placeholder="Enter email"
                       disabled={awaitingSecondFactor}
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 focus:ring-[#F28C28] focus:border-[#F28C28] transition-all placeholder:text-gray-400 text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
                     />

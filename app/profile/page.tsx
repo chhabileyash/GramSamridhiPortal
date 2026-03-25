@@ -20,6 +20,7 @@ export default function Profile() {
     district: "",
     taluka: "",
     village: "",
+    addhar_id: "",
   });
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function Profile() {
         district: (user.unsafeMetadata?.district as string) || "",
         taluka: (user.unsafeMetadata?.taluka as string) || "",
         village: (user.unsafeMetadata?.village as string) || "",
+        addhar_id: (user.username as string) || "",
       });
     }
   }, [user]);
@@ -223,6 +225,19 @@ export default function Profile() {
                         placeholder="Village Name"
                         type="text"
                         value={formData.village}
+                        onChange={handleChange}
+                      />
+                    </div>
+                     <div className="md:col-span-2 space-y-1">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase">
+                        Village
+                      </label>
+                      <input
+                        name="village"
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                        placeholder="Village Name"
+                        type="text"
+                        value={formData.addhar_id}
                         onChange={handleChange}
                       />
                     </div>

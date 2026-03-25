@@ -8,21 +8,20 @@ import { auth } from "@clerk/nextjs/server";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const villageId = searchParams.get("villageId");
-  let all;
-  if (villageId) {
-    all = await db
-      .select()
-      .from(customVillageInfo)
-      .where(eq(customVillageInfo.villageIdString, villageId));
-  } else {
-    all = await db.select().from(customVillageInfo);
+
+  if (!villageId) {
+    return NextResponse.json({ error: "Missing villageId" }, { status: 400 });
   }
+  const all = await db
+    .select()
+    .from(customVillageInfo)
+    .where(eq(customVillageInfo.villageIdString, villageId));
+
   const images = all
     .flatMap((village) =>
       (village.images || []).map((img) => ({
         ...img,
         villageId: village.villageIdString,
-        villageName: undefined, // Usually fetched or joined, handled by db or left undefined
       })),
     )
     .filter((img) => img.url);
@@ -38,7 +37,10 @@ export async function DELETE(req: Request) {
 
     const { url, villageId } = await req.json();
     if (!url || !villageId) {
-       return NextResponse.json({ error: "Missing url or villageId" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing url or villageId" },
+        { status: 400 },
+      );
     }
 
     const villageData = await db
@@ -62,6 +64,9 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Gallery Delete Error:", error);
-    return NextResponse.json({ error: "Failed to delete image." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete image." },
+      { status: 500 },
+    );
   }
 }
