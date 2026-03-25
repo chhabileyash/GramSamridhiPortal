@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "react-hot-toast";
 import {
   History,
   Droplet,
@@ -69,7 +70,7 @@ export default function WaterTax() {
 
   const handleSubmit = async () => {
     if (!formData.connectionId || !formData.ownerName) {
-      alert("Please enter Connection Number and Primary Owner Name.");
+      toast.error("Please enter Connection Number and Primary Owner Name.");
       return;
     }
 
@@ -92,11 +93,10 @@ export default function WaterTax() {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to submit water tax");
-      }
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Failed to file");
 
-      alert("Water tax filed successfully!");
+      toast.success("Water tax filed successfully!");
       setFormData({
         connectionId: "",
         connectionType: "Domestic",
@@ -109,7 +109,7 @@ export default function WaterTax() {
       setShowQR(false);
     } catch (err) {
       console.error(err);
-      alert("Error filing water tax. Please try again.");
+      toast.error("Error filing water tax. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Users, Plus, Trash2, X, Save, Phone, Image as ImageIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "react-hot-toast";
 
 export default function PanchayatMembersAdmin() {
     const { user , isLoaded } = useUser();
@@ -51,7 +52,7 @@ export default function PanchayatMembersAdmin() {
 
     const handleAddMember = async () => {
         if (!formData.name || !formData.position) {
-            alert("Please enter name and position.");
+            toast.error("Please enter name and position.");
             return;
         }
 
@@ -77,9 +78,9 @@ export default function PanchayatMembersAdmin() {
             setFormData({ name: "", position: "Sarpanch", imageUrl: "", phone: "" });
             setShowAddForm(false);
             fetchMembers(villageId);
-        } catch (err) {
-            console.error(err);
-            alert("Error adding member.");
+        } catch (error) {
+            console.error(error);
+            toast.error("Error adding member.");
         } finally {
             setIsSubmitting(false);
         }

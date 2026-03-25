@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { Search, Eye, CheckCircle, XCircle, X, Filter } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,7 +23,7 @@ export default function PropertyTaxPage() {
   const [taxes, setTaxes] = useState<TaxRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchTaxes(villageId?: string) {
       try {
         const res = await fetch(
@@ -73,11 +74,11 @@ export default function PropertyTaxPage() {
           taxes.map((tax) => (tax.id === id ? { ...tax, status } : tax)),
         );
       } else {
-        alert("Failed to update status.");
+        toast.error("Failed to update status.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error updating status");
+      toast.error("Error updating status");
     }
   };
 

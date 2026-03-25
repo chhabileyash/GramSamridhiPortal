@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "react-hot-toast";
 import {
   History,
   Zap,
@@ -78,7 +79,7 @@ export default function ElectricityBill() {
 
   const handleSubmit = async () => {
     if (!formData.meterId || !formData.ownerName) {
-      alert("Please enter Meter Number and Consumer Name.");
+      toast.error("Please enter Meter Number and Consumer Name.");
       return;
     }
 
@@ -101,12 +102,10 @@ export default function ElectricityBill() {
           referenceNumber: formData.referenceNumber,
         }),
       });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Failed to submit");
 
-      if (!res.ok) {
-        throw new Error("Failed to submit electricity bill");
-      }
-
-      alert("Electricity bill submitted successfully!");
+      toast.success("Electricity bill submitted successfully!");
       setFormData({
         meterId: "",
         meterType: "Domestic",
@@ -120,7 +119,7 @@ export default function ElectricityBill() {
       setShowQR(false);
     } catch (err) {
       console.error(err);
-      alert("Error submitting electricity bill. Please try again.");
+      toast.error("Error submitting electricity bill. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

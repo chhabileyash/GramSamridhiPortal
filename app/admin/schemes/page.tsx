@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, Plus, Trash2, Edit2, X, FileText, Calendar, Loader2, Filter, Layers, CheckCircle } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { Plus, Search, Edit2, Trash2, Calendar, FileText, CheckCircle, Clock, X, Loader2, Filter, Layers } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -90,9 +91,14 @@ export default function SchemesPage() {
         const res = await fetch(`/api/schemes?id=${id}`, { method: "DELETE" });
         if (res.ok) {
           setSchemes(schemes.filter(s => s.id !== id));
+          toast.success("Scheme deleted successfully!");
+        } else {
+          const err = await res.json();
+          toast.error(err.error || "Failed to delete scheme");
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Failed to delete scheme:", err);
+        toast.error(err.message || "Failed to delete scheme");
       }
     }
   };
@@ -109,12 +115,14 @@ export default function SchemesPage() {
       if (res.ok) {
         await fetchSchemes();
         handleCloseModal();
+        toast.success("Scheme saved successfully!");
       } else {
         const err = await res.json();
-        alert(err.error || "Failed to save scheme");
+        toast.error(err.error || "Failed to save scheme");
       }
-    } catch (err) {
-      console.error("Failed to save scheme:", err);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.error || "Failed to save scheme");
     } finally {
       setSubmitting(false);
     }

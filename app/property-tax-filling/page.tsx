@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "react-hot-toast";
 import {
   History,
   Building,
@@ -79,7 +80,7 @@ export default function PropertyTaxFiling() {
 
   const handleSubmit = async () => {
     if (!formData.propertyId || !formData.ownerName) {
-      alert("Please enter Assessment Number and Primary Owner Name.");
+      toast.error("Please enter Assessment Number and Primary Owner Name.");
       return;
     }
 
@@ -100,11 +101,12 @@ export default function PropertyTaxFiling() {
         }),
       });
 
+      const result = await res.json();
       if (!res.ok) {
-        throw new Error("Failed to submit property tax");
+        throw new Error(result.error || "Failed to submit property tax");
       }
 
-      alert("Property tax filed successfully!");
+      toast.success("Property tax filed successfully!");
       setFormData({
         propertyId: "",
         propertyType: "Residential",
@@ -117,9 +119,9 @@ export default function PropertyTaxFiling() {
         email: "",
         referenceNumber: "",
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Error filing property tax. Please try again.");
+      toast.error("Error filing property tax. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

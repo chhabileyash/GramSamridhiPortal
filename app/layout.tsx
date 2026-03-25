@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
-import Script from "next/script"; // ✅ Add this import
+import Script from "next/script";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -49,6 +50,7 @@ export default function RootLayout({
           key="sk_test_gbHfcd9jfeQmr3qZ6JLHrfpWxSUSmZfCyv2p02Jay3"
         >
           <Header />
+          <Toaster position="top-right" reverseOrder={false} />
           {children}
         </ClerkProvider>
       </body>

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { MessageSquare, Info, CheckCircle, Send } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { MessageSquare, ThumbsUp, Lightbulb, CheckCircle, Send, Info } from "lucide-react";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -27,7 +28,7 @@ export default function Suggestions() {
 
   const handleSubmit = async () => {
     if (!formData.message) {
-      alert("Please enter your suggestion.");
+      toast.error("Please enter your suggestion.");
       return;
     }
 
@@ -56,7 +57,7 @@ export default function Suggestions() {
       setFormData({ subject: "", message: "", category: "General", citizenName: "" });
     } catch (err) {
       console.error(err);
-      alert("Error submitting suggestion. Please try again.");
+      toast.error("Error submitting suggestion. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

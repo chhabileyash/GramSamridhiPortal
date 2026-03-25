@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Save, Map, Users, Phone, Image as ImageIcon, Trash2, Upload } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
 
 const CldUploadWidget = dynamic(() => import("next-cloudinary").then(m => m.CldUploadWidget), { ssr: false });
@@ -158,7 +159,7 @@ export default function VillageInfoPage() {
       const meta = user?.unsafeMetadata as any;
       const villageId = meta?.village_id;
       if (!villageId) {
-        alert("Error: No village ID linked to this account.");
+        toast.error("Error: No village ID linked to this account.");
         return;
       }
 
@@ -186,10 +187,10 @@ export default function VillageInfoPage() {
         throw new Error(js.error || "Failed to save");
       }
 
-      alert("Village Information and uploaded images saved successfully!");
+      toast.success("Village Information and uploaded images saved successfully!");
     } catch (err: any) {
       console.error("Save Error:", err);
-      alert("Failed to save: " + err.message);
+      toast.error("Failed to save: " + err.message);
     } finally {
       setIsSaving(false);
     }

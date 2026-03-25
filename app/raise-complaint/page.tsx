@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "react-hot-toast";
 import {
   FileText,
   AlertCircle,
@@ -33,8 +34,8 @@ export default function RaiseComplaint() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.description || !formData.category) {
-      alert("Please fill in category and description.");
+    if (!formData.category || !formData.description) {
+      toast.error("Please fill in category and description.");
       return;
     }
 
@@ -74,7 +75,7 @@ export default function RaiseComplaint() {
       });
     } catch (err) {
       console.error(err);
-      alert("Error submitting complaint. Please try again.");
+      toast.error("Error submitting complaint. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
