@@ -21,6 +21,7 @@ export function Sidebar() {
     { name: "Suggestions", href: "/suggestions" },
     { name: "Panchayat Members", href: "/panchayat-members" },
     { name: "Development Works", href: "/development-works" },
+    { name: "Contact Us", href: "/contact" },
   ];
 
   return (

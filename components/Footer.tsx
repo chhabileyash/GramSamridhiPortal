@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -13,20 +14,29 @@ export default function Footer() {
               Quick Links
             </h3>
             <ul className="space-y-3 text-[15px] text-[#A7F3D0] m-0 list-none p-0">
-              <li className="flex items-center gap-2">
-                <span className="text-[10px]">&rsaquo;</span> Home
+              <li className="flex items-center gap-2 group">
+                <span className="text-[10px]">&rsaquo;</span>
+                <Link href="/home" className="hover:text-white transition-colors">Home</Link>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[10px]">&rsaquo;</span> About Us
+              <li className="flex items-center gap-2 group">
+                <span className="text-[10px]">&rsaquo;</span>
+                <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[10px]">&rsaquo;</span> Sentittena
+              <li className="flex items-center gap-2 group">
+                <span className="text-[10px]">&rsaquo;</span>
+                <Link href="/schemes" className="hover:text-white transition-colors">Schemes</Link>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[10px]">&rsaquo;</span> sarizces
+              <li className="flex items-center gap-2 group">
+                <span className="text-[10px]">&rsaquo;</span>
+                <Link href="/services" className="hover:text-white transition-colors">Services</Link>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[10px]">&rsaquo;</span> callecty
+              <li className="flex items-center gap-2 group">
+                <span className="text-[10px]">&rsaquo;</span>
+                <Link href="/gallery" className="hover:text-white transition-colors">Gallery</Link>
+              </li>
+              <li className="flex items-center gap-2 group">
+                <span className="text-[10px]">&rsaquo;</span>
+                <Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link>
               </li>
             </ul>
           </div>

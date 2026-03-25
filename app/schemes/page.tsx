@@ -199,7 +199,7 @@ export default function UserSchemesPage() {
             <div className="p-6 overflow-y-auto">
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-xl font-bold text-slate-900 leading-tight">
+                  <h2 className="text-xl font-bold text-slate-900 leading-tight word-wrap">
                     {selectedScheme.title}
                   </h2>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase shrink-0 ${selectedScheme.category === 'Central' ? 'bg-orange-100 text-orange-700' :
@@ -210,7 +210,7 @@ export default function UserSchemesPage() {
                   </span>
                 </div>
                 {selectedScheme.schemeId && (
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider word-wrap">
                     Ref ID: {selectedScheme.schemeId}
                   </p>
                 )}
@@ -219,7 +219,7 @@ export default function UserSchemesPage() {
               <div className="space-y-6">
                 <div>
                   <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">About the Scheme</h4>
-                  <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-sm border border-slate-100">
+                  <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-sm border border-slate-100 word-wrap">
                     {selectedScheme.description}
                   </p>
                 </div>
@@ -228,7 +228,7 @@ export default function UserSchemesPage() {
                   {selectedScheme.eligible && (
                     <div className="p-4 border border-blue-100 bg-blue-50/50 rounded-sm">
                       <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">Eligibility Features</h4>
-                      <p className="text-sm text-blue-900 font-medium">{selectedScheme.eligible}</p>
+                      <p className="text-sm text-blue-900 font-medium word-wrap">{selectedScheme.eligible}</p>
                     </div>
                   )}
 
