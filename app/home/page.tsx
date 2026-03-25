@@ -121,7 +121,7 @@ export default function HomePage() {
                     src={primaryBanner}
                   />
                   {/* Navigation Arrows */}
-                  <button
+                 {/* <button
                     className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/40 hover:bg-white/60 p-2 rounded flex items-center justify-center backdrop-blur-sm"
                     suppressHydrationWarning
                   >
@@ -138,7 +138,7 @@ export default function HomePage() {
                       className="text-black w-8 h-8"
                       strokeWidth={3}
                     />
-                  </button>
+                  </button>*/}
                 </div>
               </section>
 
