@@ -8,9 +8,7 @@ export default function Home() {
   return (
     <>
       <div className="font-sans bg-[#F5F6F7] text-[#2B2B2B] min-h-screen">
-        {/* <Header /> */}
-
-        {/* BEGIN: Hero Section */}
+       
         <section
           className="relative bg-white overflow-hidden border-b border-gray-200 min-h-[450px]"
           data-purpose="hero-section"

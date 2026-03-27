@@ -13,6 +13,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import CustomUserButton from "./CustomUserButton";
+import Marquee from "react-fast-marquee";
+
 
 // Constants
 const COLORS = {
@@ -449,23 +451,23 @@ const HeaderContent = memo(function HeaderContent({
       {/* BEGIN: Alert Bar */}
       {!isAuthPage && (
         <div
-          className="bg-[#FFF8F0] border-b border-orange-100 py-2 relative z-20"
+          className="bg-[#FFF8F0] border-b border-orange-100 py-2 relative z-20 "
           data-purpose="alert-information"
         >
           <div
             className={`${
-              isRoot ? "max-w-[1200px]" : "w-full max-w-full lg:px-8"
+              isRoot ? "max-w-300" : "w-full max-w-full lg:px-8"
             } mx-auto px-4 flex flex-col sm:flex-row justify-center sm:justify-start items-center space-y-2 sm:space-y-0 sm:space-x-3 text-sm text-center sm:text-left transition-all duration-300`}
           >
             <span className="text-[#F28C28] text-lg"></span>
-            <p className="m-0 text-gray-700">
+            <Marquee className="m-0 text-gray-700">
               <strong>Covid-19 Information:</strong> Latest guidelines and
               vaccination details here.{" "}
               <span className="mx-2 text-gray-300">|</span>
               <span className="text-[#F28C28] font-semibold cursor-pointer hover:underline">
                 Read More
               </span>
-            </p>
+            </Marquee>
           </div>
         </div>
       )}

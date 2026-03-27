@@ -2,13 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Search, Info, Calendar, ExternalLink, X, FileText, LayoutList, ListFilter } from "lucide-react";
+import {
+  Search,
+  Info,
+  Calendar,
+  ExternalLink,
+  X,
+  FileText,
+  LayoutList,
+  ListFilter,
+} from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserSchemesPage() {
-  const { user,isLoaded } = useUser();
-  
+  const { user, isLoaded } = useUser();
 
   const [schemes, setSchemes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +29,9 @@ export default function UserSchemesPage() {
     const fetchSchemes = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/schemes?villageId=${encodeURIComponent(villageId)}`);
+        const res = await fetch(
+          `/api/schemes?villageId=${encodeURIComponent(villageId)}`,
+        );
         if (res.ok) {
           const json = await res.json();
           setSchemes(json.data || []);
@@ -33,14 +43,15 @@ export default function UserSchemesPage() {
       }
     };
     fetchSchemes();
-  }, [ isLoaded, user]);
+  }, [isLoaded, user]);
 
-  const filteredSchemes = schemes.filter(scheme => {
+  const filteredSchemes = schemes.filter((scheme) => {
     const matchesSearch =
       scheme.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       scheme.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       scheme.category?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = activeCategory === "All" || scheme.category === activeCategory;
+    const matchesCategory =
+      activeCategory === "All" || scheme.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -78,7 +89,10 @@ export default function UserSchemesPage() {
                   </select>
                 </div>
                 <div className="relative w-full sm:w-80 md:w-[200px] lg:w-[450px]">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                   <input
                     type="text"
                     placeholder="Search schemes..."
@@ -97,41 +111,74 @@ export default function UserSchemesPage() {
                     <tr className="bg-slate-50 border-b border-gray-200 text-xs text-slate-500 uppercase tracking-wider">
                       <th className="py-3 px-6 font-semibold">Scheme Name</th>
                       <th className="py-3 px-6 font-semibold">Type</th>
-                      <th className="py-3 px-6 font-semibold">Important Dates</th>
+                      <th className="py-3 px-6 font-semibold">
+                        Important Dates
+                      </th>
                       <th className="py-3 px-6 font-semibold">Apply Link</th>
-                      <th className="py-3 px-6 font-semibold text-right">Details</th>
+                      <th className="py-3 px-6 font-semibold text-right">
+                        Details
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {isLoading ? (
                       [...Array(4)].map((_, i) => (
-                        <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-100">
-                          <td className="py-4 px-6"><Skeleton className="h-4 w-3/4 mb-2" /><Skeleton className="h-3 w-full" /></td>
-                          <td className="py-4 px-6"><Skeleton className="h-6 w-16" /></td>
-                          <td className="py-4 px-6"><Skeleton className="h-4 w-24" /></td>
-                          <td className="py-4 px-6"><Skeleton className="h-4 w-20" /></td>
-                          <td className="py-4 px-6 text-right"><Skeleton className="h-8 w-24 ml-auto" /></td>
+                        <tr
+                          key={i}
+                          className="animate-in fade-in duration-500 border-b border-gray-100"
+                        >
+                          <td className="py-4 px-6">
+                            <Skeleton className="h-4 w-3/4 mb-2" />
+                            <Skeleton className="h-3 w-full" />
+                          </td>
+                          <td className="py-4 px-6">
+                            <Skeleton className="h-6 w-16" />
+                          </td>
+                          <td className="py-4 px-6">
+                            <Skeleton className="h-4 w-24" />
+                          </td>
+                          <td className="py-4 px-6">
+                            <Skeleton className="h-4 w-20" />
+                          </td>
+                          <td className="py-4 px-6 text-right">
+                            <Skeleton className="h-8 w-24 ml-auto" />
+                          </td>
                         </tr>
                       ))
                     ) : filteredSchemes.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center text-slate-500">
+                        <td
+                          colSpan={5}
+                          className="py-12 text-center text-slate-500"
+                        >
                           <FileText className="w-8 h-8 text-slate-300 mx-auto mb-3" />
                           <p className="font-medium">No schemes found.</p>
                         </td>
                       </tr>
                     ) : (
                       filteredSchemes.map((scheme) => (
-                        <tr key={scheme.id} className="border-b border-gray-100 hover:bg-slate-50/50 transition-colors">
-                          <td className="py-4 px-6 align-top">
-                            <p className="font-bold text-sm text-slate-800 mb-1 text-wrap break-words">{scheme.title}</p>
-                            <p className="text-xs text-slate-500 line-clamp-2 max-w-sm text-wrap break-words">{scheme.description}</p>
+                        <tr
+                          key={scheme.id}
+                          className="border-b border-gray-100 hover:bg-slate-50/50 transition-colors"
+                        >
+                          <td className="py-4 px-6 align-top w-32 truncate">
+                            <p className="font-bold text-sm text-slate-800 max-w-lg mb-1 truncate">
+                              {scheme.title}
+                            </p>
+                            <p className="text-xs text-slate-500 line-clamp-2 max-w-sm truncate">
+                              {scheme.description}
+                            </p>
                           </td>
                           <td className="py-4 px-6 align-top">
-                            <span className={`inline-block px-2 py-1 rounded text-[12px] font-bold uppercase ${scheme.category === 'Central' ? 'bg-orange-100 text-orange-700' :
-                              scheme.category === 'State' ? 'bg-purple-100 text-purple-700' :
-                                'bg-teal-100 text-teal-700'
-                              }`}>
+                            <span
+                              className={`inline-block px-2 py-1 rounded text-[12px] font-bold uppercase ${
+                                scheme.category === "Central"
+                                  ? "bg-orange-100 text-orange-700"
+                                  : scheme.category === "State"
+                                    ? "bg-purple-100 text-purple-700"
+                                    : "bg-teal-100 text-teal-700"
+                              }`}
+                            >
                               {scheme.category}
                             </span>
                           </td>
@@ -139,10 +186,22 @@ export default function UserSchemesPage() {
                             {scheme.endDate ? (
                               <div className="flex items-center gap-1.5 text-xs text-slate-600">
                                 <Calendar className="w-3 h-3" />
-                                <span>Till {new Date(scheme.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                <span>
+                                  Till{" "}
+                                  {new Date(scheme.endDate).toLocaleDateString(
+                                    "en-IN",
+                                    {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    },
+                                  )}
+                                </span>
                               </div>
                             ) : (
-                              <span className="text-xs text-slate-500 italic">Ongoing</span>
+                              <span className="text-xs text-slate-500 italic">
+                                Ongoing
+                              </span>
                             )}
                           </td>
                           <td className="py-4 px-6 align-top">
@@ -156,7 +215,9 @@ export default function UserSchemesPage() {
                                 Apply Here <ExternalLink className="w-3 h-3" />
                               </a>
                             ) : (
-                              <span className="text-xs text-slate-400 italic">Inquire at office</span>
+                              <span className="text-xs text-slate-400 italic">
+                                Inquire at office
+                              </span>
                             )}
                           </td>
                           <td className="py-4 px-6 align-top text-right">
@@ -186,7 +247,9 @@ export default function UserSchemesPage() {
             <div className="px-6 py-4 border-b border-gray-200 bg-slate-50 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <LayoutList className="w-5 h-5 text-[#0052cc]" />
-                <h3 className="text-lg font-bold text-slate-800">Scheme Details</h3>
+                <h3 className="text-lg font-bold text-slate-800">
+                  Scheme Details
+                </h3>
               </div>
               <button
                 onClick={() => setSelectedScheme(null)}
@@ -198,14 +261,19 @@ export default function UserSchemesPage() {
 
             <div className="p-6 overflow-y-auto">
               <div className="mb-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-xl font-bold text-slate-900 leading-tight text-wrap break-words">
+                <div className="flex flex-col gap-3 mb-2">
+                  <h2 className="text-xl font-bold text-slate-900 leading-tight max-w-full text-wrap wrap-break-word">
                     {selectedScheme.title}
                   </h2>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase shrink-0 ${selectedScheme.category === 'Central' ? 'bg-orange-100 text-orange-700' :
-                    selectedScheme.category === 'State' ? 'bg-purple-100 text-purple-700' :
-                      'bg-teal-100 text-teal-700'
-                    }`}>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10px] w-14 font-bold uppercase shrink-0 ${
+                      selectedScheme.category === "Central"
+                        ? "bg-orange-100 text-orange-700"
+                        : selectedScheme.category === "State"
+                          ? "bg-purple-100 text-purple-700"
+                          : "bg-teal-100 text-teal-700"
+                    }`}
+                  >
                     {selectedScheme.category}
                   </span>
                 </div>
@@ -218,8 +286,10 @@ export default function UserSchemesPage() {
 
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">About the Scheme</h4>
-                  <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-sm border border-slate-100 text-wrap break-words">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    About the Scheme
+                  </h4>
+                  <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-sm border border-slate-100 text-wrap max-w-full   wrap-break-word">
                     {selectedScheme.description}
                   </p>
                 </div>
@@ -227,19 +297,35 @@ export default function UserSchemesPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {selectedScheme.eligible && (
                     <div className="p-4 border border-blue-100 bg-blue-50/50 rounded-sm">
-                      <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">Eligibility Features</h4>
-                      <p className="text-sm text-blue-900 font-medium text-wrap break-words">{selectedScheme.eligible}</p>
+                      <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">
+                        Eligibility Features
+                      </h4>
+                      <p className="text-sm text-blue-900 font-medium text-wrap break-words">
+                        {selectedScheme.eligible}
+                      </p>
                     </div>
                   )}
 
                   <div className="p-4 border border-slate-200 rounded-sm">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Timeline</h4>
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                      Timeline
+                    </h4>
                     <div className="text-sm font-medium text-slate-800 flex flex-col gap-1">
                       {selectedScheme.startDate && (
-                        <span>Start: {new Date(selectedScheme.startDate).toLocaleDateString()}</span>
+                        <span>
+                          Start:{" "}
+                          {new Date(
+                            selectedScheme.startDate,
+                          ).toLocaleDateString()}
+                        </span>
                       )}
                       <span>
-                        Deadline: {selectedScheme.endDate ? new Date(selectedScheme.endDate).toLocaleDateString() : 'Ongoing'}
+                        Deadline:{" "}
+                        {selectedScheme.endDate
+                          ? new Date(
+                              selectedScheme.endDate,
+                            ).toLocaleDateString()
+                          : "Ongoing"}
                       </span>
                     </div>
                   </div>
@@ -247,8 +333,12 @@ export default function UserSchemesPage() {
 
                 {selectedScheme.amount && (
                   <div>
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Benefit Amount</h4>
-                    <p className="text-lg font-bold text-green-700">₹{selectedScheme.amount}</p>
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                      Benefit Amount
+                    </h4>
+                    <p className="text-lg font-bold text-green-700">
+                      ₹{selectedScheme.amount}
+                    </p>
                   </div>
                 )}
               </div>

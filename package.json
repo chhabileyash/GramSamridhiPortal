@@ -21,6 +21,7 @@
     "next-cloudinary": "^6.17.5",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-fast-marquee": "^1.6.5",
     "react-hot-toast": "^2.6.0",
     "recharts": "^3.8.0",
     "svix": "^1.89.0"

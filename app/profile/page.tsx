@@ -146,6 +146,7 @@ export default function Profile() {
                         className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
                         placeholder="John Doe"
                         type="text"
+                        disabled
                         value={formData.fullName}
                         onChange={handleChange}
                       />
@@ -159,6 +160,7 @@ export default function Profile() {
                         className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
                         placeholder="+91 9876543210"
                         type="tel"
+                        disabled
                         value={formData.phoneNumber}
                         onChange={handleChange}
                       />
@@ -171,6 +173,7 @@ export default function Profile() {
                         className="w-full border border-slate-200 bg-slate-50 cursor-not-allowed focus:outline-none px-4 py-2.5 text-sm rounded-sm"
                         placeholder="johndoe@example.com"
                         type="email"
+                        disabled
                         value={email}
                         readOnly
                       />
@@ -198,6 +201,7 @@ export default function Profile() {
                         className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
                         placeholder="District Name"
                         type="text"
+                        disabled
                         value={formData.district}
                         onChange={handleChange}
                       />
@@ -211,6 +215,7 @@ export default function Profile() {
                         className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
                         placeholder="Taluka Name"
                         type="text"
+                        disabled
                         value={formData.taluka}
                         onChange={handleChange}
                       />
@@ -224,6 +229,7 @@ export default function Profile() {
                         className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
                         placeholder="Village Name"
                         type="text"
+                        disabled
                         value={formData.village}
                         onChange={handleChange}
                       />
@@ -237,6 +243,7 @@ export default function Profile() {
                         className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
                         placeholder="Village Name"
                         type="text"
+                        disabled
                         value={formData.addhar_id}
                         onChange={handleChange}
                       />
@@ -249,14 +256,14 @@ export default function Profile() {
                           {updateMessage}
                         </div>
                       )}
-                      <button
+                      {/* <button
                         onClick={handleUpdate}
                         disabled={isUpdating}
                         className="bg-[#138808] disabled:opacity-50 text-white font-bold py-2.5 px-6 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 rounded-sm mt-4"
                       >
                         <CheckCircle className="w-5 h-5" />
                         {isUpdating ? "UPDATING..." : "UPDATE PROFILE"}
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
