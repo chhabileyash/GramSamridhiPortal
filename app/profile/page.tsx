@@ -234,7 +234,7 @@ export default function Profile() {
                         onChange={handleChange}
                       />
                     </div>
-                     <div className="md:col-span-2 space-y-1">
+                     {/* <div className="md:col-span-2 space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase">
                         Village
                       </label>
@@ -247,7 +247,7 @@ export default function Profile() {
                         value={formData.addhar_id}
                         onChange={handleChange}
                       />
-                    </div>
+                    </div> */}
                     <div className="md:col-span-2">
                       {updateMessage && (
                         <div
