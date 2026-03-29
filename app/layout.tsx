@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import Script from "next/script";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   variable: "--font-inter",
@@ -53,6 +54,7 @@ export default function RootLayout({
           <Toaster position="top-right" reverseOrder={false} />
           {children}
         </ClerkProvider>
+        <Analytics /> 
       </body>
     </html>
   );
