@@ -68,6 +68,29 @@ body {
   color: white;
   padding: 4px;
 }
+/* Desktop translate display (cloned select, shown in blue header) */
+#google_translate_desktop_display {
+  display: flex !important;
+  align-items: center;
+  min-width: 120px;
+}
+
+#google_translate_desktop_display select {
+  color: white !important;
+  background: transparent !important;
+  border: none !important;
+  font-size: 13px !important;
+  cursor: pointer;
+  outline: none !important;
+  padding: 0 4px !important;
+  width: 100%;
+}
+
+#google_translate_desktop_display select option {
+  background-color: #1F4E79;
+  color: white;
+}
+
 .VIpgJd-ZVi9od-l4eHX-hSRGPd{
   display: none !important;
 }

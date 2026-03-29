@@ -36,7 +36,10 @@ const GOOGLE_TRANSLATE_CONFIG = {
   RETRY_DELAY: 300,
   INITIAL_DELAY: 100,
   PAGE_LANGUAGE: "en",
+  // Master (off-screen, always visible to Google Translate API)
   ELEMENT_ID: "google_translate_element",
+  // Display targets — populated by cloning the master select
+  ELEMENT_DESKTOP_ID: "google_translate_desktop_display",
   ELEMENT_MOBILE_ID: "google_translate_element_mobile",
 } as const;
 
@@ -316,6 +319,25 @@ const HeaderContent = memo(function HeaderContent({
 
   return (
     <>
+      {/*
+        Master Google Translate init element.
+        Must NOT be inside a display:none container — positioned off-screen
+        so the API can inject a real <select> with all language options.
+      */}
+      <div
+        id={GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID}
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          top: 0,
+          width: "1px",
+          height: "1px",
+          overflow: "hidden",
+          pointerEvents: "none",
+        }}
+      />
+
       {/* Mobile Drawer Overlay */}
       <div
         className={`fixed inset-0 bg-black/50 z-[60] lg:hidden transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
@@ -443,8 +465,9 @@ const HeaderContent = memo(function HeaderContent({
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                   <path d="M2 12h20"></path>
                 </svg>
+                {/* Desktop display: populated by cloning the master select */}
                 <div
-                  id={GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID}
+                  id={GOOGLE_TRANSLATE_CONFIG.ELEMENT_DESKTOP_ID}
                   className="min-w-[120px]"
                 ></div>
               </div>
@@ -562,58 +585,53 @@ export default memo(function Header() {
   const pathname = usePathname();
   const { isSignedIn, isLoaded } = useUser();
 
-  // Initialize Google Translate — only ONE instance is allowed per page.
-  // After the desktop widget renders its <select>, we clone it into the
-  // mobile container and keep both in sync.
+  // Initialize Google Translate — SINGLE instance in the off-screen master div.
+  // After the API injects options into the master <select>, we clone it into
+  // BOTH the desktop display container and the mobile drawer container.
   useEffect(() => {
     retryCountRef.current = 0;
     initCompletedRef.current = false;
 
-    const syncMobileSelect = (originalSelect: HTMLSelectElement) => {
-      const mobileDiv = document.getElementById(
-        GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID,
-      );
-      if (!mobileDiv) return;
+    /** Build a styled <select> clone from the master and append it to targetId. */
+    const makeSelectClone = (
+      master: HTMLSelectElement,
+      targetId: string,
+      colorStyle: string,
+    ) => {
+      const container = document.getElementById(targetId);
+      if (!container || container.querySelector("select")) return; // already cloned
 
-      // Clear any previous clone
-      mobileDiv.innerHTML = "";
-
-      // Build a plain <select> with the same options
       const clone = document.createElement("select");
       clone.style.cssText =
-        "background:transparent;border:none;color:#1F4E79;font-size:13px;" +
-        "font-weight:500;cursor:pointer;outline:none;width:100%;padding:0 4px;";
+        `background:transparent;border:none;font-size:13px;font-weight:500;` +
+        `cursor:pointer;outline:none;width:100%;padding:0 4px;color:${colorStyle};`;
 
-      Array.from(originalSelect.options).forEach((opt) => {
+      Array.from(master.options).forEach((opt) => {
         const o = document.createElement("option");
         o.value = opt.value;
         o.text = opt.text;
         clone.appendChild(o);
       });
-      clone.value = originalSelect.value;
+      clone.value = master.value;
 
-      // Sync clone → original (drives the actual translation)
+      // clone → master (drives the actual translation)
       clone.addEventListener("change", () => {
-        originalSelect.value = clone.value;
-        originalSelect.dispatchEvent(new Event("change"));
+        master.value = clone.value;
+        master.dispatchEvent(new Event("change"));
+      });
+      // master → clone (keeps in sync when changed elsewhere)
+      master.addEventListener("change", () => {
+        if (clone.value !== master.value) clone.value = master.value;
       });
 
-      // Sync original → clone (e.g. when user picks language on desktop)
-      originalSelect.addEventListener("change", () => {
-        clone.value = originalSelect.value;
-      });
-
-      mobileDiv.appendChild(clone);
+      container.appendChild(clone);
     };
 
     const initTranslate = () => {
       if (initCompletedRef.current) return;
 
-      const desktopDiv = document.getElementById(
-        GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID,
-      );
-
-      if (!desktopDiv) {
+      const masterDiv = document.getElementById(GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID);
+      if (!masterDiv) {
         if (retryCountRef.current < GOOGLE_TRANSLATE_CONFIG.MAX_RETRIES) {
           retryCountRef.current++;
           setTimeout(initTranslate, GOOGLE_TRANSLATE_CONFIG.RETRY_DELAY);
@@ -626,25 +644,21 @@ export default memo(function Header() {
         typeof window.google.translate.TranslateElement === "function"
       ) {
         try {
-          if (desktopDiv.innerHTML.trim() === "") {
+          if (masterDiv.innerHTML.trim() === "") {
             new window.google.translate.TranslateElement(
-              {
-                pageLanguage: GOOGLE_TRANSLATE_CONFIG.PAGE_LANGUAGE,
-                autoDisplay: false,
-              },
+              { pageLanguage: GOOGLE_TRANSLATE_CONFIG.PAGE_LANGUAGE, autoDisplay: false },
               GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID,
             );
           }
-          // Wait for the widget to render its <select>, then clone it
+          // Poll until the master <select> has options, then distribute clones
           const waitForSelect = (attempts = 0) => {
-            const sel = desktopDiv.querySelector<HTMLSelectElement>(
-              "select.goog-te-combo",
-            );
-            if (sel) {
-              syncMobileSelect(sel);
+            const masterSel = masterDiv.querySelector<HTMLSelectElement>("select.goog-te-combo");
+            if (masterSel && masterSel.options.length > 1) {
+              makeSelectClone(masterSel, GOOGLE_TRANSLATE_CONFIG.ELEMENT_DESKTOP_ID, "white");
+              makeSelectClone(masterSel, GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID, "#1F4E79");
               initCompletedRef.current = true;
-            } else if (attempts < 30) {
-              setTimeout(() => waitForSelect(attempts + 1), 200);
+            } else if (attempts < 40) {
+              setTimeout(() => waitForSelect(attempts + 1), 250);
             }
           };
           waitForSelect();
@@ -671,45 +685,39 @@ export default memo(function Header() {
     };
   }, []);
 
-  // Re-sync the mobile translate clone whenever the drawer opens,
-  // in case the drawer wasn't mounted yet during initial translate init.
+  // Re-populate display containers when the mobile drawer opens,
+  // in case they were empty at init time (e.g. drawer not yet mounted).
   useEffect(() => {
     if (!isMobileMenuOpen) return;
-    // Small delay for the DOM to settle after drawer animation starts
     const t = setTimeout(() => {
-      const mobileDiv = document.getElementById(
-        GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID,
-      );
-      const desktopDiv = document.getElementById(
-        GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID,
-      );
-      if (!mobileDiv || !desktopDiv) return;
-      // Only re-clone if the mobile container is still empty
-      if (mobileDiv.innerHTML.trim() !== "") return;
-      const originalSelect =
-        desktopDiv.querySelector<HTMLSelectElement>("select.goog-te-combo");
-      if (!originalSelect) return;
+      const masterDiv = document.getElementById(GOOGLE_TRANSLATE_CONFIG.ELEMENT_ID);
+      if (!masterDiv) return;
+      const masterSel = masterDiv.querySelector<HTMLSelectElement>("select.goog-te-combo");
+      if (!masterSel || masterSel.options.length <= 1) return;
 
-      const clone = document.createElement("select");
-      clone.style.cssText =
-        "background:transparent;border:none;color:#1F4E79;font-size:13px;" +
-        "font-weight:500;cursor:pointer;outline:none;width:100%;padding:0 4px;";
-      Array.from(originalSelect.options).forEach((opt) => {
-        const o = document.createElement("option");
-        o.value = opt.value;
-        o.text = opt.text;
-        clone.appendChild(o);
-      });
-      clone.value = originalSelect.value;
-      clone.addEventListener("change", () => {
-        originalSelect.value = clone.value;
-        originalSelect.dispatchEvent(new Event("change"));
-      });
-      originalSelect.addEventListener("change", () => {
-        clone.value = originalSelect.value;
-      });
-      mobileDiv.appendChild(clone);
-    }, 150);
+      const mobileContainer = document.getElementById(GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID);
+      if (mobileContainer && !mobileContainer.querySelector("select")) {
+        const mobileClone = document.createElement("select");
+        mobileClone.style.cssText =
+          "background:transparent;border:none;font-size:13px;font-weight:500;" +
+          "cursor:pointer;outline:none;width:100%;padding:0 4px;color:#1F4E79;";
+        Array.from(masterSel.options).forEach((opt) => {
+          const o = document.createElement("option");
+          o.value = opt.value;
+          o.text = opt.text;
+          mobileClone.appendChild(o);
+        });
+        mobileClone.value = masterSel.value;
+        mobileClone.addEventListener("change", () => {
+          masterSel.value = mobileClone.value;
+          masterSel.dispatchEvent(new Event("change"));
+        });
+        masterSel.addEventListener("change", () => {
+          if (mobileClone.value !== masterSel.value) mobileClone.value = masterSel.value;
+        });
+        mobileContainer.appendChild(mobileClone);
+      }
+    }, 200);
     return () => clearTimeout(t);
   }, [isMobileMenuOpen]);
 
