@@ -590,6 +590,36 @@ export default memo(function Header() {
     retryCountRef.current = 0;
     initCompletedRef.current = false;
 
+    /**
+     * Restore the page to its original English content.
+     * Google Translate sets a cookie and adds the `translated-ltr` class on
+     * <html>. Clicking the "restore" element inside the banner is the official
+     * way; we replicate that here so we can call it programmatically.
+     */
+    const restoreToEnglish = () => {
+      // Try the official Google Translate restore element first
+      const banner = document.querySelector<HTMLElement>(".goog-te-banner-frame");
+      if (banner) {
+        try {
+          const bannerDoc =
+            (banner as HTMLIFrameElement).contentDocument ||
+            (banner as HTMLIFrameElement).contentWindow?.document;
+          const restoreBtn = bannerDoc?.querySelector<HTMLElement>(
+            ".goog-te-banner-restore, [id*='restore']",
+          );
+          restoreBtn?.click();
+          return;
+        } catch {/* cross-origin – fall through */}
+      }
+      // Fallback: reset via cookie + reload
+      document.cookie =
+        "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie =
+        "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
+        location.hostname + ";";
+      window.location.reload();
+    };
+
     /** Build a styled <select> clone from the master and append it to targetId. */
     const makeSelectClone = (
       master: HTMLSelectElement,
@@ -604,16 +634,30 @@ export default memo(function Header() {
         `background:transparent;border:none;font-size:13px;font-weight:500;` +
         `cursor:pointer;outline:none;width:100%;padding:0 4px;color:${colorStyle};`;
 
+      // ── Inject English as the first option (Google hides it since it's pageLanguage)
+      const englishOpt = document.createElement("option");
+      englishOpt.value = "en";
+      englishOpt.text = "English";
+      clone.appendChild(englishOpt);
+
       Array.from(master.options).forEach((opt) => {
+        // Skip any English option Google may have left in to avoid duplicates
+        if (opt.value === "en" || opt.value === "") return;
         const o = document.createElement("option");
         o.value = opt.value;
         o.text = opt.text;
         clone.appendChild(o);
       });
-      clone.value = master.value;
+
+      // Default to English (page is currently in English)
+      clone.value = master.value || "en";
 
       // clone → master (drives the actual translation)
       clone.addEventListener("change", () => {
+        if (clone.value === "en") {
+          restoreToEnglish();
+          return;
+        }
         master.value = clone.value;
         master.dispatchEvent(new Event("change"));
       });
@@ -699,14 +743,32 @@ export default memo(function Header() {
         mobileClone.style.cssText =
           "background:transparent;border:none;font-size:13px;font-weight:500;" +
           "cursor:pointer;outline:none;width:100%;padding:0 4px;color:#1F4E79;";
+
+        // ── Inject English as the first option
+        const engOpt = document.createElement("option");
+        engOpt.value = "en";
+        engOpt.text = "English";
+        mobileClone.appendChild(engOpt);
+
         Array.from(masterSel.options).forEach((opt) => {
+          if (opt.value === "en" || opt.value === "") return;
           const o = document.createElement("option");
           o.value = opt.value;
           o.text = opt.text;
           mobileClone.appendChild(o);
         });
-        mobileClone.value = masterSel.value;
+        mobileClone.value = masterSel.value || "en";
         mobileClone.addEventListener("change", () => {
+          if (mobileClone.value === "en") {
+            // Restore to English: clear cookie and reload
+            document.cookie =
+              "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie =
+              "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
+              location.hostname + ";";
+            window.location.reload();
+            return;
+          }
           masterSel.value = mobileClone.value;
           masterSel.dispatchEvent(new Event("change"));
         });
