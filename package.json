@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^7.0.4",
     "@neondatabase/serverless": "^1.0.2",
+    "@next/bundle-analyzer": "^16.2.1",
     "@vercel/analytics": "^2.0.1",
     "chart.js": "^4.5.1",
     "cloudinary": "^2.9.0",
