@@ -187,22 +187,26 @@ export default function SignupPage() {
 
       try {
         const payload: any = {
-          email_address: formData.email,
-          password: formData.password,
-          firstName: formData.fullName.split(" ")[0],
-          lastName: formData.fullName.split(" ").slice(1).join(" "),
-          username: formData.aadhar+"a",
-          unsafeMetadata: {
-            phoneNumber: normalizedPhone,
-            district,
-            taluka,
-            village,
-            village_id: locationDataset.find((item) => item.village === village)
-              ?.id,
-            legalAccepted: acceptedTerms,
-            role: "user",
-          },
-        };
+  email_address: formData.email,
+  password: formData.password,
+  firstName: formData.fullName.split(" ")[0],
+  lastName: formData.fullName.split(" ").slice(1).join(" "),
+  username: formData.aadhar + "a",
+  unsafeMetadata: {
+    phoneNumber: normalizedPhone,
+    district,
+    taluka,
+    village,
+    village_id: locationDataset.find(
+      (item) =>
+        item.district === district &&
+        item.subDistrict === taluka &&
+        item.village === village
+    )?.id,
+    legalAccepted: acceptedTerms,
+    role: "user",
+  },
+};
 
         // Reset any existing sign-up state
         await signUp.reset();
