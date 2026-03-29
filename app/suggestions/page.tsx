@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import posthog from "posthog-js";
 import { MessageSquare, ThumbsUp, Lightbulb, CheckCircle, Send, Info } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -54,6 +55,10 @@ export default function Suggestions() {
       const json = await res.json();
       setSuggestionId(json.data?.suggestionId || "");
       setSubmitted(true);
+      posthog.capture("suggestion_submitted", {
+        category: formData.category,
+        suggestionId: json.data?.suggestionId,
+      });
       setFormData({ subject: "", message: "", category: "General", citizenName: "" });
     } catch (err) {
       console.error(err);

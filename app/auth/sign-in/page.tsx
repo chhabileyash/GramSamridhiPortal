@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSignIn } from "@clerk/nextjs";
+import posthog from "posthog-js";
 
 type MfaStrategy = "email_code" | "phone_code" | null;
 
@@ -71,6 +72,13 @@ export default function LoginPage() {
     await signIn.finalize({
       navigate: ({ session, decorateUrl }) => {
         if (session?.currentTask) return;
+        const userId = session?.user?.id;
+        if (userId) {
+          posthog.identify(userId, {
+            email: session?.user?.primaryEmailAddress?.emailAddress,
+          });
+          posthog.capture("user_signed_in");
+        }
         const url = decorateUrl("/");
         if (url.startsWith("http")) {
           window.location.href = url;

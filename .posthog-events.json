@@ -1,0 +1,72 @@
+[
+  {
+    "event": "complaint_submitted",
+    "description": "User successfully submits a grievance complaint via the raise complaint form",
+    "file": "app/raise-complaint/page.tsx"
+  },
+  {
+    "event": "suggestion_submitted",
+    "description": "User successfully submits a suggestion to the Gram Panchayat",
+    "file": "app/suggestions/page.tsx"
+  },
+  {
+    "event": "property_tax_payment_initiated",
+    "description": "User clicks PAY NOW to begin property tax payment flow (UPI QR shown)",
+    "file": "app/property-tax-filling/page.tsx"
+  },
+  {
+    "event": "property_tax_payment_confirmed",
+    "description": "User confirms property tax payment by submitting UPI reference number",
+    "file": "app/property-tax-filling/page.tsx"
+  },
+  {
+    "event": "water_tax_payment_initiated",
+    "description": "User clicks PAY NOW to begin water tax payment flow (UPI QR shown)",
+    "file": "app/water-tax/page.tsx"
+  },
+  {
+    "event": "water_tax_payment_confirmed",
+    "description": "User confirms water tax payment by submitting UPI reference number",
+    "file": "app/water-tax/page.tsx"
+  },
+  {
+    "event": "electricity_bill_payment_initiated",
+    "description": "User clicks PAY NOW to begin electricity bill payment flow (UPI QR shown)",
+    "file": "app/electricity-bill/page.tsx"
+  },
+  {
+    "event": "electricity_bill_payment_confirmed",
+    "description": "User confirms electricity bill payment by submitting UPI reference number",
+    "file": "app/electricity-bill/page.tsx"
+  },
+  {
+    "event": "user_signed_in",
+    "description": "User successfully completes sign-in (after password or MFA step)",
+    "file": "app/auth/sign-in/page.tsx"
+  },
+  {
+    "event": "complaint_created",
+    "description": "Server-side: Complaint successfully inserted into database via API",
+    "file": "app/api/complaints/route.ts"
+  },
+  {
+    "event": "property_tax_filed",
+    "description": "Server-side: Property tax payment record successfully inserted via API",
+    "file": "app/api/property-tax/route.ts"
+  },
+  {
+    "event": "water_tax_filed",
+    "description": "Server-side: Water tax payment record successfully inserted via API",
+    "file": "app/api/water-tax/route.ts"
+  },
+  {
+    "event": "electricity_bill_filed",
+    "description": "Server-side: Electricity bill payment record successfully inserted via API",
+    "file": "app/api/electricity-bill/route.ts"
+  },
+  {
+    "event": "user_created",
+    "description": "Server-side: New user account created via Clerk webhook",
+    "file": "app/api/webhooks/users/route.ts"
+  }
+]

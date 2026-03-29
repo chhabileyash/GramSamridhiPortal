@@ -4,6 +4,7 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { db } from '@/src/index';
 import { users } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 export async function POST(req: Request) {
     console.log("webhook hit");
@@ -81,6 +82,18 @@ export async function POST(req: Request) {
                     taluka,
                     village,
                     villageId,
+                });
+
+                getPostHogClient().capture({
+                    distinctId: id,
+                    event: "user_created",
+                    properties: {
+                        email,
+                        village,
+                        villageId,
+                        district,
+                        taluka,
+                    },
                 });
             } else if (eventType === 'user.updated' && id) {
                 await db.update(users).set({

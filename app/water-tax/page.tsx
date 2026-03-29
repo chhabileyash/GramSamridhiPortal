@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import posthog from "posthog-js";
 import {
   History,
   Droplet,
@@ -97,6 +98,11 @@ export default function WaterTax() {
       if (!res.ok) throw new Error(result.error || "Failed to file");
 
       toast.success("Water tax filed successfully!");
+      posthog.capture("water_tax_payment_confirmed", {
+        connectionType: formData.connectionType,
+        amount: totalPayableAmount,
+        invoiceId: result.data?.invoiceId,
+      });
       setFormData({
         connectionId: "",
         connectionType: "Domestic",
@@ -357,7 +363,13 @@ export default function WaterTax() {
 
                       {!showQR ? (
                         <button
-                          onClick={() => setShowQR(true)}
+                          onClick={() => {
+                            setShowQR(true);
+                            posthog.capture("water_tax_payment_initiated", {
+                              connectionType: formData.connectionType,
+                              amount: totalPayableAmount,
+                            });
+                          }}
                           className="w-full bg-[#138808] text-white font-bold py-3 px-4 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 mt-6 rounded-sm"
                         >
                           PAY NOW

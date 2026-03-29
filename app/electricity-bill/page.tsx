@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import posthog from "posthog-js";
 import {
   History,
   Zap,
@@ -106,6 +107,11 @@ export default function ElectricityBill() {
       if (!res.ok) throw new Error(result.error || "Failed to submit");
 
       toast.success("Electricity bill submitted successfully!");
+      posthog.capture("electricity_bill_payment_confirmed", {
+        meterType: formData.meterType,
+        amount: totalPayableAmount,
+        invoiceId: result.data?.invoiceId,
+      });
       setFormData({
         meterId: "",
         meterType: "Domestic",
@@ -393,7 +399,13 @@ export default function ElectricityBill() {
 
                       {!showQR ? (
                         <button
-                          onClick={() => setShowQR(true)}
+                          onClick={() => {
+                            setShowQR(true);
+                            posthog.capture("electricity_bill_payment_initiated", {
+                              meterType: formData.meterType,
+                              amount: totalPayableAmount,
+                            });
+                          }}
                           className="w-full bg-[#138808] text-white font-bold py-3 px-4 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 mt-6 rounded-sm"
                         >
                           PAY NOW

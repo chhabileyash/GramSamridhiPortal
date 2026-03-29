@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import posthog from "posthog-js";
 import {
   History,
   Building,
@@ -107,6 +108,11 @@ export default function PropertyTaxFiling() {
       }
 
       toast.success("Property tax filed successfully!");
+      posthog.capture("property_tax_payment_confirmed", {
+        propertyType: formData.propertyType,
+        amount: totalPayableAmount,
+        invoiceId: result.data?.invoiceId,
+      });
       setFormData({
         propertyId: "",
         propertyType: "Residential",
@@ -429,7 +435,13 @@ export default function PropertyTaxFiling() {
 
                       {!showQR ? (
                         <button
-                          onClick={() => setShowQR(true)}
+                          onClick={() => {
+                            setShowQR(true);
+                            posthog.capture("property_tax_payment_initiated", {
+                              propertyType: formData.propertyType,
+                              amount: totalPayableAmount,
+                            });
+                          }}
                           className="w-full bg-[#138808] text-white font-bold py-3 px-4 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 mt-6 rounded-sm"
                         >
                           PAY NOW

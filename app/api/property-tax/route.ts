@@ -3,6 +3,7 @@ import { propertyTaxes } from "@/src/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 export async function GET(req: Request) {
     const { userId, sessionClaims } = await auth();
@@ -67,6 +68,16 @@ export async function POST(req: Request) {
             referenceNumber: referenceNumber,
             status: "Pending"
         }).returning();
+
+        getPostHogClient().capture({
+            distinctId: userId,
+            event: "property_tax_filed",
+            properties: {
+                invoiceId,
+                amount,
+                villageId: vId,
+            },
+        });
 
         return NextResponse.json({ success: true, data: result[0] });
     } catch (error: any) {

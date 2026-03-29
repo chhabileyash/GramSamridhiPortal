@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
+import posthog from "posthog-js";
 import {
   FileText,
   AlertCircle,
@@ -66,6 +67,10 @@ export default function RaiseComplaint() {
       const json = await res.json();
       setComplaintId(json.data?.complaintId || "");
       setSubmitted(true);
+      posthog.capture("complaint_submitted", {
+        category: formData.category,
+        complaintId: json.data?.complaintId,
+      });
       setFormData({
         category: "Water Supply",
         location: "",

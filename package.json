@@ -20,6 +20,8 @@
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "next-cloudinary": "^6.17.5",
+    "posthog-js": "^1.364.1",
+    "posthog-node": "^5.28.8",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-fast-marquee": "^1.6.5",
