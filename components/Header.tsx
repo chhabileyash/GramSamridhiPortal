@@ -492,7 +492,7 @@ const HeaderContent = memo(function HeaderContent({
 // ── Header (root) ─────────────────────────────────────────────────────────────
 
 const Header = () => {
-  const [zoomLevel, setZoomLevel] = useState(ZOOM.DEFAULT);
+  const [zoomLevel, setZoomLevel] = useState<number>(ZOOM.DEFAULT);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const retryCountRef = useRef(0);
   const initCompletedRef = useRef(false);
