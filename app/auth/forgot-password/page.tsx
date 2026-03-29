@@ -21,7 +21,7 @@ import { useSignIn } from "@clerk/nextjs";
 type Step = "email" | "code" | "password" | "done";
 
 export default function ForgotPasswordPage() {
-  const { signIn, isLoaded } = useSignIn();
+  const { signIn, fetchStatus } = useSignIn();
   const router = useRouter();
 
   const [step, setStep] = useState<Step>("email");
@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
   async function handleSendCode(e: React.FormEvent) {
     e.preventDefault();
     setErrorMsg("");
-    if (!isLoaded || !signIn) return;
+    if (!signIn || fetchStatus === 'fetching') return;
 
     if (!emailAddress.trim()) {
       setErrorMsg("Please enter your email address.");
@@ -89,13 +89,22 @@ export default function ForgotPasswordPage() {
 
     setIsSubmitting(true);
     try {
-      await signIn.create({ identifier: emailAddress });
-      await signIn.prepareFirstFactor({
-        strategy: "reset_password_email_code",
-        emailAddressId: signIn.supportedFirstFactors?.find(
-          (f: { strategy: string }) => f.strategy === "reset_password_email_code"
-        )?.emailAddressId ?? "",
-      });
+      const { error: signinerror } = await signIn.create({ identifier: emailAddress });
+
+      if (signinerror) {
+        setErrorMsg(extractError(signinerror));
+        console.error(JSON.stringify(signinerror, null, 2));
+        return;
+      }
+
+      const { error: sendCodeError } = await signIn.resetPasswordEmailCode.sendCode();
+      if (sendCodeError) {
+        setErrorMsg(extractError(sendCodeError));
+        console.error(JSON.stringify(sendCodeError, null, 2));
+        return;
+      }
+
+
       setStep("code");
       setSuccessMsg(`A 6-digit code was sent to ${emailAddress}`);
     } catch (err) {
@@ -109,7 +118,7 @@ export default function ForgotPasswordPage() {
   async function handleVerifyCode(e: React.FormEvent) {
     e.preventDefault();
     setErrorMsg("");
-    if (!isLoaded || !signIn) return;
+    if (!signIn || fetchStatus === 'fetching') return;
 
     const code = otpValues.join("");
     if (code.length !== 6) {
@@ -119,18 +128,30 @@ export default function ForgotPasswordPage() {
 
     setIsSubmitting(true);
     try {
-      const result = await signIn.attemptFirstFactor({
-        strategy: "reset_password_email_code",
+      const { error } = await signIn.resetPasswordEmailCode.verifyCode({
         code,
       });
+      if (error) {
+        setErrorMsg(extractError(error));
+        console.error(JSON.stringify(error, null, 2));
+        return;
+      }
 
-      if (result.status === "needs_new_password") {
+      if (signIn.status === "needs_new_password") {
         setStep("password");
         setSuccessMsg("");
         setErrorMsg("");
+      } else if (signIn.status === "complete") {
+        setStep("done");
+      } else if (signIn.status === "needs_second_factor") {
+        setErrorMsg(
+          "Two-factor authentication is required. Please sign in normally."
+        );
       } else {
-        setErrorMsg("Unexpected response. Please try again.");
+        setErrorMsg("Could not reset password. Please try again.");
       }
+
+
     } catch (err) {
       setErrorMsg(extractError(err));
     } finally {
@@ -142,7 +163,7 @@ export default function ForgotPasswordPage() {
   async function handleSetPassword(e: React.FormEvent) {
     e.preventDefault();
     setErrorMsg("");
-    if (!isLoaded || !signIn) return;
+    if (!signIn || fetchStatus === 'fetching') return;
 
     if (password.length < 8) {
       setErrorMsg("Password must be at least 8 characters.");
@@ -155,11 +176,17 @@ export default function ForgotPasswordPage() {
 
     setIsSubmitting(true);
     try {
-      const result = await signIn.resetPassword({ password });
+      const { error } = await signIn.resetPasswordEmailCode.submitPassword({ password });
 
-      if (result.status === "complete") {
+      if (error) {
+        setErrorMsg(extractError(error));
+        console.error(JSON.stringify(error, null, 2));
+        return;
+      }
+
+      if (signIn.status === "complete") {
         setStep("done");
-      } else if (result.status === "needs_second_factor") {
+      } else if (signIn.status === "needs_second_factor") {
         setErrorMsg(
           "Two-factor authentication is required. Please sign in normally."
         );
@@ -177,16 +204,11 @@ export default function ForgotPasswordPage() {
   async function handleResendCode() {
     setErrorMsg("");
     setSuccessMsg("");
-    if (!isLoaded || !signIn || isSubmitting) return;
+    if (!signIn || isSubmitting || fetchStatus === 'fetching') return;
 
     setIsSubmitting(true);
     try {
-      await signIn.prepareFirstFactor({
-        strategy: "reset_password_email_code",
-        emailAddressId: signIn.supportedFirstFactors?.find(
-          (f: { strategy: string }) => f.strategy === "reset_password_email_code"
-        )?.emailAddressId ?? "",
-      });
+      await signIn.resetPasswordEmailCode.sendCode()
       setSuccessMsg("A new code was sent to your email.");
       setOtpValues(["", "", "", "", "", ""]);
       otpInputRefs.current[0]?.focus();
@@ -285,13 +307,12 @@ export default function ForgotPasswordPage() {
                     <React.Fragment key={s.key}>
                       <div className="flex flex-col items-center gap-1">
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${
-                            i < stepIndex
-                              ? "bg-[#F28C28] text-white"
-                              : i === stepIndex
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${i < stepIndex
+                            ? "bg-[#F28C28] text-white"
+                            : i === stepIndex
                               ? "bg-[#1F4E79] text-white ring-4 ring-[#1F4E79]/20"
                               : "bg-gray-100 text-gray-400"
-                          }`}
+                            }`}
                         >
                           {i < stepIndex ? (
                             <CheckCircle2 className="w-4 h-4" />
@@ -300,18 +321,16 @@ export default function ForgotPasswordPage() {
                           )}
                         </div>
                         <span
-                          className={`text-[10px] font-bold uppercase tracking-wide ${
-                            i <= stepIndex ? "text-[#1F4E79]" : "text-gray-400"
-                          }`}
+                          className={`text-[10px] font-bold uppercase tracking-wide ${i <= stepIndex ? "text-[#1F4E79]" : "text-gray-400"
+                            }`}
                         >
                           {s.label}
                         </span>
                       </div>
                       {i < steps.length - 1 && (
                         <div
-                          className={`flex-1 h-0.5 mx-1 rounded-full transition-all duration-500 ${
-                            i < stepIndex ? "bg-[#F28C28]" : "bg-gray-200"
-                          }`}
+                          className={`flex-1 h-0.5 mx-1 rounded-full transition-all duration-500 ${i < stepIndex ? "bg-[#F28C28]" : "bg-gray-200"
+                            }`}
                         />
                       )}
                     </React.Fragment>
@@ -544,27 +563,26 @@ export default function ForgotPasswordPage() {
                           {[1, 2, 3, 4].map((lvl) => (
                             <div
                               key={lvl}
-                              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                                password.length >= lvl * 3
-                                  ? lvl <= 1
-                                    ? "bg-red-400"
-                                    : lvl <= 2
+                              className={`h-1 flex-1 rounded-full transition-all duration-300 ${password.length >= lvl * 3
+                                ? lvl <= 1
+                                  ? "bg-red-400"
+                                  : lvl <= 2
                                     ? "bg-yellow-400"
                                     : lvl <= 3
-                                    ? "bg-blue-400"
-                                    : "bg-green-500"
-                                  : "bg-gray-200"
-                              }`}
+                                      ? "bg-blue-400"
+                                      : "bg-green-500"
+                                : "bg-gray-200"
+                                }`}
                             />
                           ))}
                           <span className="text-xs text-gray-400 ml-1">
                             {password.length < 4
                               ? "Weak"
                               : password.length < 7
-                              ? "Fair"
-                              : password.length < 10
-                              ? "Good"
-                              : "Strong"}
+                                ? "Fair"
+                                : password.length < 10
+                                  ? "Good"
+                                  : "Strong"}
                           </span>
                         </div>
                       )}
@@ -584,15 +602,14 @@ export default function ForgotPasswordPage() {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           placeholder="Re-enter password"
-                          className={`w-full pl-10 pr-10 py-2.5 border rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 transition-all placeholder:text-gray-400 text-base ${
-                            confirmPassword &&
+                          className={`w-full pl-10 pr-10 py-2.5 border rounded-sm text-[#1F4E79] font-semibold focus:outline-none focus:ring-1 transition-all placeholder:text-gray-400 text-base ${confirmPassword &&
                             confirmPassword !== password
-                              ? "border-red-300 focus:ring-red-300 focus:border-red-300"
-                              : confirmPassword &&
-                                confirmPassword === password
+                            ? "border-red-300 focus:ring-red-300 focus:border-red-300"
+                            : confirmPassword &&
+                              confirmPassword === password
                               ? "border-green-300 focus:ring-green-400 focus:border-green-400"
                               : "border-gray-200 focus:ring-[#F28C28] focus:border-[#F28C28]"
-                          }`}
+                            }`}
                         />
                         <button
                           type="button"
