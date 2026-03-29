@@ -13,6 +13,7 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
+import Image from "next/image";
 
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
@@ -65,10 +66,24 @@ export default function HomePage() {
     ? `${(user.unsafeMetadata as any).village} ${(user.unsafeMetadata as any).taluka} ${(user.unsafeMetadata as any).district} Maharashtra India`
     : "Takarkhed Nandura Buldhana Maharashtra India";
 
-  const primaryBanner =
+  const primaryBannerRaw =
     dbData?.images?.find((img: any) => img.isPrimary)?.url ||
     dbData?.images?.[0]?.url ||
     "https://lh3.googleusercontent.com/aida-public/AB6AXuDJPGBY_I7f-SH3oiZiJZ0vb23rHOhXjXOexTEpuYvdseJxVQ-1mYJowlZR2YFbsPRBY6ZFaPsZY1tDaROhsLKUvSzYI0h1bqUdyBZywK1BnfPJHGFpXHYMhyyP_pptDNRmd2nUgzZARexAYP8QAcjMXFcrAVt7EhHhcDtG9L3NFR9-IADfg50WYrpY4E8JbLeGcFeKYT8QKw9Pisp4y17YdsdoR5bvT5MdzcMJKD-udRBleamLo87IFjAQNt0TcA466rr72RKQxZI";
+
+  // Inject q_auto:good after upload/ in Cloudinary URLs
+  let primaryBanner = primaryBannerRaw;
+  if (
+    process.env.NODE_ENV === "production" &&
+    typeof primaryBannerRaw === "string" &&
+    primaryBannerRaw.includes("res.cloudinary.com") &&
+    primaryBannerRaw.includes("/upload/")
+  ) {
+    primaryBanner = primaryBannerRaw.replace(
+      /(\/upload\/)/,
+      "$1f_auto,q_auto,w_1537/"
+    );
+  }
 
   // Unified Data processing logic using strictly village-info
   const aboutText =
@@ -91,7 +106,12 @@ export default function HomePage() {
   const email = dbData?.email || "contact@gramsamridhi.gov.in";
 
   // Dynamic data for the chart from statsData
-  const devStats = statsData?.developmentStats || { ongoing: 0, completed: 0, review: 0, total: 0 };
+  const devStats = statsData?.developmentStats || {
+    ongoing: 0,
+    completed: 0,
+    review: 0,
+    total: 0,
+  };
   const chartData = [
     { name: "Ongoing", value: devStats.ongoing || 0, color: "#FF9933" },
     { name: "Complete", value: devStats.completed || 0, color: "#138808" },
@@ -149,13 +169,17 @@ export default function HomePage() {
               {/* Hero Slider Section */}
               <section data-purpose="carousel">
                 <div className="relative w-full h-100 rounded-sm overflow-hidden group">
-                  <img
+                  <Image
                     alt="Village Display"
                     className="w-full h-full object-cover"
                     src={primaryBanner}
+                    priority
+                    fetchPriority="high"
+                    width={1537}
+                    height={400}
                   />
                   {/* Navigation Arrows */}
-                 {/* <button
+                  {/* <button
                     className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/40 hover:bg-white/60 p-2 rounded flex items-center justify-center backdrop-blur-sm"
                     suppressHydrationWarning
                   >
@@ -360,7 +384,9 @@ export default function HomePage() {
                         <div className="w-full bg-gray-100 rounded-full h-2">
                           <div
                             className="bg-[#FF9933] h-2 rounded-full"
-                            style={{ width: `${getPercent(hasData ? devStats.ongoing : 45)}%` }}
+                            style={{
+                              width: `${getPercent(hasData ? devStats.ongoing : 45)}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
@@ -381,7 +407,9 @@ export default function HomePage() {
                         <div className="w-full bg-gray-100 rounded-full h-2">
                           <div
                             className="bg-[#138808] h-2 rounded-full"
-                            style={{ width: `${getPercent(hasData ? devStats.completed : 35)}%` }}
+                            style={{
+                              width: `${getPercent(hasData ? devStats.completed : 35)}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
@@ -402,7 +430,9 @@ export default function HomePage() {
                         <div className="w-full bg-gray-100 rounded-full h-2">
                           <div
                             className="bg-[#2c5577] h-2 rounded-full"
-                            style={{ width: `${getPercent(hasData ? devStats.review : 20)}%` }}
+                            style={{
+                              width: `${getPercent(hasData ? devStats.review : 20)}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
