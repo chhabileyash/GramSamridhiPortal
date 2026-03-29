@@ -12,11 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import dynamic from "next/dynamic";
-const CustomUserButton = dynamic(() => import("./CustomUserButton"), { 
-  ssr: false,
-  loading: () => <div className="h-10 w-10 animate-pulse bg-white/20 rounded-full" />
-});
+import CustomUserButton from "./CustomUserButton";
 import Marquee from "react-fast-marquee";
 
 
@@ -489,13 +485,6 @@ export default memo(function Header() {
 
   // Initialize Google Translate
   useEffect(() => {
-    // Inject the Google Translate Script with defer
-    const script = document.createElement("script");
-    script.src =
-      "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-    script.defer = true;
-    document.body.appendChild(script);
-
     retryCountRef.current = 0;
     initCompletedRef.current = false;
 

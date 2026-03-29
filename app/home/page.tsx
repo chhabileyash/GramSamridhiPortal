@@ -13,7 +13,6 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-import Image from "next/image";
 
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
@@ -74,15 +73,11 @@ export default function HomePage() {
   // Inject q_auto:good after upload/ in Cloudinary URLs
   let primaryBanner = primaryBannerRaw;
   if (
-    process.env.NODE_ENV === "production" &&
     typeof primaryBannerRaw === "string" &&
     primaryBannerRaw.includes("res.cloudinary.com") &&
     primaryBannerRaw.includes("/upload/")
   ) {
-    primaryBanner = primaryBannerRaw.replace(
-      /(\/upload\/)/,
-      "$1f_auto,q_auto,w_1537/"
-    );
+    primaryBanner = primaryBannerRaw.replace(/(\/upload\/)/, "$1q_auto:good/");
   }
 
   // Unified Data processing logic using strictly village-info
@@ -169,14 +164,10 @@ export default function HomePage() {
               {/* Hero Slider Section */}
               <section data-purpose="carousel">
                 <div className="relative w-full h-100 rounded-sm overflow-hidden group">
-                  <Image
+                  <img
                     alt="Village Display"
                     className="w-full h-full object-cover"
                     src={primaryBanner}
-                    priority
-                    fetchPriority="high"
-                    width={1537}
-                    height={400}
                   />
                   {/* Navigation Arrows */}
                   {/* <button

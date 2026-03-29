@@ -25,23 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://res.cloudinary.com" />
-        <link
-          rel="preconnect"
-          href="https://cool-camel-50.clerk.accounts.dev"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preconnect"
-          href="https://translate.googleapis.com"
-          crossOrigin="anonymous"
-        />
-      </head>
       <body
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning
       >
+        <Script
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="afterInteractive"
+        />
         <ClerkProvider
           signInForceRedirectUrl={
             process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL
