@@ -27,6 +27,7 @@ const chartData = [
 export default function HomePage() {
   const { user, isLoaded } = useUser();
   const [dbData, setDbData] = useState<any>(null);
+  const [statsData, setStatsData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -34,10 +35,19 @@ export default function HomePage() {
       if (user && user.unsafeMetadata) {
         const villageId = (user.unsafeMetadata as any).village_id;
         if (villageId) {
+          // Fetch Village Info
           fetch(`/api/village-info?villageId=${villageId}`)
             .then((r) => r.json())
             .then((d) => {
               if (d.data) setDbData(d.data);
+            })
+            .catch((e) => console.error(e));
+
+          // Fetch Village Stats
+          fetch(`/api/stats?villageId=${villageId}`)
+            .then((r) => r.json())
+            .then((d) => {
+              setStatsData(d);
               setIsLoading(false);
             })
             .catch((e) => {
@@ -79,6 +89,30 @@ export default function HomePage() {
     "Panchayat Bhavan, Main Road,\nGram Samridhi, Pune - 411001";
   const phone = dbData?.phone || "+91 20 2345 6789";
   const email = dbData?.email || "contact@gramsamridhi.gov.in";
+
+  // Dynamic data for the chart from statsData
+  const devStats = statsData?.developmentStats || { ongoing: 0, completed: 0, review: 0, total: 0 };
+  const chartData = [
+    { name: "Ongoing", value: devStats.ongoing || 0, color: "#FF9933" },
+    { name: "Complete", value: devStats.completed || 0, color: "#138808" },
+    { name: "Review", value: devStats.review || 0, color: "#2c5577" },
+  ];
+
+  // If no data, provide the previous fallback/demo values
+  const hasData = devStats.total > 0;
+  const displayChartData = hasData
+    ? chartData
+    : [
+        { name: "Ongoing", value: 45, color: "#FF9933" },
+        { name: "Complete", value: 35, color: "#138808" },
+        { name: "Review", value: 20, color: "#2c5577" },
+      ];
+
+  const totalActions = hasData ? devStats.total : 100;
+  const getPercent = (val: number) => {
+    if (!hasData) return val; // hardcoded demo
+    return Math.round((val / totalActions) * 100);
+  };
 
   return (
     <div className="min-h-screen flex flex-col text-gray-800 font-sans bg-[#fcfcfc]">
@@ -163,6 +197,7 @@ export default function HomePage() {
                   data-purpose="map-container"
                 >
                   <iframe
+                    title="Village Map"
                     width="100%"
                     height="100%"
                     className="h-full object-cover"
@@ -290,7 +325,7 @@ export default function HomePage() {
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
-                            data={chartData}
+                            data={displayChartData}
                             cx="50%"
                             cy="50%"
                             innerRadius={60}
@@ -299,7 +334,7 @@ export default function HomePage() {
                             dataKey="value"
                             stroke="none"
                           >
-                            {chartData.map((entry, index) => (
+                            {displayChartData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                           </Pie>
@@ -315,17 +350,17 @@ export default function HomePage() {
                           </p>
                           <div className="flex items-baseline space-x-1">
                             <span className="text-xl font-bold text-[#FF9933]">
-                              45
+                              {hasData ? devStats.ongoing : 45}
                             </span>
                             <span className="text-[10px] text-gray-400 font-bold uppercase">
-                              Percent
+                              {hasData ? "Active" : "Percent"}
                             </span>
                           </div>
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-2">
                           <div
                             className="bg-[#FF9933] h-2 rounded-full"
-                            style={{ width: "45%" }}
+                            style={{ width: `${getPercent(hasData ? devStats.ongoing : 45)}%` }}
                           ></div>
                         </div>
                       </div>
@@ -336,17 +371,17 @@ export default function HomePage() {
                           </p>
                           <div className="flex items-baseline space-x-1">
                             <span className="text-xl font-bold text-[#138808]">
-                              35
+                              {hasData ? devStats.completed : 35}
                             </span>
                             <span className="text-[10px] text-gray-400 font-bold uppercase">
-                              Percent
+                              {hasData ? "Finished" : "Percent"}
                             </span>
                           </div>
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-2">
                           <div
                             className="bg-[#138808] h-2 rounded-full"
-                            style={{ width: "35%" }}
+                            style={{ width: `${getPercent(hasData ? devStats.completed : 35)}%` }}
                           ></div>
                         </div>
                       </div>
@@ -357,17 +392,17 @@ export default function HomePage() {
                           </p>
                           <div className="flex items-baseline space-x-1">
                             <span className="text-xl font-bold text-[#2c5577]">
-                              20
+                              {hasData ? devStats.review : 20}
                             </span>
                             <span className="text-[10px] text-gray-400 font-bold uppercase">
-                              Percent
+                              {hasData ? "Pending" : "Percent"}
                             </span>
                           </div>
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-2">
                           <div
                             className="bg-[#2c5577] h-2 rounded-full"
-                            style={{ width: "20%" }}
+                            style={{ width: `${getPercent(hasData ? devStats.review : 20)}%` }}
                           ></div>
                         </div>
                       </div>

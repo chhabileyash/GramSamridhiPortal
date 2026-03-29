@@ -56,8 +56,6 @@ export async function POST(req: Request) {
 
     try {
         if (eventType === 'user.created' || eventType === 'user.updated') {
-            console.log(evt.data);
-
             const { email_addresses, first_name, last_name, image_url, unsafe_metadata } = evt.data;
             const email = email_addresses && email_addresses.length > 0 ? email_addresses[0].email_address : '';
 
@@ -84,7 +82,6 @@ export async function POST(req: Request) {
                     village,
                     villageId,
                 });
-                console.log(`User created in db: ${id}`);
             } else if (eventType === 'user.updated' && id) {
                 await db.update(users).set({
                     email: email,
@@ -100,11 +97,9 @@ export async function POST(req: Request) {
                     villageId,
                     updatedAt: new Date(),
                 }).where(eq(users.clerkId, id));
-                console.log(`User updated in db: ${id}`);
             }
         } else if (eventType === 'user.deleted' && id) {
             await db.delete(users).where(eq(users.clerkId, id));
-            console.log(`User deleted from db: ${id}`);
         }
     } catch (error) {
         console.error("Error processing webhook in database:", error);

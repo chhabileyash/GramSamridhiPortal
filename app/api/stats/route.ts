@@ -52,16 +52,27 @@ export async function GET(req: NextRequest) {
     )
     .then((r) => r.length);
 
-  // Ongoing development works (assume status is not "Complete")
-  const ongoingDevelopmentWorks = await db
+  // Development works breakdown
+  const ongoingWorks = await db
+    .select()
+    .from(developmentWorks)
+    .where(and(eq(developmentWorks.villageId, villageId), eq(developmentWorks.status, "Ongoing")))
+    .then((r) => r.length);
+
+  const completedWorks = await db
+    .select()
+    .from(developmentWorks)
+    .where(and(eq(developmentWorks.villageId, villageId), eq(developmentWorks.status, "Completed")))
+    .then((r) => r.length);
+
+  const reviewWorks = await db
     .select()
     .from(developmentWorks)
     .where(
       and(
         eq(developmentWorks.villageId, villageId),
-        // status != "Complete"
-        not(eq(developmentWorks.status, "Complete")),
-      ),
+        or(eq(developmentWorks.status, "Pending Start"), eq(developmentWorks.status, "Halted"))
+      )
     )
     .then((r) => r.length);
 
@@ -85,7 +96,12 @@ export async function GET(req: NextRequest) {
     totalUsers,
     pendingComplaints,
     activeSchemes,
-    ongoingDevelopmentWorks,
+    developmentStats: {
+      ongoing: ongoingWorks,
+      completed: completedWorks,
+      review: reviewWorks,
+      total: ongoingWorks + completedWorks + reviewWorks
+    },
     last5Complaints,
     last5Schemes,
   });
