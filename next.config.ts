@@ -34,7 +34,11 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [{ hostname: "res.cloudinary.com" }],
+    remotePatterns: [
+      { hostname: "res.cloudinary.com" },
+      { hostname: "lh3.googleusercontent.com" },
+      { hostname: "img.clerk.com" },
+    ],
   },
   experimental: {
     disableOptimizedLoading: false,

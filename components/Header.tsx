@@ -11,7 +11,7 @@ import React, {
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 import dynamic from "next/dynamic";
 
 const CustomUserButton = dynamic(() => import("./CustomUserButton"), {
@@ -60,6 +60,69 @@ declare global {
     };
   }
 }
+
+/** Compact user profile card shown in the mobile sidebar drawer. */
+const MobileUserCard = memo(function MobileUserCard({
+  onSignOut,
+}: {
+  onSignOut?: () => void;
+}) {
+  const { user } = useUser();
+  const { signOut } = useClerk();
+
+  const displayName =
+    user?.fullName || user?.firstName || user?.username || "User";
+  const displayInitials =
+    (user?.firstName?.[0] || "") + (user?.lastName?.[0] || "");
+  const displayEmail = user?.primaryEmailAddress?.emailAddress || "";
+
+  const handleSignOut = async () => {
+    await signOut();
+    onSignOut?.();
+  };
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      {/* Profile section */}
+      <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#1F4E79]/5 to-[#F28C28]/5 border-b border-gray-100">
+        {/* Avatar */}
+        <div
+          className="shrink-0 w-11 h-11 rounded-full overflow-hidden flex items-center justify-center font-semibold text-white text-base"
+          style={{ background: "linear-gradient(135deg, #1F4E79, #F28C28)" }}
+        >
+          {user?.imageUrl ? (
+            <img
+              src={user.imageUrl}
+              alt={displayName}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span>{displayInitials || "U"}</span>
+          )}
+        </div>
+        {/* Name + email */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-[#1F4E79] truncate leading-tight">
+            {displayName}
+          </p>
+          {displayEmail && (
+            <p className="text-xs text-gray-500 truncate mt-0.5">{displayEmail}</p>
+          )}
+        </div>
+      </div>
+      {/* Sign-out */}
+      <button
+        onClick={handleSignOut}
+        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors font-medium"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path fillRule="evenodd" clipRule="evenodd" d="M2.6 2.604A2.045 2.045 0 0 1 4.052 2h3.417c.544 0 1.066.217 1.45.604.385.387.601.911.601 1.458v.69c0 .413-.334.75-.746.75a.748.748 0 0 1-.745-.75v-.69a.564.564 0 0 0-.56-.562H4.051a.558.558 0 0 0-.56.563v7.875a.564.564 0 0 0 .56.562h3.417a.558.558 0 0 0 .56-.563v-.671c0-.415.333-.75.745-.75s.746.335.746.75v.671c0 .548-.216 1.072-.6 1.459a2.045 2.045 0 0 1-1.45.604H4.05a2.045 2.045 0 0 1-1.45-.604A2.068 2.068 0 0 1 2 11.937V4.064c0-.548.216-1.072.6-1.459Zm8.386 3.116a.743.743 0 0 1 1.055 0l1.74 1.75a.753.753 0 0 1 0 1.06l-1.74 1.75a.743.743 0 0 1-1.055 0 .753.753 0 0 1 0-1.06l.467-.47H5.858A.748.748 0 0 1 5.112 8c0-.414.334-.75.746-.75h5.595l-.467-.47a.753.753 0 0 1 0-1.06Z"/>
+        </svg>
+        Sign out
+      </button>
+    </div>
+  );
+});
 
 const HeaderContent = memo(function HeaderContent({
   zoomLevel,
@@ -219,7 +282,7 @@ const HeaderContent = memo(function HeaderContent({
       if (!isLoaded)
         return (
           <div
-            className={`${isMobile ? "h-10 w-full" : "h-10 w-32"} animate-pulse ${isMobile ? "bg-gray-200" : "bg-white/20"} rounded-md`}
+            className={`${isMobile ? "h-16 w-full" : "h-10 w-32"} animate-pulse ${isMobile ? "bg-gray-200" : "bg-white/20"} rounded-md`}
           ></div>
         );
       if (!isSignedIn)
@@ -234,16 +297,15 @@ const HeaderContent = memo(function HeaderContent({
             Login / Register
           </Link>
         );
+      if (isMobile) {
+        return (
+          <MobileUserCard onSignOut={() => setIsMobileMenuOpen(false)} />
+        );
+      }
       return (
-        <div
-          className={`flex items-center ${
-            isMobile
-              ? "justify-center bg-gray-100 rounded-md py-2 min-h-10"
-              : "min-h-[40px]"
-          }`}
-        >
+        <div className="min-h-[40px] flex items-center">
           <CustomUserButton
-            isMobile={isMobile}
+            isMobile={false}
             onSignOut={() => setIsMobileMenuOpen(false)}
           />
         </div>
@@ -289,12 +351,21 @@ const HeaderContent = memo(function HeaderContent({
         </div>
 
         {/* Mobile Tools (Translate, Zoom, Register) */}
-        <div className="p-4 flex flex-col gap-4 border-b border-gray-100 bg-[#f8fafc]">
-          <div className="flex items-center bg-gray-200 rounded-md px-3 py-1.5 h-10 w-full">
-            <div
-              id={GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID}
-              className="min-w-30 overflow-hidden"
-            ></div>
+        <div className="p-4 flex flex-col gap-3 border-b border-gray-100 bg-[#f8fafc]">
+          {/* Language Selector */}
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-1">Language</span>
+            <div className="flex items-center bg-gray-200 rounded-md px-3 py-1.5 min-h-[40px] w-full overflow-visible">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1F4E79] opacity-70 mr-2 shrink-0">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                <path d="M2 12h20"></path>
+              </svg>
+              <div
+                id={GOOGLE_TRANSLATE_CONFIG.ELEMENT_MOBILE_ID}
+                className="flex-1 overflow-visible"
+              ></div>
+            </div>
           </div>
           <ZoomControls isMobile={true} />
           <AuthButton isMobile={true} />
