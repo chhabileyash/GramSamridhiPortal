@@ -13,6 +13,7 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
+import Image from "next/image";
 
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
@@ -70,14 +71,14 @@ export default function HomePage() {
     dbData?.images?.[0]?.url ||
     "https://lh3.googleusercontent.com/aida-public/AB6AXuDJPGBY_I7f-SH3oiZiJZ0vb23rHOhXjXOexTEpuYvdseJxVQ-1mYJowlZR2YFbsPRBY6ZFaPsZY1tDaROhsLKUvSzYI0h1bqUdyBZywK1BnfPJHGFpXHYMhyyP_pptDNRmd2nUgzZARexAYP8QAcjMXFcrAVt7EhHhcDtG9L3NFR9-IADfg50WYrpY4E8JbLeGcFeKYT8QKw9Pisp4y17YdsdoR5bvT5MdzcMJKD-udRBleamLo87IFjAQNt0TcA466rr72RKQxZI";
 
-  // Inject q_auto:good after upload/ in Cloudinary URLs
+  // Inject f_auto,q_auto,w_1537 after upload/ in Cloudinary URLs
   let primaryBanner = primaryBannerRaw;
   if (
     typeof primaryBannerRaw === "string" &&
     primaryBannerRaw.includes("res.cloudinary.com") &&
     primaryBannerRaw.includes("/upload/")
   ) {
-    primaryBanner = primaryBannerRaw.replace(/(\/upload\/)/, "$1q_auto:good/");
+    primaryBanner = primaryBannerRaw.replace(/(\/upload\/)/, "$1f_auto,q_auto,w_1537/");
   }
 
   // Unified Data processing logic using strictly village-info
@@ -164,10 +165,14 @@ export default function HomePage() {
               {/* Hero Slider Section */}
               <section data-purpose="carousel">
                 <div className="relative w-full h-100 rounded-sm overflow-hidden group">
-                  <img
+                  <Image
                     alt="Village Display"
                     className="w-full h-full object-cover"
                     src={primaryBanner}
+                    priority
+                    fetchPriority="high"
+                    width={1537}
+                    height={400}
                   />
                   {/* Navigation Arrows */}
                   {/* <button

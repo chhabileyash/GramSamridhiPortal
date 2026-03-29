@@ -12,11 +12,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import CustomUserButton from "./CustomUserButton";
+import dynamic from "next/dynamic";
+
+const CustomUserButton = dynamic(() => import("./CustomUserButton"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-10 w-10 animate-pulse bg-white/20 rounded-full"></div>
+  ),
+});
 import Marquee from "react-fast-marquee";
 
 
 // Constants
+
 const COLORS = {
   primary: "#1F4E79",
   accent: "#F28C28",
@@ -37,7 +45,7 @@ const ZOOM_CONFIG = {
   MAX: 1.2,
   STEP: 0.1,
   DEFAULT: 1,
-} as const;
+} as const; 
 
 declare global {
   interface Window {
