@@ -7,7 +7,7 @@ export function Skeleton({
   return (
     <div
       className={`animate-pulse rounded-md bg-gray-200 ${className || ""}`}
-      {...props}
-    />
-  );
+      {...props} />);
+
+
 }

@@ -16,7 +16,7 @@ type VillageGlimpsesProps = {
 
 export default function VillageGlimpses({
   villageName,
-  photos,
+  photos
 }: VillageGlimpsesProps) {
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
@@ -69,14 +69,14 @@ export default function VillageGlimpses({
           <button
             type="button"
             onClick={() => openPreview(0)}
-            className="group relative overflow-hidden border border-green-200 bg-white text-left shadow-sm lg:col-span-7"
-          >
+            className="group relative overflow-hidden border border-green-200 bg-white text-left shadow-sm lg:col-span-7">
+            
             <img
               src={photos[0].image}
               alt={photos[0].title}
               loading="lazy"
-              className="h-80 w-full object-cover transition duration-500 group-hover:scale-[1.03] md:h-105"
-            />
+              className="h-80 w-full object-cover transition duration-500 group-hover:scale-[1.03] md:h-105" />
+            
             <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 via-black/30 to-transparent p-5 text-white md:p-6">
               <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-green-200">
                 Featured
@@ -99,68 +99,68 @@ export default function VillageGlimpses({
                   key={photo.title}
                   type="button"
                   onClick={() => openPreview(actualIndex)}
-                  className="group relative overflow-hidden border border-green-200 bg-white text-left shadow-sm"
-                >
+                  className="group relative overflow-hidden border border-green-200 bg-white text-left shadow-sm">
+                  
                   <img
                     src={photo.image}
                     alt={photo.title}
                     loading="lazy"
-                    className="h-38 w-full object-cover transition duration-500 group-hover:scale-105 md:h-50"
-                  />
+                    className="h-38 w-full object-cover transition duration-500 group-hover:scale-105 md:h-50" />
+                  
                   <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 via-black/25 to-transparent px-3 py-2.5 text-white md:px-4">
                     <h3 className="line-clamp-1 text-xs font-bold uppercase tracking-wide md:text-sm">
                       {photo.title}
                     </h3>
                   </div>
-                </button>
-              );
+                </button>);
+
             })}
           </div>
         </div>
       </section>
 
-      {activePhoto && (
-        <div
-          className="fixed inset-0 z-999 flex items-center justify-center bg-black/85 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Village image preview"
-          onClick={closePreview}
-        >
+      {activePhoto &&
+      <div
+        className="fixed inset-0 z-999 flex items-center justify-center bg-black/85 p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Village image preview"
+        onClick={closePreview}>
+        
           <div
-            className="relative w-full max-w-5xl"
-            onClick={(event) => event.stopPropagation()}
-          >
+          className="relative w-full max-w-5xl"
+          onClick={(event) => event.stopPropagation()}>
+          
             <img
-              src={activePhoto.image}
-              alt={activePhoto.title}
-              className="max-h-[78vh] w-full border border-white/20 object-contain bg-black"
-            />
+            src={activePhoto.image}
+            alt={activePhoto.title}
+            className="max-h-[78vh] w-full border border-white/20 object-contain bg-black" />
+          
 
             <button
-              type="button"
-              onClick={closePreview}
-              className="absolute right-2 top-2 inline-flex size-10 items-center justify-center bg-black/60 text-white transition hover:bg-black"
-              aria-label="Close preview"
-            >
+            type="button"
+            onClick={closePreview}
+            className="absolute right-2 top-2 inline-flex size-10 items-center justify-center bg-black/60 text-white transition hover:bg-black"
+            aria-label="Close preview">
+            
               <X className="size-5" />
             </button>
 
             <button
-              type="button"
-              onClick={showPrev}
-              className="absolute left-2 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center bg-black/60 text-white transition hover:bg-black"
-              aria-label="Previous image"
-            >
+            type="button"
+            onClick={showPrev}
+            className="absolute left-2 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center bg-black/60 text-white transition hover:bg-black"
+            aria-label="Previous image">
+            
               <ChevronLeft className="size-5" />
             </button>
 
             <button
-              type="button"
-              onClick={showNext}
-              className="absolute right-2 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center bg-black/60 text-white transition hover:bg-black"
-              aria-label="Next image"
-            >
+            type="button"
+            onClick={showNext}
+            className="absolute right-2 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center bg-black/60 text-white transition hover:bg-black"
+            aria-label="Next image">
+            
               <ChevronRight className="size-5" />
             </button>
 
@@ -174,7 +174,7 @@ export default function VillageGlimpses({
             </div>
           </div>
         </div>
-      )}
-    </>
-  );
+      }
+    </>);
+
 }

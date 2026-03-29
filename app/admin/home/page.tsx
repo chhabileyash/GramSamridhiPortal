@@ -5,8 +5,8 @@ import {
   FileText,
   CheckCircle,
   AlertTriangle,
-  Loader2,
-} from "lucide-react";
+  Loader2 } from
+"lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -23,7 +23,7 @@ export default function AdminHomePage() {
       setError("");
       try {
         const villageId =
-          user?.unsafeMetadata?.village_id || user?.unsafeMetadata?.villageId;
+        user?.unsafeMetadata?.village_id || user?.unsafeMetadata?.villageId;
         const res = await fetch(`/api/stats?villageId=${villageId}`);
         if (!res.ok) throw new Error("Failed to fetch stats");
         const data = await res.json();
@@ -53,8 +53,8 @@ export default function AdminHomePage() {
           <img
             src="https://img.icons8.com/color/96/000000/administrator-male.png"
             alt="Admin"
-            className="w-16 h-16 opacity-80"
-          />
+            className="w-16 h-16 opacity-80" />
+          
         </div>
       </section>
 
@@ -63,11 +63,11 @@ export default function AdminHomePage() {
           <Users className="w-10 h-10 text-[#FF9933] mb-2" />
           <h2 className="text-lg font-semibold text-gray-600">Total Users</h2>
           <div className="mt-1 h-9 flex items-center justify-center">
-            {loading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <span className="text-3xl text-gray-900 font-bold">{stats?.totalUsers ?? "-"}</span>
-            )}
+            {loading ?
+            <Skeleton className="h-8 w-16" /> :
+
+            <span className="text-3xl text-gray-900 font-bold">{stats?.totalUsers ?? "-"}</span>
+            }
           </div>
         </div>
         <div className="p-6 bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col justify-center items-center">
@@ -76,11 +76,11 @@ export default function AdminHomePage() {
             Pending Complaints
           </h2>
           <div className="mt-1 h-9 flex items-center justify-center">
-            {loading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <span className="text-3xl text-gray-900 font-bold">{stats?.pendingComplaints ?? "-"}</span>
-            )}
+            {loading ?
+            <Skeleton className="h-8 w-16" /> :
+
+            <span className="text-3xl text-gray-900 font-bold">{stats?.pendingComplaints ?? "-"}</span>
+            }
           </div>
         </div>
         <div className="p-6 bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col justify-center items-center">
@@ -89,11 +89,11 @@ export default function AdminHomePage() {
             Active Schemes
           </h2>
           <div className="mt-1 h-9 flex items-center justify-center">
-            {loading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <span className="text-3xl text-gray-900 font-bold">{stats?.activeSchemes ?? "-"}</span>
-            )}
+            {loading ?
+            <Skeleton className="h-8 w-16" /> :
+
+            <span className="text-3xl text-gray-900 font-bold">{stats?.activeSchemes ?? "-"}</span>
+            }
           </div>
         </div>
         <div className="p-6 bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col justify-center items-center">
@@ -102,11 +102,11 @@ export default function AdminHomePage() {
             Ongoing Dev. Works
           </h2>
           <div className="mt-1 h-9 flex items-center justify-center">
-            {loading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <span className="text-3xl text-gray-900 font-bold">{stats?.ongoingDevelopmentWorks ?? "-"}</span>
-            )}
+            {loading ?
+            <Skeleton className="h-8 w-16" /> :
+
+            <span className="text-3xl text-gray-900 font-bold">{stats?.ongoingDevelopmentWorks ?? "-"}</span>
+            }
           </div>
         </div>
       </section>
@@ -115,75 +115,75 @@ export default function AdminHomePage() {
         <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">
           Recent Complaints
         </h2>
-        {loading ? (
-          <div className="flex flex-col gap-3 mt-2">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-3 pt-1">
+        {loading ?
+        <div className="flex flex-col gap-3 mt-2">
+            {[...Array(3)].map((_, i) =>
+          <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-3 pt-1">
                 <Skeleton className="h-5 w-48 bg-gray-200" />
                 <Skeleton className="h-4 w-24 bg-gray-200" />
                 <Skeleton className="h-4 w-20 bg-gray-200 md:ml-auto" />
               </div>
-            ))}
-          </div>
-        ) : error ? (
-          <div className="text-red-500">{error}</div>
-        ) : (
-          <ul className="space-y-3">
-            {stats?.last5Complaints?.length ? (
-              stats.last5Complaints.map((c: any) => (
-                <li
-                  key={c.id}
-                  className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-2 last:border-b-0 last:pb-0"
-                >
+          )}
+          </div> :
+        error ?
+        <div className="text-red-500">{error}</div> :
+
+        <ul className="space-y-3">
+            {stats?.last5Complaints?.length ?
+          stats.last5Complaints.map((c: any) =>
+          <li
+            key={c.id}
+            className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-2 last:border-b-0 last:pb-0">
+            
                   <span className="font-semibold text-gray-800">{c.title}</span>
                   <span className="text-xs text-gray-500">{c.category}</span>
                   <span className="text-xs text-gray-400 ml-auto">
-                    {c.createdAt
-                      ? new Date(c.createdAt).toLocaleDateString("en-IN")
-                      : "-"}
+                    {c.createdAt ?
+              new Date(c.createdAt).toLocaleDateString("en-IN") :
+              "-"}
                   </span>
                 </li>
-              ))
-            ) : (
-              <li className="text-gray-500">No recent complaints.</li>
-            )}
+          ) :
+
+          <li className="text-gray-500">No recent complaints.</li>
+          }
           </ul>
-        )}
+        }
       </section>
 
       <section className="bg-white p-6 border border-gray-200 rounded-sm shadow-sm mt-8">
         <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2">
           Recent Schemes
         </h2>
-        {loading ? (
-          <div className="flex items-center gap-2 text-gray-500">
+        {loading ?
+        <div className="flex items-center gap-2 text-gray-500">
             <Loader2 className="animate-spin" /> Loading...
-          </div>
-        ) : error ? (
-          <div className="text-red-500">{error}</div>
-        ) : (
-          <ul className="space-y-3">
-            {stats?.last5Schemes?.length ? (
-              stats.last5Schemes.map((s: any) => (
-                <li
-                  key={s.id}
-                  className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-2 last:border-b-0 last:pb-0"
-                >
+          </div> :
+        error ?
+        <div className="text-red-500">{error}</div> :
+
+        <ul className="space-y-3">
+            {stats?.last5Schemes?.length ?
+          stats.last5Schemes.map((s: any) =>
+          <li
+            key={s.id}
+            className="flex flex-col md:flex-row md:items-center gap-2 border-b pb-2 last:border-b-0 last:pb-0">
+            
                   <span className="font-semibold text-gray-800">{s.title}</span>
                   <span className="text-xs text-gray-500">{s.category}</span>
                   <span className="text-xs text-gray-400 ml-auto">
-                    {s.createdAt
-                      ? new Date(s.createdAt).toLocaleDateString("en-IN")
-                      : "-"}
+                    {s.createdAt ?
+              new Date(s.createdAt).toLocaleDateString("en-IN") :
+              "-"}
                   </span>
                 </li>
-              ))
-            ) : (
-              <li className="text-gray-500">No recent schemes.</li>
-            )}
+          ) :
+
+          <li className="text-gray-500">No recent schemes.</li>
+          }
           </ul>
-        )}
+        }
       </section>
-    </>
-  );
+    </>);
+
 }

@@ -20,7 +20,7 @@ export default function NotificationsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
-  // Form State
+
   const [audience, setAudience] = useState("All Villagers");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
@@ -29,7 +29,7 @@ export default function NotificationsPage() {
   const fetchNotifications = async (villageId?: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/notifications?villageId=${encodeURIComponent(villageId||"")}`);
+      const res = await fetch(`/api/notifications?villageId=${encodeURIComponent(villageId || "")}`);
       if (res.ok) {
         const json = await res.json();
         setNotifications(json.data || []);
@@ -57,7 +57,7 @@ export default function NotificationsPage() {
       const res = await fetch("/api/notifications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({villageId, userId: user?.id || null, title, message, audience }),
+        body: JSON.stringify({ villageId, userId: user?.id || null, title, message, audience })
       });
       if (res.ok) {
         toast.success("Broadcast sent successfully!");
@@ -82,7 +82,7 @@ export default function NotificationsPage() {
 
     try {
       const res = await fetch(`/api/notifications?id=${id}`, {
-        method: "DELETE",
+        method: "DELETE"
       });
       if (res.ok) {
         toast.success("Broadcast deleted");
@@ -99,7 +99,7 @@ export default function NotificationsPage() {
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleString("en-IN", {
       dateStyle: "medium",
-      timeStyle: "short",
+      timeStyle: "short"
     });
   };
 
@@ -120,7 +120,7 @@ export default function NotificationsPage() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Send Notification Form */}
+        {}
         <section className="bg-white border border-gray-200 rounded-sm shadow-sm lg:col-span-1 border-t-2 border-t-[#2c5577]">
           <div className="p-5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -135,8 +135,8 @@ export default function NotificationsPage() {
               <select
                 value={audience}
                 onChange={(e) => setAudience(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white"
-              >
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white">
+                
                 <option value="All Villagers">All Villagers</option>
                 <option value="Property Owners">Property Owners</option>
                 <option value="Panchayat Staff Only">
@@ -153,8 +153,8 @@ export default function NotificationsPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Important Meeting Alert"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+              
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -165,25 +165,25 @@ export default function NotificationsPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 placeholder="Type your message here..."
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
-              />
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none" />
+              
             </div>
             <button
               onClick={handleSend}
               disabled={isSending || !title.trim() || !message.trim()}
-              className="w-full bg-[#2c5577] text-white px-4 py-2.5 rounded-md font-bold hover:bg-[#1a364d] transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-            >
-              {isSending ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                <Send size={18} />
-              )}
+              className="w-full bg-[#2c5577] text-white px-4 py-2.5 rounded-md font-bold hover:bg-[#1a364d] transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+              
+              {isSending ?
+              <Loader2 size={18} className="animate-spin" /> :
+
+              <Send size={18} />
+              }
               <span>{isSending ? "Sending..." : "Send Notification"}</span>
             </button>
           </div>
         </section>
 
-        {/* Notification History */}
+        {}
         <section className="bg-white border border-gray-200 rounded-sm shadow-sm lg:col-span-2 flex flex-col h-full">
           <div className="p-5 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-900">
@@ -193,19 +193,19 @@ export default function NotificationsPage() {
               onClick={() => fetchNotifications(villageId)}
               disabled={isLoading}
               className="text-gray-500 hover:text-[#2c5577] transition-colors p-1 rounded-md hover:bg-gray-100"
-              title="Refresh"
-            >
+              title="Refresh">
+              
               <RefreshCw
                 size={18}
-                className={isLoading ? "animate-spin" : ""}
-              />
+                className={isLoading ? "animate-spin" : ""} />
+              
             </button>
           </div>
           <div className="divide-y divide-gray-100 overflow-y-auto max-h-[600px]">
-            {isLoading ? (
-              <div className="animate-in fade-in duration-500">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="p-5 flex gap-4">
+            {isLoading ?
+            <div className="animate-in fade-in duration-500">
+                {[...Array(4)].map((_, i) =>
+              <div key={i} className="p-5 flex gap-4">
                     <div className="mt-1 shrink-0">
                       <Skeleton className="w-10 h-10 rounded-full" />
                     </div>
@@ -224,19 +224,19 @@ export default function NotificationsPage() {
                       <Skeleton className="h-8 w-8 rounded-md" />
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : notifications.length === 0 ? (
-              <div className="p-10 flex flex-col items-center justify-center text-gray-400">
+              )}
+              </div> :
+            notifications.length === 0 ?
+            <div className="p-10 flex flex-col items-center justify-center text-gray-400">
                 <Bell size={40} className="mb-3 text-gray-300" />
                 <p>No past broadcasts found.</p>
-              </div>
-            ) : (
-              notifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  className="p-5 hover:bg-yellow-50/50 transition-colors flex gap-4 group"
-                >
+              </div> :
+
+            notifications.map((notif) =>
+            <div
+              key={notif.id}
+              className="p-5 hover:bg-yellow-50/50 transition-colors flex gap-4 group">
+              
                   <div className="mt-1 shrink-0">
                     <div className="w-10 h-10 rounded-full bg-yellow-100 border border-yellow-200 flex items-center justify-center text-yellow-600 shadow-sm">
                       <Bell size={18} />
@@ -260,19 +260,19 @@ export default function NotificationsPage() {
                   </div>
                   <div className="shrink-0 flex items-start">
                     <button
-                      onClick={() => handleDelete(notif.id)}
-                      className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors p-2 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-sm"
-                      title="Delete Broadcast"
-                    >
+                  onClick={() => handleDelete(notif.id)}
+                  className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors p-2 rounded-md opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-sm"
+                  title="Delete Broadcast">
+                  
                       <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
-              ))
-            )}
+            )
+            }
           </div>
         </section>
       </div>
-    </>
-  );
+    </>);
+
 }

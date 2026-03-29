@@ -2,7 +2,7 @@ export default function Loading() {
   return (
     <main className="min-h-screen flex flex-col text-gray-800 font-sans bg-[#fcfcfc]">
       <div className="flex flex-1 items-start">
-        {/* Placeholder Sidebar */}
+        {}
         <div className="hidden md:flex flex-col w-64 border-r border-gray-200 bg-white h-screen shrink-0">
           <div className="p-6 border-b border-gray-200">
             <div className="animate-pulse bg-slate-200 h-8 w-3/4 rounded-sm"></div>
@@ -15,7 +15,7 @@ export default function Loading() {
           </div>
         </div>
         
-        {/* Placeholder Main Content */}
+        {}
         <div className="flex-1 p-8 min-w-0">
           <div className="mx-auto max-w-6xl">
             <div className="flex justify-between items-end mb-8 border-b border-gray-200 pb-4 animate-in fade-in duration-300">
@@ -38,6 +38,6 @@ export default function Loading() {
           </div>
         </div>
       </div>
-    </main>
-  );
+    </main>);
+
 }

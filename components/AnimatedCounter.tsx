@@ -15,7 +15,7 @@ export default function AnimatedCounter({
   duration = 2000,
   suffix = "",
   prefix = "",
-  decimals = 0,
+  decimals = 0
 }: AnimatedCounterProps) {
   const [count, setCount] = useState(0);
   const countRef = useRef<HTMLSpanElement>(null);
@@ -29,7 +29,7 @@ export default function AnimatedCounter({
           observer.disconnect();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     if (countRef.current) {
@@ -49,7 +49,7 @@ export default function AnimatedCounter({
       const progress = currentTime - startTime;
       const percentage = Math.min(progress / duration, 1);
 
-      // Easing out quartic curve
+
       const easeOutQuart = 1 - Math.pow(1 - percentage, 4);
 
       setCount(end * easeOutQuart);
@@ -64,10 +64,10 @@ export default function AnimatedCounter({
     requestAnimationFrame(animate);
   }, [end, duration, isVisible]);
 
-  // Using Indian number system (en-IN) to gracefully match local formatting for lakhs, crores etc.
+
   const formattedNumber = new Intl.NumberFormat("en-IN", {
     minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    maximumFractionDigits: decimals
   }).format(count);
 
   return (
@@ -75,6 +75,6 @@ export default function AnimatedCounter({
       {prefix}
       {formattedNumber}
       {suffix}
-    </span>
-  );
+    </span>);
+
 }

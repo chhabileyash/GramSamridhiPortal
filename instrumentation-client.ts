@@ -9,7 +9,7 @@ if (typeof window !== "undefined") {
         defaults: "2026-01-30",
         capture_exceptions: true,
         debug: process.env.NODE_ENV === "development",
-        disable_session_recording: true, // disable heavy recorder
+        disable_session_recording: true
       });
     });
   });

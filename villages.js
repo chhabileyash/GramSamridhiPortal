@@ -2,16 +2,16 @@ const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
 
-// Normalize strings to ensure consistent ID generation
+
 const normalize = (str) => str?.trim().toLowerCase().replace(/\s+/g, ' ') || '';
 
-// Deterministic ID generator using SHA-1
+
 const generateId = (...parts) => {
   const key = parts.map(normalize).join('|');
   return crypto.createHash('sha1').update(key).digest('hex').slice(0, 12);
 };
 
-// Flatten deeply nested JSON into a single array using modern array methods
+
 const flattenVillageData = (data, state) => {
   if (!data?.districts || !Array.isArray(data.districts)) {
     throw new Error('Invalid JSON structure: "districts" array is required');
@@ -28,7 +28,7 @@ const flattenVillageData = (data, state) => {
       return sd.villages.reduce((acc, village) => {
         const id = generateId(state, d.district, sd.subDistrict, village);
 
-        // Filter out duplicate IDs
+
         if (!seen.has(id)) {
           seen.add(id);
           acc.push({
@@ -45,10 +45,10 @@ const flattenVillageData = (data, state) => {
   });
 };
 
-/**
- * Main Async Runner
- * Accepts input and output files dynamically, defaulting to input.json / output.json
- */
+
+
+
+
 async function processVillages(inputFilename, outputFilename, targetState) {
   const inputPath = path.resolve(__dirname, inputFilename);
   const outputPath = path.resolve(__dirname, outputFilename);
@@ -65,7 +65,7 @@ async function processVillages(inputFilename, outputFilename, targetState) {
 
     console.log(`[3/3] Writing results to: ${outputFilename}...`);
     await fs.writeFile(outputPath, JSON.stringify(processedData, null, 2));
-    
+
     console.log('✨ Data extraction complete!');
   } catch (error) {
     if (error.code === 'ENOENT') {
@@ -80,9 +80,9 @@ async function processVillages(inputFilename, outputFilename, targetState) {
   }
 }
 
-// Allow overriding default files via CLI arguments
-// Usage: node villages.js <input_file> <output_file> <state>
-// Default: node villages.js input.json output.json "Maharashtra"
+
+
+
 const [,, input = 'input.json', output = 'output.json', state = 'Maharashtra'] = process.argv;
 
 processVillages(input, output, state);

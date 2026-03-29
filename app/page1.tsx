@@ -20,8 +20,8 @@ import {
   ClipboardList,
   CreditCard,
   Info,
-  BadgeHelpIcon,
-} from "lucide-react";
+  BadgeHelpIcon } from
+"lucide-react";
 import data from "../data.json";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -36,28 +36,28 @@ interface SubDistrict {
 }
 
 const slides = [
-  {
-    image:
-      "https://images.unsplash.com/photo-1634874706682-3468a6e421ba?q=80&w=1457&auto=format&fit=crop",
-    title: "Vibrant Rural Ecosystems",
-    description:
-      "Modern infrastructure meeting traditional values in the heart of Maharashtra.",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1643474004591-35d044e959ea?q=80&w=1470&auto=format&fit=crop",
-    title: "Digital Empowerment",
-    description:
-      "Connecting every village to the global digital economy through accessible services.",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1647184223407-ef8273a6822c?q=80&w=1374&auto=format&fit=crop",
-    title: "Sustainable Agriculture",
-    description:
-      "Promoting eco-friendly farming practices and robust water management.",
-  },
-];
+{
+  image:
+  "https://images.unsplash.com/photo-1634874706682-3468a6e421ba?q=80&w=1457&auto=format&fit=crop",
+  title: "Vibrant Rural Ecosystems",
+  description:
+  "Modern infrastructure meeting traditional values in the heart of Maharashtra."
+},
+{
+  image:
+  "https://images.unsplash.com/photo-1643474004591-35d044e959ea?q=80&w=1470&auto=format&fit=crop",
+  title: "Digital Empowerment",
+  description:
+  "Connecting every village to the global digital economy through accessible services."
+},
+{
+  image:
+  "https://images.unsplash.com/photo-1647184223407-ef8273a6822c?q=80&w=1374&auto=format&fit=crop",
+  title: "Sustainable Agriculture",
+  description:
+  "Promoting eco-friendly farming practices and robust water management."
+}];
+
 
 export default function Home() {
   const router = useRouter();
@@ -66,17 +66,17 @@ export default function Home() {
   const [village, setVillage] = useState("");
   const districts: District[] = data.districts || [];
   const selectedDistrictData = districts.find(
-    (d: District) => d.district === district,
+    (d: District) => d.district === district
   );
-  const talukas: SubDistrict[] = selectedDistrictData
-    ? selectedDistrictData.subDistricts
-    : [];
+  const talukas: SubDistrict[] = selectedDistrictData ?
+  selectedDistrictData.subDistricts :
+  [];
   const selectedTalukaData = talukas.find(
-    (t: SubDistrict) => t.subDistrict === taluka,
+    (t: SubDistrict) => t.subDistrict === taluka
   );
-  const villages: string[] = selectedTalukaData
-    ? selectedTalukaData.villages
-    : [];
+  const villages: string[] = selectedTalukaData ?
+  selectedTalukaData.villages :
+  [];
   const [current, setCurrent] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => {
@@ -86,7 +86,7 @@ export default function Home() {
   }, []);
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
   const prevSlide = () =>
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
   return (
     <>
       <div className="bg-[#f9f9f9] text-base md:text-lg text-slate-900  ">
@@ -96,7 +96,7 @@ export default function Home() {
             <span className="hidden sm:inline">Citizen Support</span>
           </button>
         </div>
-        {/* <Header /> */}
+        {}
         <div className="flex items-center overflow-hidden border-b border-slate-200 bg-white py-2">
           <div className="z-10 ml-3 whitespace-nowrap bg-[#f57b20] px-3 py-1 text-[10px] font-black tracking-[0.15em] text-white uppercase sm:ml-4 sm:px-4 sm:text-xs sm:tracking-widest">
             LATEST UPDATES:
@@ -126,9 +126,9 @@ export default function Home() {
             className="absolute inset-0 z-0 bg-cover bg-center"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(0, 33, 71, 0.85), rgba(0, 33, 71, 0.95)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDE2AIfo1s1gN4TWz6BFu1Hgx8d2yB6SvIC7v8fhsy4_ElrdgN6fM3CGAerBp1usnm5AoYpJ8MXn_iWTLOf1X_Xjfgc2CHJjq5WRhdrWGEmVta1CDsYouxyQfas_XAxF-yQ4DeBjQ0mp8pGemJ1wGgAgMhvRNjHeIAbbwyx1ClBtG3JTE5a91kG2gvzOM_evj6G2xV7PjSwoBWEwYuzkTvjrR1vq3lJlrCCFRg-PG4pZEzJIdTCOiEsV66L9lof6o8iom0rGukyIz7E')",
-            }}
-          />
+              "linear-gradient(rgba(0, 33, 71, 0.85), rgba(0, 33, 71, 0.95)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDE2AIfo1s1gN4TWz6BFu1Hgx8d2yB6SvIC7v8fhsy4_ElrdgN6fM3CGAerBp1usnm5AoYpJ8MXn_iWTLOf1X_Xjfgc2CHJjq5WRhdrWGEmVta1CDsYouxyQfas_XAxF-yQ4DeBjQ0mp8pGemJ1wGgAgMhvRNjHeIAbbwyx1ClBtG3JTE5a91kG2gvzOM_evj6G2xV7PjSwoBWEwYuzkTvjrR1vq3lJlrCCFRg-PG4pZEzJIdTCOiEsV66L9lof6o8iom0rGukyIz7E')"
+            }} />
+          
           <div className="relative z-10 mx-auto w-full max-w-[1200px] px-4 text-center text-white sm:px-6 lg:px-8">
             <span className="mb-6 inline-block border border-white/30 px-4 py-1 text-xs font-bold tracking-[0.2em] text-white uppercase">
               Rural Development Department
@@ -239,16 +239,16 @@ export default function Home() {
 
             <div className="group relative">
               <div className="relative aspect-video w-full overflow-hidden border border-slate-300 bg-white">
-                {slides.map((slide: any, index: number) => (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === current ? "opacity-100 z-10" : "opacity-0 z-0"}`}
-                  >
+                {slides.map((slide: any, index: number) =>
+                <div
+                  key={index}
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === current ? "opacity-100 z-10" : "opacity-0 z-0"}`}>
+                  
                     <img
-                      alt={slide.title}
-                      className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
-                      src={slide.image}
-                    />
+                    alt={slide.title}
+                    className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
+                    src={slide.image} />
+                  
                     <div className="absolute right-0 bottom-0 left-0 border-t-4 border-[#f57b20] bg-[#fffffff]/80 p-6 text-white backdrop-blur-sm">
                       <div className="mx-auto w-full max-w-[1200px] px-3 sm:px-6 lg:px-8">
                         <h3 className="text-lg font-black tracking-tight uppercase sm:text-xl">
@@ -260,19 +260,19 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
 
               <button
                 onClick={prevSlide}
-                className="absolute left-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#0f766e] shadow-lg transition-all hover:border-[#0f766e] hover:bg-[#0f766e] hover:text-white sm:left-4 sm:size-12"
-              >
+                className="absolute left-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#0f766e] shadow-lg transition-all hover:border-[#0f766e] hover:bg-[#0f766e] hover:text-white sm:left-4 sm:size-12">
+                
                 <ChevronLeft />
               </button>
               <button
                 onClick={nextSlide}
-                className="absolute right-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#0f766e] shadow-lg transition-all hover:border-[#0f766e] hover:bg-[#0f766e] hover:text-white sm:right-4 sm:size-12"
-              >
+                className="absolute right-2 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center border border-slate-300 bg-white/90 text-[#0f766e] shadow-lg transition-all hover:border-[#0f766e] hover:bg-[#0f766e] hover:text-white sm:right-4 sm:size-12">
+                
                 <ChevronRight />
               </button>
             </div>
@@ -338,9 +338,9 @@ export default function Home() {
                   className="aspect-video bg-cover bg-center shadow-md transition-all group-hover:grayscale-0 md:w-1/2 grayscale"
                   style={{
                     backgroundImage:
-                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCXAGavzmlpZw5esy2lzmIzekc0x-HDHTu1VFdcdIQYTVxwbpnhvBppA0EKASCE1_le1sjDr9cJ6L4Dk6m37Vd3guYmImFYDOGQbw4JmmUWIR7sZJp4aseoz_NVKl_zeqNguvYCy3st3xbv_dnbH18ApHyp4c9_KrRcMm13udwAXOrhGHk6w4Ep7MkeBWrcB2-AChZRUqm4HaOdm1KO7YwndQ3CrnuP35Vr_h0FF_d8TxcaRSovK22hmJKuTQC4P-oeOFL0550pW_N')",
-                  }}
-                />
+                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCXAGavzmlpZw5esy2lzmIzekc0x-HDHTu1VFdcdIQYTVxwbpnhvBppA0EKASCE1_le1sjDr9cJ6L4Dk6m37Vd3guYmImFYDOGQbw4JmmUWIR7sZJp4aseoz_NVKl_zeqNguvYCy3st3xbv_dnbH18ApHyp4c9_KrRcMm13udwAXOrhGHk6w4Ep7MkeBWrcB2-AChZRUqm4HaOdm1KO7YwndQ3CrnuP35Vr_h0FF_d8TxcaRSovK22hmJKuTQC4P-oeOFL0550pW_N')"
+                  }} />
+                
                 <div className="flex flex-col justify-center md:w-1/2">
                   <span className="mb-1 text-[10px] font-black tracking-widest text-[#f57b20] uppercase">
                     Sanitation &amp; Ecology
@@ -354,8 +354,8 @@ export default function Home() {
                   </p>
                   <a
                     className="flex items-center gap-2 text-xs font-bold text-[#0f766e] uppercase transition-transform group-hover:translate-x-2"
-                    href="#"
-                  >
+                    href="#">
+                    
                     Read Success Story
                     <ArrowRight className="text-sm" />
                   </a>
@@ -367,9 +367,9 @@ export default function Home() {
                   className="aspect-video bg-cover bg-center shadow-md transition-all group-hover:grayscale-0 md:w-1/2 grayscale"
                   style={{
                     backgroundImage:
-                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWOAZULjffZQm6xdQbirErIl-J-6mWscmHOX9E8CCAJRwspUR2P9YprjvZ5o3HDIVVwYnrmaSgsL3rXPqLH3NbZzLYrv-GWUEQPWO2lmcZMxtFMkT8eKFsLP2L9EPvjDwxUs12r4MeuqYZ3H8d7wnGRKoZ4F2fG7TenMClPk4Za9mlRoJybccFEQh1pwbWIl-KQTQnTx7lluL7eQeFxWfqu_UHNneVoh5AJGUx1FKfR9i2n9bDrsyNR45I7nsbbZ7-K-ajPRCBt7uU')",
-                  }}
-                />
+                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWOAZULjffZQm6xdQbirErIl-J-6mWscmHOX9E8CCAJRwspUR2P9YprjvZ5o3HDIVVwYnrmaSgsL3rXPqLH3NbZzLYrv-GWUEQPWO2lmcZMxtFMkT8eKFsLP2L9EPvjDwxUs12r4MeuqYZ3H8d7wnGRKoZ4F2fG7TenMClPk4Za9mlRoJybccFEQh1pwbWIl-KQTQnTx7lluL7eQeFxWfqu_UHNneVoh5AJGUx1FKfR9i2n9bDrsyNR45I7nsbbZ7-K-ajPRCBt7uU')"
+                  }} />
+                
                 <div className="flex flex-col justify-center md:w-1/2">
                   <span className="mb-1 text-[10px] font-black tracking-widest text-[#f57b20] uppercase">
                     Education &amp; Digitization
@@ -383,8 +383,8 @@ export default function Home() {
                   </p>
                   <a
                     className="flex items-center gap-2 text-xs font-bold text-[#0f766e] uppercase transition-transform group-hover:translate-x-2"
-                    href="#"
-                  >
+                    href="#">
+                    
                     Read Success Story
                     <ArrowRight className="text-sm" />
                   </a>
@@ -510,8 +510,8 @@ export default function Home() {
                     <input
                       className="h-12 w-full pl-2 border border-slate-300 text-sm font-bold focus:border-[#0f766e] focus:ring-[#0f766e]"
                       placeholder="Enter name"
-                      type="text"
-                    />
+                      type="text" />
+                    
                   </div>
                   <div>
                     <label className="mb-2 block text-[10px] font-black tracking-widest text-slate-500 uppercase">
@@ -531,8 +531,8 @@ export default function Home() {
                     </label>
                     <textarea
                       className="h-24 w-full border border-slate-300 p-3 text-sm font-bold focus:border-[#0f766e] focus:ring-[#0f766e]"
-                      placeholder="Describe your issue..."
-                    />
+                      placeholder="Describe your issue..." />
+                    
                   </div>
                   <button className="w-full bg-[#0f766e] py-4 text-sm font-black text-white uppercase shadow-md transition-all hover:bg-slate-800">
                     Submit Formal Complaint
@@ -561,16 +561,16 @@ export default function Home() {
                       setDistrict(e.target.value);
                       setTaluka("");
                       setVillage("");
-                    }}
-                  >
+                    }}>
+                    
                     <option value="" disabled className="text-slate-400">
                       -- Select District --
                     </option>
-                    {districts.map((d: District) => (
-                      <option key={d.district} value={d.district}>
+                    {districts.map((d: District) =>
+                    <option key={d.district} value={d.district}>
                         {d.district}
                       </option>
-                    ))}
+                    )}
                   </select>
                 </div>
 
@@ -585,16 +585,16 @@ export default function Home() {
                       setTaluka(e.target.value);
                       setVillage("");
                     }}
-                    disabled={!district}
-                  >
+                    disabled={!district}>
+                    
                     <option value="" disabled className="text-slate-400">
                       -- Select Taluka --
                     </option>
-                    {talukas.map((t: SubDistrict) => (
-                      <option key={t.subDistrict} value={t.subDistrict}>
+                    {talukas.map((t: SubDistrict) =>
+                    <option key={t.subDistrict} value={t.subDistrict}>
                         {t.subDistrict}
                       </option>
-                    ))}
+                    )}
                   </select>
                 </div>
 
@@ -606,16 +606,16 @@ export default function Home() {
                     className="h-12 w-full border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-900 transition-colors hover:border-slate-400 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] disabled:cursor-not-allowed disabled:opacity-50"
                     value={village}
                     onChange={(e) => setVillage(e.target.value)}
-                    disabled={!taluka}
-                  >
+                    disabled={!taluka}>
+                    
                     <option value="" disabled className="text-slate-400">
                       -- Select Village --
                     </option>
-                    {villages.map((v: string) => (
-                      <option key={v} value={v}>
+                    {villages.map((v: string) =>
+                    <option key={v} value={v}>
                         {v}
                       </option>
-                    ))}
+                    )}
                   </select>
                 </div>
 
@@ -628,13 +628,13 @@ export default function Home() {
                         const formattedTaluka = encodeURIComponent(taluka);
                         const formattedVillage = encodeURIComponent(village);
                         router.push(
-                          `/villages/${formattedDistrict}/${formattedTaluka}/${formattedVillage}`,
+                          `/villages/${formattedDistrict}/${formattedTaluka}/${formattedVillage}`
                         );
                       } else {
                         alert("Please select District, Taluka, and Village.");
                       }
-                    }}
-                  >
+                    }}>
+                    
                     <Search className="text-xl transition-transform duration-300 group-hover:scale-110 group-hover:text-[#f57b20]" />
                     Find Village
                   </button>
@@ -775,9 +775,9 @@ export default function Home() {
                   data-alt="Pradhan Mantri Awas Yojana"
                   style={{
                     backgroundImage:
-                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWOAZULjffZQm6xdQbirErIl-J-6mWscmHOX9E8CCAJRwspUR2P9YprjvZ5o3HDIVVwYnrmaSgsL3rXPqLH3NbZzLYrv-GWUEQPWO2lmcZMxtFMkT8eKFsLP2L9EPvjDwxUs12r4MeuqYZ3H8d7wnGRKoZ4F2fG7TenMClPk4Za9mlRoJybccFEQh1pwbWIl-KQTQnTx7lluL7eQeFxWfqu_UHNneVoh5AJGUx1FKfR9i2n9bDrsyNR45I7nsbbZ7-K-ajPRCBt7uU')",
-                  }}
-                />
+                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWOAZULjffZQm6xdQbirErIl-J-6mWscmHOX9E8CCAJRwspUR2P9YprjvZ5o3HDIVVwYnrmaSgsL3rXPqLH3NbZzLYrv-GWUEQPWO2lmcZMxtFMkT8eKFsLP2L9EPvjDwxUs12r4MeuqYZ3H8d7wnGRKoZ4F2fG7TenMClPk4Za9mlRoJybccFEQh1pwbWIl-KQTQnTx7lluL7eQeFxWfqu_UHNneVoh5AJGUx1FKfR9i2n9bDrsyNR45I7nsbbZ7-K-ajPRCBt7uU')"
+                  }} />
+                
                 <div className="p-6">
                   <h4 className="mb-3 text-lg font-bold text-[#0f766e]">
                     PM Awas Yojana (Gramin)
@@ -799,9 +799,9 @@ export default function Home() {
                   data-alt="MGNREGA"
                   style={{
                     backgroundImage:
-                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0TeB0tP5FUL2JElm2ktfeeaX4M47Z8JsIg63J2OIleXttaYPVGcJzMPvBmKUcnnlbqbu2sWL3kdnjEp3bLdQKz1jQuiKuAR4u1gvTXAg__5JNjpL_laYCraygIDP6PBjQjs3j-soFn7KGLAZ7ZAj3moqIVEVCA9QQQXpdhrSOOSLIHnaVBdgMxQJazSvSzm4IFCYjVFu5m29sbo8xRp5reMy6a8qfrNG8iM_H10jJjc96Y34d4vK3zIYJf_sVvslKiigZx9AzGofj')",
-                  }}
-                />
+                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0TeB0tP5FUL2JElm2ktfeeaX4M47Z8JsIg63J2OIleXttaYPVGcJzMPvBmKUcnnlbqbu2sWL3kdnjEp3bLdQKz1jQuiKuAR4u1gvTXAg__5JNjpL_laYCraygIDP6PBjQjs3j-soFn7KGLAZ7ZAj3moqIVEVCA9QQQXpdhrSOOSLIHnaVBdgMxQJazSvSzm4IFCYjVFu5m29sbo8xRp5reMy6a8qfrNG8iM_H10jJjc96Y34d4vK3zIYJf_sVvslKiigZx9AzGofj')"
+                  }} />
+                
                 <div className="p-6">
                   <h4 className="mb-3 text-lg font-bold text-[#0f766e]">
                     MGNREGA Employment
@@ -823,9 +823,9 @@ export default function Home() {
                   data-alt="Jal Jeevan Mission"
                   style={{
                     backgroundImage:
-                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUmhIXyJpB5-K_9GwN2HM0sggy8w8ARRo4SyUDgP2zKtXOTOTKIGFskGU5QClHH3bkf5ljoQhp-37da23Pjrk_WMa9vnvV9yDpvtzQBWgAtaGCL7BNbF5hGcMwsqT2hZ4XJdx4cucI8BAKrhhMKP_Ppc-Jc8zs5lt4ZZWTzhB4IkVEZRhWCSDW6NfDguQrHbMQnaDTroWEbXTIOgwML1mHUlGDosFYmtJd_a6r-RGdcd_xdHiDzO9g8RLZzSaRva7KOxL0GlKM8qdH')",
-                  }}
-                />
+                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUmhIXyJpB5-K_9GwN2HM0sggy8w8ARRo4SyUDgP2zKtXOTOTKIGFskGU5QClHH3bkf5ljoQhp-37da23Pjrk_WMa9vnvV9yDpvtzQBWgAtaGCL7BNbF5hGcMwsqT2hZ4XJdx4cucI8BAKrhhMKP_Ppc-Jc8zs5lt4ZZWTzhB4IkVEZRhWCSDW6NfDguQrHbMQnaDTroWEbXTIOgwML1mHUlGDosFYmtJd_a6r-RGdcd_xdHiDzO9g8RLZzSaRva7KOxL0GlKM8qdH')"
+                  }} />
+                
                 <div className="p-6">
                   <h4 className="mb-3 text-lg font-bold text-[#0f766e]">
                     Jal Jeevan Mission
@@ -880,9 +880,9 @@ export default function Home() {
                     className="h-48 border-b border-slate-200 bg-cover bg-center"
                     style={{
                       backgroundImage:
-                        "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCXAGavzmlpZw5esy2lzmIzekc0x-HDHTu1VFdcdIQYTVxwbpnhvBppA0EKASCE1_le1sjDr9cJ6L4Dk6m37Vd3guYmImFYDOGQbw4JmmUWIR7sZJp4aseoz_NVKl_zeqNguvYCy3st3xbv_dnbH18ApHyp4c9_KrRcMm13udwAXOrhGHk6w4Ep7MkeBWrcB2-AChZRUqm4HaOdm1KO7YwndQ3CrnuP35Vr_h0FF_d8TxcaRSovK22hmJKuTQC4P-oeOFL0550pW_N')",
-                    }}
-                  />
+                      "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCXAGavzmlpZw5esy2lzmIzekc0x-HDHTu1VFdcdIQYTVxwbpnhvBppA0EKASCE1_le1sjDr9cJ6L4Dk6m37Vd3guYmImFYDOGQbw4JmmUWIR7sZJp4aseoz_NVKl_zeqNguvYCy3st3xbv_dnbH18ApHyp4c9_KrRcMm13udwAXOrhGHk6w4Ep7MkeBWrcB2-AChZRUqm4HaOdm1KO7YwndQ3CrnuP35Vr_h0FF_d8TxcaRSovK22hmJKuTQC4P-oeOFL0550pW_N')"
+                    }} />
+                  
                   <div className="p-5 sm:p-8">
                     <div className="mb-6 flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
                       <div>
@@ -934,6 +934,6 @@ export default function Home() {
         </section>
         <Footer />
       </div>
-    </>
-  );
+    </>);
+
 }

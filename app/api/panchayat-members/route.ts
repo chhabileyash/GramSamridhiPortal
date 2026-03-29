@@ -15,11 +15,11 @@ export async function GET(req: Request) {
   try {
     let data;
 
-    data = await db
-      .select()
-      .from(panchayatMembers)
-      .where(eq(panchayatMembers.villageId, villageIdParam))
-      .orderBy(desc(panchayatMembers.createdAt));
+    data = await db.
+    select().
+    from(panchayatMembers).
+    where(eq(panchayatMembers.villageId, villageIdParam)).
+    orderBy(desc(panchayatMembers.createdAt));
 
     return NextResponse.json({ data: data || [] });
   } catch (error: any) {
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     if (role !== "admin") {
       return NextResponse.json(
         { error: "Forbidden - Admin only" },
-        { status: 403 },
+        { status: 403 }
       );
     }
 
@@ -49,22 +49,22 @@ export async function POST(req: Request) {
     if (!name || !position) {
       return NextResponse.json(
         { error: "Name and position are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     const vId = villageId ? villageId.toString() : null;
 
-    const result = await db
-      .insert(panchayatMembers)
-      .values({
-        villageId: vId,
-        name,
-        position,
-        imageUrl: imageUrl || null,
-        phone: phone || null,
-      })
-      .returning();
+    const result = await db.
+    insert(panchayatMembers).
+    values({
+      villageId: vId,
+      name,
+      position,
+      imageUrl: imageUrl || null,
+      phone: phone || null
+    }).
+    returning();
 
     return NextResponse.json({ success: true, data: result[0] });
   } catch (error: any) {
@@ -84,7 +84,7 @@ export async function DELETE(req: Request) {
     if (role !== "admin") {
       return NextResponse.json(
         { error: "Forbidden - Admin only" },
-        { status: 403 },
+        { status: 403 }
       );
     }
 
@@ -95,9 +95,9 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Missing member id" }, { status: 400 });
     }
 
-    await db
-      .delete(panchayatMembers)
-      .where(eq(panchayatMembers.id, parseInt(id, 10)));
+    await db.
+    delete(panchayatMembers).
+    where(eq(panchayatMembers.id, parseInt(id, 10)));
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

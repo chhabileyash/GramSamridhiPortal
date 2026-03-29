@@ -73,6 +73,6 @@ export default function ServicesPage() {
           </div>
         </main>
       </div>
-    </div>
-  );
+    </div>);
+
 }

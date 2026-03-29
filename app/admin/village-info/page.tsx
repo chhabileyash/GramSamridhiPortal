@@ -6,7 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
 
-const CldUploadWidget = dynamic(() => import("next-cloudinary").then(m => m.CldUploadWidget), { ssr: false });
+const CldUploadWidget = dynamic(() => import("next-cloudinary").then((m) => m.CldUploadWidget), { ssr: false });
 
 export default function VillageInfoPage() {
   const { user, isLoaded } = useUser();
@@ -19,7 +19,7 @@ export default function VillageInfoPage() {
         district: "",
         state: "Maharashtra"
       },
-      about: "Enter a brief overview about your village here...",
+      about: "Enter a brief overview about your village here..."
     },
     stats: {
       population: {
@@ -41,11 +41,11 @@ export default function VillageInfoPage() {
     }
   });
 
-  type ImageItem = { file: File | null; url: string; title: string; type: string; isPrimary: boolean };
+  type ImageItem = {file: File | null;url: string;title: string;type: string;isPrimary: boolean;};
   const [images, setImages] = useState<ImageItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load village metadata from Clerk user on mount
+
   useEffect(() => {
     if (isLoaded && user && user.unsafeMetadata) {
       const meta = user.unsafeMetadata as any;
@@ -55,7 +55,7 @@ export default function VillageInfoPage() {
       const villageId = meta.village_id;
 
       const setMetaDefaults = () => {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           village: { ...prev.village, name, location: { taluka, district, state: "Maharashtra" } }
         }));
@@ -66,7 +66,7 @@ export default function VillageInfoPage() {
         return;
       }
 
-      // Fetch existing DB data
+
       const loadDB = async () => {
         try {
           const res = await fetch(`/api/village-info?villageId=${villageId}`);
@@ -104,31 +104,31 @@ export default function VillageInfoPage() {
   }, [isLoaded, user]);
 
   const handleVillageChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, village: { ...prev.village, [field]: value } }));
+    setFormData((prev) => ({ ...prev, village: { ...prev.village, [field]: value } }));
   };
 
   const handleLocationChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, village: { ...prev.village, location: { ...prev.village.location, [field]: value } } }));
+    setFormData((prev) => ({ ...prev, village: { ...prev.village, location: { ...prev.village.location, [field]: value } } }));
   };
 
   const handleStatsPopChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, stats: { ...prev.stats, population: { ...prev.stats.population, [field]: Number(value) || 0 } } }));
+    setFormData((prev) => ({ ...prev, stats: { ...prev.stats, population: { ...prev.stats.population, [field]: Number(value) || 0 } } }));
   };
 
   const handleStatsDistChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, stats: { ...prev.stats, distribution: { ...prev.stats.distribution, [field]: Number(value) || 0 } } }));
+    setFormData((prev) => ({ ...prev, stats: { ...prev.stats, distribution: { ...prev.stats.distribution, [field]: Number(value) || 0 } } }));
   };
 
   const handleContactChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, contact: { ...prev.contact, [field]: value } }));
+    setFormData((prev) => ({ ...prev, contact: { ...prev.contact, [field]: value } }));
   };
 
-  // Image Multi-Upload Management
+
 
   const removeImage = (index: number) => {
-    setImages(prev => {
+    setImages((prev) => {
       const newArr = [...prev];
-      // Revoke the object URL to avoid memory leaks
+
       if (newArr[index].url.startsWith("blob:")) {
         URL.revokeObjectURL(newArr[index].url);
       }
@@ -138,12 +138,12 @@ export default function VillageInfoPage() {
   };
 
   const updateImage = (index: number, field: string, value: string | boolean) => {
-    setImages(prev => {
+    setImages((prev) => {
       const newImages = [...prev];
 
-      // If setting this image as primary, unset all others
+
       if (field === 'isPrimary' && value === true) {
-        newImages.forEach(img => img.isPrimary = false);
+        newImages.forEach((img) => img.isPrimary = false);
       }
 
       newImages[index] = { ...newImages[index], [field]: value };
@@ -206,24 +206,24 @@ export default function VillageInfoPage() {
         <button
           onClick={handleSaveAll}
           disabled={isSaving}
-          className="text-black px-6 py-2.5 rounded-md font-bold transition-colors flex items-center justify-center gap-2 min-w-[160px] shadow-md"
-        >
-          {isSaving ? (
-            <span className="flex items-center gap-2 animate-pulse">Saving...</span>
-          ) : (
-            <>
+          className="text-black px-6 py-2.5 rounded-md font-bold transition-colors flex items-center justify-center gap-2 min-w-[160px] shadow-md">
+          
+          {isSaving ?
+          <span className="flex items-center gap-2 animate-pulse">Saving...</span> :
+
+          <>
               <Save size={18} />
               <span>Save Master Data</span>
             </>
-          )}
+          }
         </button>
       </section>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Left Column - Forms */}
+        {}
         <div className="xl:col-span-8 space-y-6">
 
-          {/* Detailed Info Card */}
+          {}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
             <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 flex items-center gap-2">
               <Map className="text-indigo-600 w-5 h-5" />
@@ -264,13 +264,13 @@ export default function VillageInfoPage() {
                   value={formData.village.about}
                   onChange={(e) => handleVillageChange("about", e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm leading-relaxed"
-                />
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm leading-relaxed" />
+                
               </div>
             </div>
           </div>
 
-          {/* Demographics & Statistics */}
+          {}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
             <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 flex items-center gap-2">
               <Users className="text-green-600 w-5 h-5" />
@@ -323,10 +323,10 @@ export default function VillageInfoPage() {
 
         </div>
 
-        {/* Right Column - Images & Contact */}
+        {}
         <div className="xl:col-span-4 space-y-6">
 
-          {/* Contact Details */}
+          {}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
             <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 flex items-center gap-2">
               <Phone className="text-[#FF9933] w-5 h-5" />
@@ -348,20 +348,20 @@ export default function VillageInfoPage() {
             </div>
           </div>
 
-          {/* Media / Images Gallery */}
+          {}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden max-h-[800px]">
             <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ImageIcon className="text-blue-500 w-5 h-5" />
                 <h2 className="text-lg font-bold text-gray-900">4. Display Images</h2>
               </div>
-              <CldUploadWidget 
+              <CldUploadWidget
                 signatureEndpoint="/api/cloudinary-sign"
                 options={{ multiple: true }}
                 onSuccess={(result: any) => {
                   if (result.event !== "success") return;
                   const url = result.info.secure_url;
-                  setImages(prev => {
+                  setImages((prev) => {
                     const newImage = {
                       file: null,
                       url: url,
@@ -371,23 +371,23 @@ export default function VillageInfoPage() {
                     };
                     return [...prev, newImage];
                   });
-                }}
-              >
-                {({ open }) => (
-                  <button
-                    onClick={(e) => { e.preventDefault(); open(); }}
-                    className="border-2 border-blue-600 text-black hover:bg-blue-800 px-3 py-1.5 rounded text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
-                  >
+                }}>
+                
+                {({ open }) =>
+                <button
+                  onClick={(e) => {e.preventDefault();open();}}
+                  className="border-2 border-blue-600 text-black hover:bg-blue-800 px-3 py-1.5 rounded text-sm font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer">
+                  
                     <Upload size={16} />
                     <span>Upload Media</span>
                   </button>
-                )}
+                }
               </CldUploadWidget>
             </div>
 
             <div className="p-4 space-y-4 overflow-y-auto bg-gray-50 flex-1">
-              {images.map((img, index) => (
-                <div key={index} className={`bg-white p-4 border rounded-md shadow-sm relative ${img.isPrimary ? 'border-blue-400 ring-1 ring-blue-400' : 'border-gray-200'}`}>
+              {images.map((img, index) =>
+              <div key={index} className={`bg-white p-4 border rounded-md shadow-sm relative ${img.isPrimary ? 'border-blue-400 ring-1 ring-blue-400' : 'border-gray-200'}`}>
 
                   <div className="flex justify-between items-start mb-3">
                     <span className="text-xs font-bold text-gray-500 uppercase flex items-center gap-2">
@@ -402,7 +402,7 @@ export default function VillageInfoPage() {
                   </div>
 
                   <div className="flex gap-4 items-start pb-1">
-                    {/* Image Preview Block */}
+                    {}
                     <div className="w-20 h-20 shrink-0 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-sm">
                       <img src={img.url} alt="Preview" className="w-full h-full object-cover" />
                     </div>
@@ -425,31 +425,31 @@ export default function VillageInfoPage() {
                   <div className="mt-4 pt-3 border-t border-gray-100 flex items-center">
                     <label className="flex items-center gap-2 cursor-pointer group">
                       <input
-                        type="checkbox"
-                        checked={img.isPrimary || false}
-                        onChange={(e) => updateImage(index, "isPrimary", e.target.checked)}
-                        className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded border-gray-300 cursor-pointer"
-                      />
+                      type="checkbox"
+                      checked={img.isPrimary || false}
+                      onChange={(e) => updateImage(index, "isPrimary", e.target.checked)}
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded border-gray-300 cursor-pointer" />
+                    
                       <span className={`text-xs font-bold transition-colors ${img.isPrimary ? 'text-blue-700' : 'text-gray-500 group-hover:text-gray-700'}`}>
                         {img.isPrimary ? '★ Primary Display Info' : 'Set as Primary Cover'}
                       </span>
                     </label>
                   </div>
                 </div>
-              ))}
+              )}
 
-              {images.length === 0 && (
-                <div className="text-center py-10 bg-white border border-dashed border-gray-300 rounded-lg">
+              {images.length === 0 &&
+              <div className="text-center py-10 bg-white border border-dashed border-gray-300 rounded-lg">
                   <ImageIcon className="mx-auto h-8 w-8 text-gray-300 mb-2" />
                   <p className="text-gray-500 text-sm font-medium">No images uploaded.</p>
                   <p className="text-xs text-gray-400 mt-1">Click the Upload button to select multiple images.</p>
                 </div>
-              )}
+              }
             </div>
           </div>
 
         </div>
       </div>
-    </>
-  );
+    </>);
+
 }

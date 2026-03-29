@@ -15,8 +15,8 @@ import {
   Phone,
   User,
   Calendar,
-  MapPin,
-} from "lucide-react";
+  MapPin } from
+"lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ComplaintsPage() {
@@ -26,17 +26,17 @@ export default function ComplaintsPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedComplaintId, setSelectedComplaintId] = useState<number | null>(
-    null,
+    null
   );
   const [editStatus, setEditStatus] = useState("");
   const [editPriority, setEditPriority] = useState("");
 
-  // Filters
+
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
   useEffect(() => {
-    if (!isLoaded || !user) return; // Wait until user is loaded and exists
+    if (!isLoaded || !user) return;
     const meta = user?.unsafeMetadata as any;
     const villageId = meta?.village_id;
     const fetchComplaints = async () => {
@@ -77,16 +77,16 @@ export default function ComplaintsPage() {
         body: JSON.stringify({
           id: selectedComplaintId,
           status: editStatus,
-          priority: editPriority,
-        }),
+          priority: editPriority
+        })
       });
       if (res.ok) {
         setComplaints(
           complaints.map((cmp) =>
-            cmp.id === selectedComplaintId
-              ? { ...cmp, status: editStatus, priority: editPriority }
-              : cmp,
-          ),
+          cmp.id === selectedComplaintId ?
+          { ...cmp, status: editStatus, priority: editPriority } :
+          cmp
+          )
         );
       }
     } catch (err) {
@@ -95,32 +95,32 @@ export default function ComplaintsPage() {
     closeDetailsModal();
   };
 
-  // Derived Metrics
+
   const totalReports = complaints.length;
   const pendingReports = complaints.filter(
-    (c) => c.status === "Pending",
+    (c) => c.status === "Pending"
   ).length;
   const progressReports = complaints.filter(
-    (c) => c.status === "Progress",
+    (c) => c.status === "Progress"
   ).length;
   const completeReports = complaints.filter(
-    (c) => c.status === "Complete",
+    (c) => c.status === "Complete"
   ).length;
 
   const filteredComplaints = complaints.filter((cmp) => {
     const matchesSearch =
-      (cmp.complaintId || "")
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      (cmp.title || "").toLowerCase().includes(searchQuery.toLowerCase());
+    (cmp.complaintId || "").
+    toLowerCase().
+    includes(searchQuery.toLowerCase()) ||
+    (cmp.title || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "All" || cmp.status === statusFilter;
     const matchesCategory =
-      categoryFilter === "All" || cmp.category === categoryFilter;
+    categoryFilter === "All" || cmp.category === categoryFilter;
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
   const selectedComplaint = complaints.find(
-    (c) => c.id === selectedComplaintId,
+    (c) => c.id === selectedComplaintId
   );
 
   return (
@@ -137,7 +137,7 @@ export default function ComplaintsPage() {
         </div>
       </section>
 
-      {/* Metrics Row */}
+      {}
       <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
           <div className="p-3 bg-blue-50 text-blue-600 rounded-full">
@@ -193,21 +193,21 @@ export default function ComplaintsPage() {
         </div>
       </section>
 
-      {/* Table Section */}
+      {}
       <section className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
           <div className="relative w-full sm:w-80">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
+              size={18} />
+            
             <input
               type="text"
               placeholder="Search complaints by ID or Title..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
-            />
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm" />
+            
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
             <div className="flex items-center gap-1.5 min-w-max">
@@ -219,8 +219,8 @@ export default function ComplaintsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer min-w-max"
-            >
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer min-w-max">
+              
               <option value="All">All Categories</option>
               <option value="Water Supply">Water Supply</option>
               <option value="Street Lights">Street Lights</option>
@@ -235,8 +235,8 @@ export default function ComplaintsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer min-w-max"
-            >
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer min-w-max">
+              
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
               <option value="Progress">Progress</option>
@@ -258,9 +258,9 @@ export default function ComplaintsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {isLoading ? (
-                [...Array(5)].map((_, i) => (
-                  <tr key={i} className="hover:bg-gray-50 transition-colors animate-in fade-in duration-500">
+              {isLoading ?
+              [...Array(5)].map((_, i) =>
+              <tr key={i} className="hover:bg-gray-50 transition-colors animate-in fade-in duration-500">
                     <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
                     <td className="px-6 py-4">
                       <Skeleton className="h-5 w-40 mb-1" />
@@ -271,22 +271,22 @@ export default function ComplaintsPage() {
                     <td className="px-6 py-4"><Skeleton className="h-6 w-24 mx-auto rounded-full" /></td>
                     <td className="px-6 py-4 text-right"><Skeleton className="h-8 w-28 ml-auto rounded" /></td>
                   </tr>
-                ))
-              ) : filteredComplaints.length === 0 ? (
-                <tr>
+              ) :
+              filteredComplaints.length === 0 ?
+              <tr>
                   <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-gray-500"
-                  >
+                  colSpan={6}
+                  className="px-6 py-12 text-center text-gray-500">
+                  
                     No complaints found matching your criteria.
                   </td>
-                </tr>
-              ) : (
-                filteredComplaints.map((complaint) => (
-                  <tr
-                    key={complaint.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
+                </tr> :
+
+              filteredComplaints.map((complaint) =>
+              <tr
+                key={complaint.id}
+                className="hover:bg-gray-50 transition-colors">
+                
                     <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
                       {complaint.complaintId}
                     </td>
@@ -299,62 +299,62 @@ export default function ComplaintsPage() {
                       </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-600 font-medium">
-                      {complaint.createdAt
-                        ? new Date(complaint.createdAt).toLocaleDateString(
-                            "en-IN",
-                          )
-                        : "-"}
+                      {complaint.createdAt ?
+                  new Date(complaint.createdAt).toLocaleDateString(
+                    "en-IN"
+                  ) :
+                  "-"}
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 flex justify-center items-center rounded-md text-xs font-bold w-full mx-auto max-w-[90px] ${
-                          complaint.priority === "Critical"
-                            ? "bg-red-100 text-red-800 border border-red-200"
-                            : complaint.priority === "High"
-                              ? "bg-orange-100 text-orange-800 border border-orange-200"
-                              : complaint.priority === "Medium"
-                                ? "bg-blue-100 text-blue-800 border border-blue-200"
-                                : "bg-gray-100 text-gray-800 border border-gray-200"
-                        }`}
-                      >
+                    className={`px-2 py-1 flex justify-center items-center rounded-md text-xs font-bold w-full mx-auto max-w-[90px] ${
+                    complaint.priority === "Critical" ?
+                    "bg-red-100 text-red-800 border border-red-200" :
+                    complaint.priority === "High" ?
+                    "bg-orange-100 text-orange-800 border border-orange-200" :
+                    complaint.priority === "Medium" ?
+                    "bg-blue-100 text-blue-800 border border-blue-200" :
+                    "bg-gray-100 text-gray-800 border border-gray-200"}`
+                    }>
+                    
                         {complaint.priority || "Medium"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 flex justify-center py-1.5 rounded-full text-xs font-bold w-full mx-auto max-w-[100px] ${
-                          complaint.status === "Complete"
-                            ? "bg-green-100 text-green-800"
-                            : complaint.status === "Progress"
-                              ? "bg-blue-100 text-blue-800"
-                              : complaint.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
+                    className={`px-2 flex justify-center py-1.5 rounded-full text-xs font-bold w-full mx-auto max-w-[100px] ${
+                    complaint.status === "Complete" ?
+                    "bg-green-100 text-green-800" :
+                    complaint.status === "Progress" ?
+                    "bg-blue-100 text-blue-800" :
+                    complaint.status === "Pending" ?
+                    "bg-yellow-100 text-yellow-800" :
+                    "bg-gray-100 text-gray-800"}`
+                    }>
+                    
                         {complaint.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
-                        onClick={() => openDetailsModal(complaint)}
-                        className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded shadow-sm hover:bg-red-100 transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-red-500"
-                      >
+                    onClick={() => openDetailsModal(complaint)}
+                    className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded shadow-sm hover:bg-red-100 transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-red-500">
+                    
                         <Eye size={14} />
                         View Details
                       </button>
                     </td>
                   </tr>
-                ))
-              )}
+              )
+              }
             </tbody>
           </table>
         </div>
       </section>
 
-      {/* Complaint Details Modal */}
-      {isModalOpen && selectedComplaint && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {}
+      {isModalOpen && selectedComplaint &&
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <div>
@@ -367,15 +367,15 @@ export default function ComplaintsPage() {
                 </p>
               </div>
               <button
-                onClick={closeDetailsModal}
-                className="text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-200"
-              >
+              onClick={closeDetailsModal}
+              className="text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-200">
+              
                 <X size={24} />
               </button>
             </div>
 
             <div className="p-6 overflow-y-auto">
-              {/* Complaint Info */}
+              {}
               <div className="mb-6">
                 <h3 className="text-lg font-bold text-[#2c5577] mb-2">
                   {selectedComplaint.title}
@@ -385,7 +385,7 @@ export default function ComplaintsPage() {
                 </p>
               </div>
 
-              {/* Grid Context */}
+              {}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 border-b border-gray-100 pb-6">
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -395,15 +395,15 @@ export default function ComplaintsPage() {
                         Logged Date
                       </p>
                       <p className="text-sm font-semibold text-gray-900">
-                        {selectedComplaint.createdAt
-                          ? new Date(
-                              selectedComplaint.createdAt,
-                            ).toLocaleDateString("en-IN", {
-                              day: "2-digit",
-                              month: "long",
-                              year: "numeric",
-                            })
-                          : "-"}
+                        {selectedComplaint.createdAt ?
+                      new Date(
+                        selectedComplaint.createdAt
+                      ).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                      }) :
+                      "-"}
                       </p>
                     </div>
                   </div>
@@ -430,11 +430,11 @@ export default function ComplaintsPage() {
                       <p className="text-sm font-semibold text-gray-900">
                         {selectedComplaint.citizenName || "Not provided"}
                       </p>
-                      {selectedComplaint.citizenContact && (
-                        <p className="text-xs text-[#2c5577] font-medium flex items-center gap-1 mt-0.5">
+                      {selectedComplaint.citizenContact &&
+                    <p className="text-xs text-[#2c5577] font-medium flex items-center gap-1 mt-0.5">
                           <Phone size={10} /> {selectedComplaint.citizenContact}
                         </p>
-                      )}
+                    }
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -451,7 +451,7 @@ export default function ComplaintsPage() {
                 </div>
               </div>
 
-              {/* Admin Controls */}
+              {}
               <div className="bg-blue-50/50 p-5 rounded-lg border border-blue-100">
                 <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">
                   Admin Controls Update
@@ -462,10 +462,10 @@ export default function ComplaintsPage() {
                       Update Status
                     </label>
                     <select
-                      value={editStatus}
-                      onChange={(e) => setEditStatus(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                    >
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                    
                       <option value="Pending">Pending</option>
                       <option value="Progress">Progress</option>
                       <option value="Complete">Complete</option>
@@ -476,10 +476,10 @@ export default function ComplaintsPage() {
                       Update Priority
                     </label>
                     <select
-                      value={editPriority}
-                      onChange={(e) => setEditPriority(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                    >
+                    value={editPriority}
+                    onChange={(e) => setEditPriority(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                    
                       <option value="Low">Low</option>
                       <option value="Medium">Medium</option>
                       <option value="High">High</option>
@@ -492,22 +492,22 @@ export default function ComplaintsPage() {
 
             <div className="px-6 py-4 border-t border-gray-200 bg-white flex justify-end gap-3">
               <button
-                onClick={closeDetailsModal}
-                className="px-5 py-2 border border-gray-300 rounded-md font-medium text-sm hover:bg-gray-50 transition-colors"
-              >
+              onClick={closeDetailsModal}
+              className="px-5 py-2 border border-gray-300 rounded-md font-medium text-sm hover:bg-gray-50 transition-colors">
+              
                 Cancel
               </button>
               <button
-                onClick={handleSaveChanges}
-                className="px-5 py-2 bg-[#138808] text-white rounded-md font-bold text-sm hover:bg-green-700 transition-colors flex items-center gap-2 shadow-sm"
-              >
+              onClick={handleSaveChanges}
+              className="px-5 py-2 bg-[#138808] text-white rounded-md font-bold text-sm hover:bg-green-700 transition-colors flex items-center gap-2 shadow-sm">
+              
                 <Save size={16} />
                 Save Updates
               </button>
             </div>
           </div>
         </div>
-      )}
-    </>
-  );
+      }
+    </>);
+
 }

@@ -10,8 +10,8 @@ import {
   User,
   IndianRupee,
   CheckCircle,
-  Info,
-} from "lucide-react";
+  Info } from
+"lucide-react";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -28,7 +28,7 @@ export default function ElectricityBill() {
     address: "",
     ownerName: "",
     contactNumber: "",
-    referenceNumber: "",
+    referenceNumber: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showQR, setShowQR] = useState(false);
@@ -59,12 +59,12 @@ export default function ElectricityBill() {
     }
   }, [showPastReceipts, user]);
 
-  // Dynamic pricing based on units consumed and meter type
+
   const units = parseFloat(formData.unitsConsumed) || 0;
-  let ratePerUnit = 5; // Default Domestic
-  if (formData.meterType === "Commercial") ratePerUnit = 8;
-  else if (formData.meterType === "Industrial") ratePerUnit = 10;
-  else if (formData.meterType === "Agricultural") ratePerUnit = 3;
+  let ratePerUnit = 5;
+  if (formData.meterType === "Commercial") ratePerUnit = 8;else
+  if (formData.meterType === "Industrial") ratePerUnit = 10;else
+  if (formData.meterType === "Agricultural") ratePerUnit = 3;
 
   const energyCharges = units * ratePerUnit;
   const fixedCharges = formData.meterType === "Commercial" ? 200 : formData.meterType === "Industrial" ? 350 : 100;
@@ -100,8 +100,8 @@ export default function ElectricityBill() {
           financialYear: `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
           unitsConsumed: formData.unitsConsumed,
           amount: totalPayableAmount,
-          referenceNumber: formData.referenceNumber,
-        }),
+          referenceNumber: formData.referenceNumber
+        })
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Failed to submit");
@@ -110,7 +110,7 @@ export default function ElectricityBill() {
       posthog.capture("electricity_bill_payment_confirmed", {
         meterType: formData.meterType,
         amount: totalPayableAmount,
-        invoiceId: result.data?.invoiceId,
+        invoiceId: result.data?.invoiceId
       });
       setFormData({
         meterId: "",
@@ -120,7 +120,7 @@ export default function ElectricityBill() {
         address: "",
         ownerName: "",
         contactNumber: "",
-        referenceNumber: "",
+        referenceNumber: ""
       });
       setShowQR(false);
     } catch (err) {
@@ -138,7 +138,7 @@ export default function ElectricityBill() {
 
         <main className="flex-1 p-8 bg-white min-w-0">
           <div className="mx-auto">
-            {/* Page Header */}
+            {}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 border-b border-gray-200 pb-4 gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
@@ -151,15 +151,15 @@ export default function ElectricityBill() {
               </div>
               <button
                 onClick={() => setShowPastReceipts(!showPastReceipts)}
-                className="flex items-center gap-2 px-4 py-2 border border-[#FF9933] text-[#FF9933] text-xs font-bold hover:bg-[#FF9933]/5 transition-colors rounded-sm"
-              >
+                className="flex items-center gap-2 px-4 py-2 border border-[#FF9933] text-[#FF9933] text-xs font-bold hover:bg-[#FF9933]/5 transition-colors rounded-sm">
+                
                 <History className="w-4 h-4" />
                 {showPastReceipts ? "BACK TO FILING" : "VIEW PAST RECEIPTS"}
               </button>
             </div>
 
-            {showPastReceipts ? (
-              <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
+            {showPastReceipts ?
+            <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 text-slate-600 font-bold border-b border-gray-200 uppercase tracking-wider text-[10px]">
@@ -175,9 +175,9 @@ export default function ElectricityBill() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {isLoadingReceipts ? (
-                        [...Array(3)].map((_, i) => (
-                          <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-50">
+                      {isLoadingReceipts ?
+                    [...Array(3)].map((_, i) =>
+                    <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-50">
                             <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
                             <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
                             <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
@@ -187,11 +187,11 @@ export default function ElectricityBill() {
                             <td className="px-6 py-4"><Skeleton className="h-4 w-16 ml-auto" /></td>
                             <td className="px-6 py-4"><Skeleton className="h-6 w-16 mx-auto rounded-full" /></td>
                           </tr>
-                        ))
-                      ) : pastReceipts.length === 0 ? (
-                        <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-500 font-medium">No past receipts found.</td></tr>
-                      ) : pastReceipts.map((bill: any) => (
-                        <tr key={bill.id} className="hover:bg-slate-50 transition-colors">
+                    ) :
+                    pastReceipts.length === 0 ?
+                    <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-500 font-medium">No past receipts found.</td></tr> :
+                    pastReceipts.map((bill: any) =>
+                    <tr key={bill.id} className="hover:bg-slate-50 transition-colors">
                           <td className="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap">{bill.invoiceId}</td>
                           <td className="px-6 py-4 text-slate-600">{bill.meterId}</td>
                           <td className="px-6 py-4 font-medium text-[#ab7845]">{bill.ownerName}</td>
@@ -201,23 +201,23 @@ export default function ElectricityBill() {
                           <td className="px-6 py-4 whitespace-nowrap font-bold text-slate-900 text-right">₹ {parseFloat(bill.amount).toFixed(2)}</td>
                           <td className="px-6 py-4 text-center">
                             <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${bill.status === 'Paid' ? 'bg-green-100 text-green-800' :
-                              (bill.status === 'Reviewing' || bill.status === 'Pending') ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
-                              }`}>
+                        bill.status === 'Reviewing' || bill.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'}`
+                        }>
                               {bill.status}
                             </span>
                           </td>
                         </tr>
-                      ))}
+                    )}
                     </tbody>
                   </table>
                 </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Form Sections */}
+              </div> :
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {}
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                  {/* Section 1: Meter Details */}
+                  {}
                   <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
                       <div className="bg-[#FF9933]/10 text-[#FF9933] p-2">
@@ -233,24 +233,24 @@ export default function ElectricityBill() {
                           Meter Number
                         </label>
                         <input
-                          name="meterId"
-                          value={formData.meterId}
-                          onChange={handleChange}
-                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
-                          placeholder="e.g. MH-BUL-102938"
-                          type="text"
-                        />
+                        name="meterId"
+                        value={formData.meterId}
+                        onChange={handleChange}
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                        placeholder="e.g. MH-BUL-102938"
+                        type="text" />
+                      
                       </div>
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">
                           Connection Type
                         </label>
                         <select
-                          name="meterType"
-                          value={formData.meterType}
-                          onChange={handleChange}
-                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm rounded-sm"
-                        >
+                        name="meterType"
+                        value={formData.meterType}
+                        onChange={handleChange}
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm rounded-sm">
+                        
                           <option>Domestic</option>
                           <option>Commercial</option>
                           <option>Industrial</option>
@@ -262,44 +262,44 @@ export default function ElectricityBill() {
                           Units Consumed (kWh)
                         </label>
                         <input
-                          name="unitsConsumed"
-                          value={formData.unitsConsumed}
-                          onChange={handleChange}
-                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
-                          placeholder="e.g. 250"
-                          type="number"
-                        />
+                        name="unitsConsumed"
+                        value={formData.unitsConsumed}
+                        onChange={handleChange}
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                        placeholder="e.g. 250"
+                        type="number" />
+                      
                       </div>
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">
                           Ward Number
                         </label>
                         <input
-                          name="wardNumber"
-                          value={formData.wardNumber}
-                          onChange={handleChange}
-                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
-                          placeholder="Ward 12 - Gram Panchayat"
-                          type="text"
-                        />
+                        name="wardNumber"
+                        value={formData.wardNumber}
+                        onChange={handleChange}
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                        placeholder="Ward 12 - Gram Panchayat"
+                        type="text" />
+                      
                       </div>
                       <div className="md:col-span-2 space-y-1">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">
                           Service Address
                         </label>
                         <textarea
-                          name="address"
-                          value={formData.address}
-                          onChange={handleChange}
-                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
-                          placeholder="Enter complete address where meter is installed"
-                          rows={3}
-                        ></textarea>
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                        placeholder="Enter complete address where meter is installed"
+                        rows={3}>
+                      </textarea>
                       </div>
                     </div>
                   </div>
 
-                  {/* Section 2: Consumer Information */}
+                  {}
                   <div className="bg-white border border-gray-300 shadow-sm p-6 rounded-sm">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
                       <div className="bg-[#FF9933]/10 text-[#FF9933] p-2">
@@ -315,34 +315,34 @@ export default function ElectricityBill() {
                           Consumer Name
                         </label>
                         <input
-                          name="ownerName"
-                          value={formData.ownerName}
-                          onChange={handleChange}
-                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
-                          placeholder="Full name as per ID"
-                          type="text"
-                        />
+                        name="ownerName"
+                        value={formData.ownerName}
+                        onChange={handleChange}
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                        placeholder="Full name as per ID"
+                        type="text" />
+                      
                       </div>
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">
                           Contact Number
                         </label>
                         <input
-                          name="contactNumber"
-                          value={formData.contactNumber}
-                          onChange={handleChange}
-                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
-                          placeholder="+91 98765 43210"
-                          type="tel"
-                        />
+                        name="contactNumber"
+                        value={formData.contactNumber}
+                        onChange={handleChange}
+                        className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                        placeholder="+91 98765 43210"
+                        type="tel" />
+                      
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Summary Sidebar */}
+                {}
                 <div className="lg:col-span-1 flex flex-col gap-6">
-                  {/* Bill Summary */}
+                  {}
                   <div className="bg-white border border-gray-300 shadow-sm flex flex-col h-fit rounded-sm overflow-hidden">
                     <div className="bg-[#FF9933] text-white p-4 flex items-center justify-between">
                       <h3 className="text-xs font-bold uppercase tracking-widest">
@@ -397,28 +397,28 @@ export default function ElectricityBill() {
                         </div>
                       </div>
 
-                      {!showQR ? (
-                        <button
-                          onClick={() => {
-                            setShowQR(true);
-                            posthog.capture("electricity_bill_payment_initiated", {
-                              meterType: formData.meterType,
-                              amount: totalPayableAmount,
-                            });
-                          }}
-                          className="w-full bg-[#138808] text-white font-bold py-3 px-4 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 mt-6 rounded-sm"
-                        >
+                      {!showQR ?
+                    <button
+                      onClick={() => {
+                        setShowQR(true);
+                        posthog.capture("electricity_bill_payment_initiated", {
+                          meterType: formData.meterType,
+                          amount: totalPayableAmount
+                        });
+                      }}
+                      className="w-full bg-[#138808] text-white font-bold py-3 px-4 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 mt-6 rounded-sm">
+                      
                           PAY NOW
-                        </button>
-                      ) : (
-                        <div className="mt-6 flex flex-col items-center animate-in fade-in duration-300">
+                        </button> :
+
+                    <div className="mt-6 flex flex-col items-center animate-in fade-in duration-300">
                           <p className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">Scan to Pay via UPI</p>
                           <div className="bg-white p-2 border border-slate-200 rounded-md shadow-sm mb-4">
                             <img
-                              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=grampanchayat@sbi&pn=Gram%20Panchayat&am=${totalPayableAmount.toFixed(2)}`}
-                              alt="UPI QR Code"
-                              className="w-32 h-32"
-                            />
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=grampanchayat@sbi&pn=Gram%20Panchayat&am=${totalPayableAmount.toFixed(2)}`}
+                          alt="UPI QR Code"
+                          className="w-32 h-32" />
+                        
                           </div>
 
                           <div className="w-full mb-4 text-left">
@@ -426,35 +426,35 @@ export default function ElectricityBill() {
                               Payment Reference Number *
                             </label>
                             <input
-                              name="referenceNumber"
-                              value={formData.referenceNumber}
-                              onChange={handleChange}
-                              className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
-                              placeholder="Enter 12-digit UPI Ref Number"
-                              type="text"
-                            />
+                          name="referenceNumber"
+                          value={formData.referenceNumber}
+                          onChange={handleChange}
+                          className="w-full border border-slate-200 bg-white focus:ring-1 focus:ring-[#FF9933] focus:border-[#FF9933] focus:outline-none px-4 py-2.5 text-sm placeholder-slate-700 rounded-sm"
+                          placeholder="Enter 12-digit UPI Ref Number"
+                          type="text" />
+                        
                           </div>
 
                           <button
-                            onClick={handleSubmit}
-                            disabled={isSubmitting || !formData.referenceNumber}
-                            className="w-full bg-[#138808] text-white font-bold py-3 px-4 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 rounded-sm disabled:opacity-50"
-                          >
+                        onClick={handleSubmit}
+                        disabled={isSubmitting || !formData.referenceNumber}
+                        className="w-full bg-[#138808] text-white font-bold py-3 px-4 shadow-sm hover:opacity-90 transition-colors flex items-center justify-center gap-2 rounded-sm disabled:opacity-50">
+                        
                             <CheckCircle className="w-5 h-5" />
                             {isSubmitting ? "SUBMITTING..." : "CONFIRM PAYMENT"}
                           </button>
                           <button
-                            onClick={() => setShowQR(false)}
-                            className="w-full bg-white text-slate-500 font-bold py-2 mt-2 text-xs hover:bg-slate-50 border border-slate-200 transition-colors rounded-sm"
-                          >
+                        onClick={() => setShowQR(false)}
+                        className="w-full bg-white text-slate-500 font-bold py-2 mt-2 text-xs hover:bg-slate-50 border border-slate-200 transition-colors rounded-sm">
+                        
                             Cancel
                           </button>
                         </div>
-                      )}
+                    }
                     </div>
                   </div>
 
-                  {/* Info Box */}
+                  {}
                   <div className="bg-slate-50 border border-gray-200 shadow-sm p-6 border-l-4 border-l-[#FF9933] rounded-sm">
                     <div className="flex gap-3">
                       <Info className="w-5 h-5 text-[#FF9933] shrink-0" />
@@ -474,11 +474,11 @@ export default function ElectricityBill() {
                   </div>
                 </div>
               </div>
-            )}
+            }
           </div>
         </main>
       </div>
       <Footer />
-    </div>
-  );
+    </div>);
+
 }

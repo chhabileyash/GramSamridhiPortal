@@ -8,8 +8,8 @@ import {
   Mail,
   Clock,
   MessageSquare,
-  ChevronRight,
-} from "lucide-react";
+  ChevronRight } from
+"lucide-react";
 
 import Footer from "@/components/Footer";
 import { Sidebar } from "@/components/Sidebar";
@@ -25,16 +25,16 @@ export default function ContactPage() {
       if (user && user.unsafeMetadata) {
         const villageId = (user.unsafeMetadata as any).village_id;
         if (villageId) {
-          fetch(`/api/village-info?villageId=${villageId}`)
-            .then((r) => r.json())
-            .then((d) => {
-              if (d.data) setDbData(d.data);
-              setIsLoading(false);
-            })
-            .catch((e) => {
-              console.error(e);
-              setIsLoading(false);
-            });
+          fetch(`/api/village-info?villageId=${villageId}`).
+          then((r) => r.json()).
+          then((d) => {
+            if (d.data) setDbData(d.data);
+            setIsLoading(false);
+          }).
+          catch((e) => {
+            console.error(e);
+            setIsLoading(false);
+          });
           return;
         }
       }
@@ -42,13 +42,13 @@ export default function ContactPage() {
     }
   }, [isLoaded, user]);
 
-  const mapQuery = user?.unsafeMetadata
-    ? `${(user.unsafeMetadata as any).village} ${(user.unsafeMetadata as any).taluka} ${(user.unsafeMetadata as any).district} Maharashtra India`
-    : "Takarkhed Nandura Buldhana Maharashtra India";
+  const mapQuery = user?.unsafeMetadata ?
+  `${(user.unsafeMetadata as any).village} ${(user.unsafeMetadata as any).taluka} ${(user.unsafeMetadata as any).district} Maharashtra India` :
+  "Takarkhed Nandura Buldhana Maharashtra India";
 
   const addr =
-    dbData?.address ||
-    "Panchayat Bhavan, Main Road,\nGram Samridhi, Pune - 411001";
+  dbData?.address ||
+  "Panchayat Bhavan, Main Road,\nGram Samridhi, Pune - 411001";
   const phone = dbData?.phone || "+91 20 2345 6789";
   const email = dbData?.email || "contact@gramsamridhi.gov.in";
 
@@ -58,7 +58,7 @@ export default function ContactPage() {
         <Sidebar />
 
         <main className="flex-1 p-6 space-y-8 min-w-0">
-          {/* Header Section */}
+          {}
           <section className="bg-white p-8 border-b-4 border-[#FF9933] shadow-sm rounded-sm">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Contact Us</h1>
             <p className="text-gray-600 max-w-2xl">
@@ -68,18 +68,18 @@ export default function ContactPage() {
             </p>
           </section>
 
-          {isLoading || !isLoaded ? (
-            <div className="animate-in fade-in duration-500 space-y-8 w-full">
+          {isLoading || !isLoaded ?
+          <div className="animate-in fade-in duration-500 space-y-8 w-full">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Skeleton className="h-40 rounded-sm w-full" />
                 <Skeleton className="h-40 rounded-sm w-full" />
                 <Skeleton className="h-40 rounded-sm w-full" />
               </div>
               <Skeleton className="w-full h-[500px] rounded-sm" />
-            </div>
-          ) : (
-            <>
-              {/* Contact Information Cards */}
+            </div> :
+
+          <>
+              {}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
                   <div className="w-12 h-12 bg-[#FF9933]/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#FF9933] transition-colors">
@@ -123,9 +123,9 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Form & Map Section */}
+              {}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Contact Form */}
+                {}
                 <div className="bg-white p-8 border border-gray-200 shadow-sm rounded-sm">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 bg-blue-50 rounded">
@@ -143,20 +143,20 @@ export default function ContactPage() {
                           Full Name
                         </label>
                         <input
-                          type="text"
-                          className="w-full px-4 py-3 rounded border border-gray-200 focus:border-[#FF9933] focus:ring-1 focus:ring-[#FF9933] outline-none transition-all text-sm"
-                          placeholder="John Doe"
-                        />
+                        type="text"
+                        className="w-full px-4 py-3 rounded border border-gray-200 focus:border-[#FF9933] focus:ring-1 focus:ring-[#FF9933] outline-none transition-all text-sm"
+                        placeholder="John Doe" />
+                      
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
                           Email Address
                         </label>
                         <input
-                          type="email"
-                          className="w-full px-4 py-3 rounded border border-gray-200 focus:border-[#FF9933] focus:ring-1 focus:ring-[#FF9933] outline-none transition-all text-sm"
-                          placeholder="john@example.com"
-                        />
+                        type="email"
+                        className="w-full px-4 py-3 rounded border border-gray-200 focus:border-[#FF9933] focus:ring-1 focus:ring-[#FF9933] outline-none transition-all text-sm"
+                        placeholder="john@example.com" />
+                      
                       </div>
                     </div>
 
@@ -178,10 +178,10 @@ export default function ContactPage() {
                         Message
                       </label>
                       <textarea
-                        rows={5}
-                        className="w-full px-4 py-3 rounded border border-gray-200 focus:border-[#FF9933] focus:ring-1 focus:ring-[#FF9933] outline-none transition-all text-sm resize-none"
-                        placeholder="How can we help you today?"
-                      ></textarea>
+                      rows={5}
+                      className="w-full px-4 py-3 rounded border border-gray-200 focus:border-[#FF9933] focus:ring-1 focus:ring-[#FF9933] outline-none transition-all text-sm resize-none"
+                      placeholder="How can we help you today?">
+                    </textarea>
                     </div>
 
                     <button className="w-full bg-[#2c5577] text-white font-bold py-4 rounded-sm hover:bg-[#1e3a52] transition-colors flex items-center justify-center gap-2 group shadow-lg shadow-blue-900/10">
@@ -194,17 +194,17 @@ export default function ContactPage() {
                   </form>
                 </div>
 
-                {/* Map Section */}
+                {}
                 <div className="flex flex-col h-full space-y-4">
                   <div className="flex-1 bg-gray-100 rounded-sm overflow-hidden border border-gray-200 shadow-sm relative group">
                     <iframe
-                      width="100%"
-                      height="100%"
-                      className="h-full object-cover grayscale-[0.2] contrast-[1.1]"
-                      style={{ border: 0 }}
-                      loading="lazy"
-                      src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
-                    ></iframe>
+                    width="100%"
+                    height="100%"
+                    className="h-full object-cover grayscale-[0.2] contrast-[1.1]"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}>
+                  </iframe>
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md p-3 rounded-sm shadow-sm border border-gray-100">
                       <p className="text-[10px] font-bold text-[#FF9933] uppercase">
                         Location
@@ -236,10 +236,10 @@ export default function ContactPage() {
                 </div>
               </div>
             </>
-          )}
+          }
         </main>
       </div>
       <Footer />
-    </div>
-  );
+    </div>);
+
 }

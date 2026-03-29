@@ -12,8 +12,8 @@ import {
   Zap,
   Wallet,
   Clock,
-  Loader2,
-} from "lucide-react";
+  Loader2 } from
+"lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ElectricityBillAdminPage() {
@@ -24,7 +24,7 @@ export default function ElectricityBillAdminPage() {
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
   const [selectedBillId, setSelectedBillId] = useState<number | null>(null);
 
-  // Filters
+
   const [searchQuery, setSearchQuery] = useState("");
   const [financialYearFilter, setFinancialYearFilter] = useState("All");
 
@@ -35,7 +35,7 @@ export default function ElectricityBillAdminPage() {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/electricity-bill?villageId=${encodeURIComponent(villageId)}`,
+          `/api/electricity-bill?villageId=${encodeURIComponent(villageId)}`
         );
         if (res.ok) {
           const json = await res.json();
@@ -67,13 +67,13 @@ export default function ElectricityBillAdminPage() {
       const res = await fetch("/api/electricity-bill", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: selectedBillId, status: newStatus }),
+        body: JSON.stringify({ id: selectedBillId, status: newStatus })
       });
       if (res.ok) {
         setBills(
           bills.map((bill) =>
-            bill.id === selectedBillId ? { ...bill, status: newStatus } : bill,
-          ),
+          bill.id === selectedBillId ? { ...bill, status: newStatus } : bill
+          )
         );
       }
     } catch (err) {
@@ -87,25 +87,25 @@ export default function ElectricityBillAdminPage() {
 
   const filteredBills = bills.filter((bill) => {
     const matchesSearch =
-      (bill.invoiceId || "")
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      (bill.ownerName || "").toLowerCase().includes(searchQuery.toLowerCase());
+    (bill.invoiceId || "").
+    toLowerCase().
+    includes(searchQuery.toLowerCase()) ||
+    (bill.ownerName || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesYear =
-      financialYearFilter === "All" ||
-      bill.financialYear === financialYearFilter;
+    financialYearFilter === "All" ||
+    bill.financialYear === financialYearFilter;
     return matchesSearch && matchesYear;
   });
 
   const selectedBill = bills.find((b) => b.id === selectedBillId);
 
-  // Metrics Logic
+
   const totalInvoices = bills.length;
-  const totalRevenue = bills
-    .filter((b) => b.status === "Paid")
-    .reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
+  const totalRevenue = bills.
+  filter((b) => b.status === "Paid").
+  reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
   const pendingRequests = bills.filter(
-    (b) => b.status === "Reviewing" || b.status === "Pending",
+    (b) => b.status === "Reviewing" || b.status === "Pending"
   ).length;
   const paidCount = bills.filter((b) => b.status === "Paid").length;
 
@@ -123,7 +123,7 @@ export default function ElectricityBillAdminPage() {
         </div>
       </section>
 
-      {/* Metrics Row */}
+      {}
       <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
           <div className="p-3 bg-amber-50 text-amber-600 rounded-full shrink-0">
@@ -179,21 +179,21 @@ export default function ElectricityBillAdminPage() {
         </div>
       </section>
 
-      {/* Table Section */}
+      {}
       <section className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
           <div className="relative w-full sm:max-w-md md:max-w-lg lg:w-[450px]">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
+              size={18} />
+            
             <input
               type="text"
               placeholder="Search by Invoice ID or Consumer Name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"
-            />
+              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+            
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="flex items-center gap-1.5 min-w-max hidden sm:flex">
@@ -205,8 +205,8 @@ export default function ElectricityBillAdminPage() {
             <select
               value={financialYearFilter}
               onChange={(e) => setFinancialYearFilter(e.target.value)}
-              className="border border-gray-300 bg-white rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-auto cursor-pointer"
-            >
+              className="border border-gray-300 bg-white rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-auto cursor-pointer">
+              
               <option value="All">All Financial Years</option>
               <option value="2023-2024">2023-2024</option>
               <option value="2024-2025">2024-2025</option>
@@ -231,9 +231,9 @@ export default function ElectricityBillAdminPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {isLoading ? (
-                [...Array(5)].map((_, i) => (
-                  <tr key={i} className="border-b border-gray-50 last:border-0 animate-in fade-in duration-500">
+              {isLoading ?
+              [...Array(5)].map((_, i) =>
+              <tr key={i} className="border-b border-gray-50 last:border-0 animate-in fade-in duration-500">
                     <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
                     <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
                     <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
@@ -243,22 +243,22 @@ export default function ElectricityBillAdminPage() {
                     <td className="px-6 py-4"><Skeleton className="h-6 w-20 mx-auto rounded-md" /></td>
                     <td className="px-6 py-4"><div className="flex justify-end"><Skeleton className="h-8 w-24 rounded" /></div></td>
                   </tr>
-                ))
-              ) : filteredBills.length === 0 ? (
-                <tr>
+              ) :
+              filteredBills.length === 0 ?
+              <tr>
                   <td
-                    colSpan={8}
-                    className="px-6 py-12 text-center text-gray-500"
-                  >
+                  colSpan={8}
+                  className="px-6 py-12 text-center text-gray-500">
+                  
                     No bill records found matching your criteria.
                   </td>
-                </tr>
-              ) : (
-                filteredBills.map((bill) => (
-                  <tr
-                    key={bill.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
+                </tr> :
+
+              filteredBills.map((bill) =>
+              <tr
+                key={bill.id}
+                className="hover:bg-gray-50 transition-colors">
+                
                     <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap text-xs">
                       {bill.invoiceId}
                     </td>
@@ -279,55 +279,55 @@ export default function ElectricityBillAdminPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 flex items-center justify-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider max-w-[120px] mx-auto ${
-                          bill.status === "Paid"
-                            ? "bg-green-100 text-green-800"
-                            : bill.status === "Reviewing" ||
-                                bill.status === "Pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {bill.status === "Paid" && (
-                          <CheckCircle size={12} className="mr-1.5" />
-                        )}
+                    className={`px-2 flex items-center justify-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider max-w-[120px] mx-auto ${
+                    bill.status === "Paid" ?
+                    "bg-green-100 text-green-800" :
+                    bill.status === "Reviewing" ||
+                    bill.status === "Pending" ?
+                    "bg-yellow-100 text-yellow-800" :
+                    "bg-red-100 text-red-800"}`
+                    }>
+                    
+                        {bill.status === "Paid" &&
+                    <CheckCircle size={12} className="mr-1.5" />
+                    }
                         {(bill.status === "Reviewing" ||
-                          bill.status === "Pending") && (
-                          <Clock size={12} className="mr-1.5" />
-                        )}
-                        {bill.status === "Denied" && (
-                          <XCircle size={12} className="mr-1.5" />
-                        )}
+                    bill.status === "Pending") &&
+                    <Clock size={12} className="mr-1.5" />
+                    }
+                        {bill.status === "Denied" &&
+                    <XCircle size={12} className="mr-1.5" />
+                    }
                         {bill.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       {bill.status === "Reviewing" ||
-                      bill.status === "Pending" ? (
-                        <button
-                          onClick={() => handleOpenProof(bill.id)}
-                          className="inline-flex items-center gap-1.5 bg-[#2c5577] text-white px-3 py-1.5 rounded shadow-sm hover:bg-[#1a364d] transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-[#2c5577]"
-                        >
+                  bill.status === "Pending" ?
+                  <button
+                    onClick={() => handleOpenProof(bill.id)}
+                    className="inline-flex items-center gap-1.5 bg-[#2c5577] text-white px-3 py-1.5 rounded shadow-sm hover:bg-[#1a364d] transition-colors font-medium text-xs focus:ring-2 focus:ring-offset-1 focus:ring-[#2c5577]">
+                    
                           <Eye size={14} />
                           View Proof
-                        </button>
-                      ) : (
-                        <span className="text-gray-400 text-[11px] font-bold italic uppercase">
+                        </button> :
+
+                  <span className="text-gray-400 text-[11px] font-bold italic uppercase">
                           Action Completed
                         </span>
-                      )}
+                  }
                     </td>
                   </tr>
-                ))
-              )}
+              )
+              }
             </tbody>
           </table>
         </div>
       </section>
 
-      {/* View Proof Modal */}
-      {isProofModalOpen && selectedBill && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {}
+      {isProofModalOpen && selectedBill &&
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <div>
@@ -340,9 +340,9 @@ export default function ElectricityBillAdminPage() {
                 </p>
               </div>
               <button
-                onClick={handleCloseProof}
-                className="text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-full hover:bg-gray-200"
-              >
+              onClick={handleCloseProof}
+              className="text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-full hover:bg-gray-200">
+              
                 <X size={20} />
               </button>
             </div>
@@ -405,23 +405,23 @@ export default function ElectricityBillAdminPage() {
 
             <div className="px-6 py-4 border-t border-gray-200 bg-white grid grid-cols-2 gap-4">
               <button
-                onClick={handleReject}
-                className="w-full py-2.5 bg-white text-red-600 border-2 border-red-500 hover:bg-red-50 rounded-md text-sm font-bold transition-colors flex justify-center items-center gap-2"
-              >
+              onClick={handleReject}
+              className="w-full py-2.5 bg-white text-red-600 border-2 border-red-500 hover:bg-red-50 rounded-md text-sm font-bold transition-colors flex justify-center items-center gap-2">
+              
                 <XCircle size={18} />
                 Deny Proof
               </button>
               <button
-                onClick={handleAccept}
-                className="w-full py-2.5 bg-[#138808] text-white hover:bg-green-700 rounded-md text-sm font-bold transition-colors flex justify-center items-center gap-2 shadow-sm"
-              >
+              onClick={handleAccept}
+              className="w-full py-2.5 bg-[#138808] text-white hover:bg-green-700 rounded-md text-sm font-bold transition-colors flex justify-center items-center gap-2 shadow-sm">
+              
                 <CheckCircle size={18} />
                 Accept & Verify
               </button>
             </div>
           </div>
         </div>
-      )}
-    </>
-  );
+      }
+    </>);
+
 }

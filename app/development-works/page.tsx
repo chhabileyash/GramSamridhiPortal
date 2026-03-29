@@ -49,14 +49,14 @@ export default function DevelopmentWorks() {
     const meta = user?.unsafeMetadata as any;
     const villageId = meta?.village_id;
     console.log();
-    
+
     fetchWorks(villageId);
   }, [user, isLoaded]);
 
-  const filteredWorks = works.filter(w => {
+  const filteredWorks = works.filter((w) => {
     const matchesSearch = (w.projectId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (w.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (w.contractor || "").toLowerCase().includes(searchTerm.toLowerCase());
+    (w.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (w.contractor || "").toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "All" || w.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -70,19 +70,19 @@ export default function DevelopmentWorks() {
 
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case "Completed": return "bg-green-100 text-green-800";
-      case "Ongoing": return "bg-blue-100 text-blue-800";
-      case "Halted": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-700";
+      case "Completed":return "bg-green-100 text-green-800";
+      case "Ongoing":return "bg-blue-100 text-blue-800";
+      case "Halted":return "bg-red-100 text-red-800";
+      default:return "bg-gray-100 text-gray-700";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "Completed": return <CheckCircle size={12} className="mr-1" />;
-      case "Ongoing": return <TrendingUp size={12} className="mr-1" />;
-      case "Halted": return <X size={12} className="mr-1" />;
-      default: return <Clock size={12} className="mr-1" />;
+      case "Completed":return <CheckCircle size={12} className="mr-1" />;
+      case "Ongoing":return <TrendingUp size={12} className="mr-1" />;
+      case "Halted":return <X size={12} className="mr-1" />;
+      default:return <Clock size={12} className="mr-1" />;
     }
   };
 
@@ -103,7 +103,7 @@ export default function DevelopmentWorks() {
 
         <main className="flex-1 p-8 bg-white min-w-0">
           <div className="mx-auto">
-            {/* Page Header */}
+            {}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 border-b border-gray-200 pb-4 gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
@@ -115,7 +115,7 @@ export default function DevelopmentWorks() {
               </div>
             </div>
 
-            {/* Filters Bar */}
+            {}
             <div className="bg-gray-50 border border-gray-200 p-4 mb-6 rounded-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="relative w-full sm:w-80 md:w-96 lg:w-[450px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -124,14 +124,14 @@ export default function DevelopmentWorks() {
                   placeholder="Search projects..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-[#0052cc] focus:border-[#0052cc] bg-white"
-                />
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-[#0052cc] focus:border-[#0052cc] bg-white" />
+                
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="border border-gray-300 bg-white rounded-sm px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#0052cc] w-full sm:w-auto cursor-pointer"
-              >
+                className="border border-gray-300 bg-white rounded-sm px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#0052cc] w-full sm:w-auto cursor-pointer">
+                
                 <option value="All">All Statuses</option>
                 <option value="Pending Start">Pending Start</option>
                 <option value="Ongoing">Ongoing</option>
@@ -140,7 +140,7 @@ export default function DevelopmentWorks() {
               </select>
             </div>
 
-            {/* Table */}
+            {}
             <section className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm border-collapse">
@@ -155,9 +155,9 @@ export default function DevelopmentWorks() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {isLoading ? (
-                      [...Array(5)].map((_, i) => (
-                        <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-100">
+                    {isLoading ?
+                    [...Array(5)].map((_, i) =>
+                    <tr key={i} className="animate-in fade-in duration-500 border-b border-gray-100">
                           <td className="px-6 py-4"><Skeleton className="h-4 w-12" /></td>
                           <td className="px-6 py-4"><Skeleton className="h-4 w-40 mb-2" /><Skeleton className="h-3 w-24" /></td>
                           <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
@@ -170,17 +170,17 @@ export default function DevelopmentWorks() {
                           <td className="px-6 py-4"><Skeleton className="h-6 w-24 mx-auto rounded-md" /></td>
                           <td className="px-6 py-4 text-right"><Skeleton className="h-4 w-16 ml-auto" /></td>
                         </tr>
-                      ))
-                    ) : filteredWorks.length === 0 ? (
-                      <tr>
+                    ) :
+                    filteredWorks.length === 0 ?
+                    <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
                           <Map className="w-8 h-8 mx-auto mb-2 opacity-20" />
                           <p>No development projects found.</p>
                         </td>
-                      </tr>
-                    ) : (
-                      filteredWorks.map((work) => (
-                        <tr key={work.id} className="hover:bg-slate-50 transition-colors group">
+                      </tr> :
+
+                    filteredWorks.map((work) =>
+                    <tr key={work.id} className="hover:bg-slate-50 transition-colors group">
                           <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap text-xs">{work.projectId}</td>
                           <td className="px-6 py-4">
                             <h4 className="font-bold text-[#2c5577] text-sm">{work.name}</h4>
@@ -191,9 +191,9 @@ export default function DevelopmentWorks() {
                             <div className="flex items-center gap-2">
                               <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                                 <div
-                                  className={`h-2 rounded-full ${work.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
-                                  style={{ width: `${work.progress}%` }}
-                                ></div>
+                              className={`h-2 rounded-full ${work.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
+                              style={{ width: `${work.progress}%` }}>
+                            </div>
                               </div>
                               <span className="text-xs font-bold text-gray-600 w-8">{work.progress}%</span>
                             </div>
@@ -206,15 +206,15 @@ export default function DevelopmentWorks() {
                           </td>
                           <td className="px-6 py-4 text-right">
                             <button
-                              onClick={() => openModal(work)}
-                              className="inline-flex items-center gap-1 text-[#0052cc] hover:underline font-bold text-xs"
-                            >
+                          onClick={() => openModal(work)}
+                          className="inline-flex items-center gap-1 text-[#0052cc] hover:underline font-bold text-xs">
+                          
                               Details <ChevronRight size={14} />
                             </button>
                           </td>
                         </tr>
-                      ))
-                    )}
+                    )
+                    }
                   </tbody>
                 </table>
               </div>
@@ -223,9 +223,9 @@ export default function DevelopmentWorks() {
         </main>
       </div>
 
-      {/* Detail Modal */}
-      {isModalOpen && selectedWork && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {}
+      {isModalOpen && selectedWork &&
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -246,13 +246,13 @@ export default function DevelopmentWorks() {
                 <h3 className="text-xl font-bold text-slate-900 leading-tight">{selectedWork.name}</h3>
               </div>
 
-              {selectedWork.description && (
-                <div className="bg-gray-50 p-4 rounded-sm border border-gray-100 mb-5">
+              {selectedWork.description &&
+            <div className="bg-gray-50 p-4 rounded-sm border border-gray-100 mb-5">
                   <p className="text-sm text-slate-700 leading-relaxed">{selectedWork.description}</p>
                 </div>
-              )}
+            }
 
-              {/* Progress Bar */}
+              {}
               <div className="mb-5">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Progress</span>
@@ -260,9 +260,9 @@ export default function DevelopmentWorks() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                   <div
-                    className={`h-3 rounded-full transition-all ${selectedWork.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
-                    style={{ width: `${selectedWork.progress}%` }}
-                  ></div>
+                  className={`h-3 rounded-full transition-all ${selectedWork.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
+                  style={{ width: `${selectedWork.progress}%` }}>
+                </div>
                 </div>
               </div>
 
@@ -298,17 +298,17 @@ export default function DevelopmentWorks() {
             </div>
             <div className="px-6 py-4 bg-gray-50 text-right">
               <button
-                onClick={closeModal}
-                className="px-6 py-2 bg-slate-800 text-white text-xs font-bold rounded-sm hover:bg-slate-700 transition-colors"
-              >
+              onClick={closeModal}
+              className="px-6 py-2 bg-slate-800 text-white text-xs font-bold rounded-sm hover:bg-slate-700 transition-colors">
+              
                 CLOSE
               </button>
             </div>
           </div>
         </div>
-      )}
+      }
 
       <Footer />
-    </div>
-  );
+    </div>);
+
 }

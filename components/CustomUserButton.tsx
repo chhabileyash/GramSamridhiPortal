@@ -172,20 +172,20 @@ const styles = `
   }
 `;
 
-const SignOutIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 16 16"
-    className="custom-user-popover-action-button-icon custom-user-popover-action-button-icon__signOut"
-  >
+const SignOutIcon = () =>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 16 16"
+  className="custom-user-popover-action-button-icon custom-user-popover-action-button-icon__signOut">
+  
     <path
-      fill="currentColor"
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M2.6 2.604A2.045 2.045 0 0 1 4.052 2h3.417c.544 0 1.066.217 1.45.604.385.387.601.911.601 1.458v.69c0 .413-.334.75-.746.75a.748.748 0 0 1-.745-.75v-.69a.564.564 0 0 0-.56-.562H4.051a.558.558 0 0 0-.56.563v7.875a.564.564 0 0 0 .56.562h3.417a.558.558 0 0 0 .56-.563v-.671c0-.415.333-.75.745-.75s.746.335.746.75v.671c0 .548-.216 1.072-.6 1.459a2.045 2.045 0 0 1-1.45.604H4.05a2.045 2.045 0 0 1-1.45-.604A2.068 2.068 0 0 1 2 11.937V4.064c0-.548.216-1.072.6-1.459Zm8.386 3.116a.743.743 0 0 1 1.055 0l1.74 1.75a.753.753 0 0 1 0 1.06l-1.74 1.75a.743.743 0 0 1-1.055 0 .753.753 0 0 1 0-1.06l.467-.47H5.858A.748.748 0 0 1 5.112 8c0-.414.334-.75.746-.75h5.595l-.467-.47a.753.753 0 0 1 0-1.06Z"
-    />
-  </svg>
-);
+    fill="currentColor"
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M2.6 2.604A2.045 2.045 0 0 1 4.052 2h3.417c.544 0 1.066.217 1.45.604.385.387.601.911.601 1.458v.69c0 .413-.334.75-.746.75a.748.748 0 0 1-.745-.75v-.69a.564.564 0 0 0-.56-.562H4.051a.558.558 0 0 0-.56.563v7.875a.564.564 0 0 0 .56.562h3.417a.558.558 0 0 0 .56-.563v-.671c0-.415.333-.75.745-.75s.746.335.746.75v.671c0 .548-.216 1.072-.6 1.459a2.045 2.045 0 0 1-1.45.604H4.05a2.045 2.045 0 0 1-1.45-.604A2.068 2.068 0 0 1 2 11.937V4.064c0-.548.216-1.072.6-1.459Zm8.386 3.116a.743.743 0 0 1 1.055 0l1.74 1.75a.753.753 0 0 1 0 1.06l-1.74 1.75a.743.743 0 0 1-1.055 0 .753.753 0 0 1 0-1.06l.467-.47H5.858A.748.748 0 0 1 5.112 8c0-.414.334-.75.746-.75h5.595l-.467-.47a.753.753 0 0 1 0-1.06Z" />
+  
+  </svg>;
+
 
 interface CustomUserButtonProps {
   isMobile?: boolean;
@@ -194,7 +194,7 @@ interface CustomUserButtonProps {
 
 const CustomUserButton: React.FC<CustomUserButtonProps> = ({
   isMobile = false,
-  onSignOut,
+  onSignOut
 }) => {
   const [open, setOpen] = useState(false);
   const [animating, setAnimating] = useState(false);
@@ -218,8 +218,8 @@ const CustomUserButton: React.FC<CustomUserButtonProps> = ({
   }, []);
 
   const toggle = useCallback(
-    () => (open ? closeDropdown() : openDropdown()),
-    [open, closeDropdown, openDropdown],
+    () => open ? closeDropdown() : openDropdown(),
+    [open, closeDropdown, openDropdown]
   );
 
   useEffect(() => {
@@ -246,9 +246,9 @@ const CustomUserButton: React.FC<CustomUserButtonProps> = ({
   };
 
   const displayName =
-    user?.fullName || user?.firstName || user?.username || "User";
+  user?.fullName || user?.firstName || user?.username || "User";
   const displayInitials =
-    (user?.firstName?.[0] || "") + (user?.lastName?.[0] || "");
+  (user?.firstName?.[0] || "") + (user?.lastName?.[0] || "");
   const displayEmail = user?.primaryEmailAddress?.emailAddress || "";
 
   return (
@@ -258,58 +258,58 @@ const CustomUserButton: React.FC<CustomUserButtonProps> = ({
         className="custom-user-button"
         ref={ref}
         style={{
-          width: isMobile ? "100%" : "auto",
-        }}
-      >
+          width: isMobile ? "100%" : "auto"
+        }}>
+        
         <button
           className="custom-user-button-trigger"
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={toggle}
-          style={{ width: isMobile ? "100%" : "auto" }}
-        >
+          style={{ width: isMobile ? "100%" : "auto" }}>
+          
           <span className="custom-avatar-box">
-            {user?.imageUrl ? (
-              <img
-                src={user.imageUrl}
-                alt={displayName}
-                className="custom-avatar-image"
-              />
-            ) : (
-              <span className="custom-avatar-initials">
+            {user?.imageUrl ?
+            <img
+              src={user.imageUrl}
+              alt={displayName}
+              className="custom-avatar-image" /> :
+
+
+            <span className="custom-avatar-initials">
                 {displayInitials || "U"}
               </span>
-            )}
+            }
           </span>
-          {!isMobile && (
-            <span style={{ fontSize: "13px", color: "#1F4E79" }}>▼</span>
-          )}
+          {!isMobile &&
+          <span style={{ fontSize: "13px", color: "#1F4E79" }}>▼</span>
+          }
         </button>
 
-        {visible && (
-          <div
-            className={`custom-user-popover-card ${
-              animating ? "custom-popover-enter" : "custom-popover-exit"
-            }`}
-            role="dialog"
-            aria-label="User menu"
-          >
+        {visible &&
+        <div
+          className={`custom-user-popover-card ${
+          animating ? "custom-popover-enter" : "custom-popover-exit"}`
+          }
+          role="dialog"
+          aria-label="User menu">
+          
             <div className="custom-user-popover-main">
-              {/* User Preview */}
+              {}
               <div className="custom-user-preview">
                 <span className="custom-user-preview-avatar-container">
                   <span className="custom-avatar-box large">
-                    {user?.imageUrl ? (
-                      <img
-                        src={user.imageUrl}
-                        alt={displayName}
-                        className="custom-avatar-image"
-                      />
-                    ) : (
-                      <span className="custom-avatar-initials">
+                    {user?.imageUrl ?
+                  <img
+                    src={user.imageUrl}
+                    alt={displayName}
+                    className="custom-avatar-image" /> :
+
+
+                  <span className="custom-avatar-initials">
                         {displayInitials || "U"}
                       </span>
-                    )}
+                  }
                   </span>
                 </span>
                 <span className="custom-user-preview-text-container">
@@ -322,13 +322,13 @@ const CustomUserButton: React.FC<CustomUserButtonProps> = ({
                 </span>
               </div>
 
-              {/* Actions */}
+              {}
               <div className="custom-user-popover-actions" role="menu">
                 <button
-                  className="custom-user-popover-action-button custom-user-popover-action-button__signOut"
-                  role="menuitem"
-                  onClick={handleSignOut}
-                >
+                className="custom-user-popover-action-button custom-user-popover-action-button__signOut"
+                role="menuitem"
+                onClick={handleSignOut}>
+                
                   <span className="custom-user-popover-action-button-icon-box custom-user-popover-action-button-icon-box__signOut">
                     <SignOutIcon />
                   </span>
@@ -337,10 +337,10 @@ const CustomUserButton: React.FC<CustomUserButtonProps> = ({
               </div>
             </div>
           </div>
-        )}
+        }
       </div>
-    </>
-  );
+    </>);
+
 };
 
 export default CustomUserButton;

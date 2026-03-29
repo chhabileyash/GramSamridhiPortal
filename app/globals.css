@@ -30,7 +30,7 @@ body {
   top: 0px !important;
 }
 
-/* Google Translate Style Fixes */
+
 #google_translate_element {
   display: flex !important;
   align-items: center;
@@ -39,17 +39,17 @@ body {
 #google_translate_element .goog-te-gadget {
   display: flex;
   align-items: center;
-  font-size: 0px; /* Hide "Powered by Google" text */
+  font-size: 0px; 
   margin: 0 !important;
   color: transparent !important;
 }
 
-/* Hide the Google logo inside the gadget */
+
 #google_translate_element .goog-te-gadget img {
   display: none !important;
 }
 
-/* Style the native select element */
+
 .goog-te-combo {
   background-color: transparent !important;
   border: none !important;
@@ -60,15 +60,15 @@ body {
   padding: 0 4px !important;
   margin: 0 !important;
   width: auto;
-  max-width: 140px; /* Adjust as needed */
+  max-width: 140px; 
 }
 
 .goog-te-combo option {
-  background-color: var(--color-primary); /* Use theme color for dropdown */
+  background-color: var(--color-primary); 
   color: white;
   padding: 4px;
 }
-/* Desktop translate display (cloned select, shown in blue header) */
+
 #google_translate_desktop_display {
   display: flex !important;
   align-items: center;
@@ -94,7 +94,7 @@ body {
 .VIpgJd-ZVi9od-l4eHX-hSRGPd{
   display: none !important;
 }
-/* Hide the top banner frame from Google */
+
 .VIpgJd-ZVi9od-ORHb-OEVmcd {
   display: none !important;
 }
@@ -112,7 +112,7 @@ body {
   height: 32px;
 }
 
-/* Mobile translate element overrides */
+
 #google_translate_element_mobile {
   display: flex !important;
   align-items: center;
@@ -132,7 +132,7 @@ body {
   display: none !important;
 }
 
-/* Mobile select: dark text on gray background */
+
 #google_translate_element_mobile .goog-te-combo {
   color: #1F4E79 !important;
   background-color: transparent !important;

@@ -16,16 +16,16 @@ export default function VillageLoading() {
         <div className="space-y-4 lg:col-span-2">
           <div className="h-44 animate-pulse border border-border bg-surface" />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-24 animate-pulse border border-border bg-surface"
-              />
-            ))}
+            {Array.from({ length: 6 }).map((_, index) =>
+            <div
+              key={index}
+              className="h-24 animate-pulse border border-border bg-surface" />
+
+            )}
           </div>
         </div>
         <div className="h-96 animate-pulse border border-[#082b57] bg-[#082b57]/90" />
       </section>
-    </main>
-  );
+    </main>);
+
 }

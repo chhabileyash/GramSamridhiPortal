@@ -8,12 +8,12 @@ import {
   date,
   index,
   jsonb,
-  boolean,
-} from "drizzle-orm/pg-core";
+  boolean } from
+"drizzle-orm/pg-core";
 
-// =====================================
-// USERS (Clerk user sync)
-// =====================================
+
+
+
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -32,12 +32,12 @@ export const users = pgTable("users", {
   villageId: text("village_id"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// VILLAGES
-// =====================================
+
+
+
 
 export const villages = pgTable(
   "villages",
@@ -73,22 +73,22 @@ export const villages = pgTable(
 
     scrapedUrl: text("scraped_url").unique(),
 
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow()
   },
   (table) => ({
-    pinCodeIdx: index("idx_villages_pin_code").on(table.pinCode),
-  }),
+    pinCodeIdx: index("idx_villages_pin_code").on(table.pinCode)
+  })
 );
 
-// =====================================
-// POPULATION
-// =====================================
+
+
+
 
 export const villagePopulation = pgTable("village_population", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
   totalPopulation: integer("total_population"),
@@ -96,7 +96,7 @@ export const villagePopulation = pgTable("village_population", {
 
   femalePopulationPercent: numeric("female_population_percent", {
     precision: 5,
-    scale: 2,
+    scale: 2
   }),
   femalePopulation: integer("female_population"),
 
@@ -105,41 +105,41 @@ export const villagePopulation = pgTable("village_population", {
 
   femaleLiteracyRate: numeric("female_literacy_rate", {
     precision: 5,
-    scale: 2,
+    scale: 2
   }),
   femaleLiterate: integer("female_literate"),
 
   scheduledTribePercent: numeric("scheduled_tribe_percent", {
     precision: 5,
-    scale: 2,
+    scale: 2
   }),
   scheduledTribePopulation: integer("scheduled_tribe_population"),
 
   scheduledCastePercent: numeric("scheduled_caste_percent", {
     precision: 5,
-    scale: 2,
+    scale: 2
   }),
   scheduledCastePopulation: integer("scheduled_caste_population"),
 
   workingPopulationPercent: numeric("working_population_percent", {
     precision: 5,
-    scale: 2,
+    scale: 2
   }),
 
   childPopulation: integer("child_population"),
   girlChildPercent: numeric("girl_child_percent", { precision: 5, scale: 2 }),
-  girlChildPopulation: integer("girl_child_population"),
+  girlChildPopulation: integer("girl_child_population")
 });
 
-// =====================================
-// WEATHER
-// =====================================
+
+
+
 
 export const villageWeather = pgTable("village_weather", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
   temperatureC: numeric("temperature_c", { precision: 5, scale: 2 }),
@@ -150,18 +150,18 @@ export const villageWeather = pgTable("village_weather", {
   windDirection: text("wind_direction"),
 
   stationName: text("station_name"),
-  observedMinutesAgo: integer("observed_minutes_ago"),
+  observedMinutesAgo: integer("observed_minutes_ago")
 });
 
-// =====================================
-// WEATHER FORECAST
-// =====================================
+
+
+
 
 export const weatherForecast = pgTable("weather_forecast", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
   forecastDate: date("forecast_date"),
@@ -169,40 +169,40 @@ export const weatherForecast = pgTable("weather_forecast", {
   minTemp: numeric("min_temp", { precision: 5, scale: 2 }),
   maxTemp: numeric("max_temp", { precision: 5, scale: 2 }),
 
-  description: text("description"),
+  description: text("description")
 });
 
-// =====================================
-// HIGHWAYS
-// =====================================
+
+
+
 
 export const highways = pgTable("highways", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
-  highwayName: text("highway_name"),
+  highwayName: text("highway_name")
 });
 
-// =====================================
-// RIVERS
-// =====================================
+
+
+
 
 export const rivers = pgTable("rivers", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
-  riverName: text("river_name"),
+  riverName: text("river_name")
 });
 
-// =====================================
-// PLACES (bus stops, temples, atms etc.)
-// =====================================
+
+
+
 
 export const places = pgTable(
   "places",
@@ -210,7 +210,7 @@ export const places = pgTable(
     id: serial("id").primaryKey(),
 
     villageId: integer("village_id").references(() => villages.id, {
-      onDelete: "cascade",
+      onDelete: "cascade"
     }),
 
     category: text("category"),
@@ -220,17 +220,17 @@ export const places = pgTable(
 
     distanceKm: numeric("distance_km", { precision: 6, scale: 2 }),
 
-    rawText: text("raw_text"),
+    rawText: text("raw_text")
   },
   (table) => ({
     categoryIdx: index("idx_places_category").on(table.category),
-    villageIdx: index("idx_places_village").on(table.villageId),
-  }),
+    villageIdx: index("idx_places_village").on(table.villageId)
+  })
 );
 
-// =====================================
-// NEARBY LOCATIONS
-// =====================================
+
+
+
 
 export const nearbyLocations = pgTable(
   "nearby_locations",
@@ -238,145 +238,145 @@ export const nearbyLocations = pgTable(
     id: serial("id").primaryKey(),
 
     villageId: integer("village_id").references(() => villages.id, {
-      onDelete: "cascade",
+      onDelete: "cascade"
     }),
 
     category: text("category"),
 
     name: text("name"),
 
-    distanceKm: numeric("distance_km", { precision: 6, scale: 2 }),
+    distanceKm: numeric("distance_km", { precision: 6, scale: 2 })
   },
   (table) => ({
-    categoryIdx: index("idx_nearby_category").on(table.category),
-  }),
+    categoryIdx: index("idx_nearby_category").on(table.category)
+  })
 );
 
-// =====================================
-// POLLING STATIONS
-// =====================================
+
+
+
 
 export const pollingStations = pgTable("polling_stations", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
-  stationName: text("station_name"),
+  stationName: text("station_name")
 });
 
-// =====================================
-// COLLEGES
-// =====================================
+
+
+
 
 export const colleges = pgTable("colleges", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
   name: text("name"),
-  address: text("address"),
+  address: text("address")
 });
 
-// =====================================
-// SCHOOLS
-// =====================================
+
+
+
 
 export const schools = pgTable("schools", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
   name: text("name"),
-  address: text("address"),
+  address: text("address")
 });
 
-// =====================================
-// HEALTH CENTERS
-// =====================================
+
+
+
 
 export const healthCenters = pgTable("health_centers", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
   name: text("name"),
-  address: text("address"),
+  address: text("address")
 });
 
-// =====================================
-// VILLAGE TALKS
-// =====================================
+
+
+
 
 export const villageTalks = pgTable("village_talks", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
   message: text("message"),
 
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
 });
 
-// =====================================
-// VILLAGE MEMBERS
-// =====================================
+
+
+
 
 export const villageMembers = pgTable("village_members", {
   id: serial("id").primaryKey(),
 
   villageId: integer("village_id").references(() => villages.id, {
-    onDelete: "cascade",
+    onDelete: "cascade"
   }),
 
-  username: text("username"),
+  username: text("username")
 });
 
-// =====================================
-// CUSTOM VILLAGE INFO (User Configured)
-// =====================================
+
+
+
 
 export const customVillageInfo = pgTable("custom_village_info", {
   id: serial("id").primaryKey(),
-  villageIdString: text("village_id_string").unique(), // Mapped to output.json UUID
+  villageIdString: text("village_id_string").unique(),
 
   about: text("about"),
 
-  // Population stats
+
   totalPopulation: integer("total_population"),
   malePopulation: integer("male_population"),
   femalePopulation: integer("female_population"),
 
-  // Distribution
+
   childrenCount: integer("children_count"),
   youthCount: integer("youth_count"),
   adultsCount: integer("adults_count"),
   seniorsCount: integer("seniors_count"),
 
-  // Contact
+
   address: text("address"),
   phone: text("phone"),
   email: text("email"),
 
-  // Images stored as JSONB
-  images: jsonb("images").$type<Array<{ url: string; title: string; type: string; isPrimary: boolean }>>(),
+
+  images: jsonb("images").$type<Array<{url: string;title: string;type: string;isPrimary: boolean;}>>(),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// ADMINS (Stub to prevent accidental drop)
-// =====================================
+
+
+
 
 export const admins = pgTable("admins", {
   id: serial("id").primaryKey(),
@@ -385,12 +385,12 @@ export const admins = pgTable("admins", {
   name: text("name"),
   isActive: boolean("is_active"),
   createdAt: timestamp("created_at"),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at")
 });
 
-// =====================================
-// PROPERTY TAXES
-// =====================================
+
+
+
 
 export const propertyTaxes = pgTable("property_taxes", {
   id: serial("id").primaryKey(),
@@ -406,16 +406,16 @@ export const propertyTaxes = pgTable("property_taxes", {
   amount: numeric("amount", { precision: 10, scale: 2 }),
   paymentDate: date("payment_date"),
 
-  status: text("status").default("Pending"), // e.g. "Pending" / "Paid" / "Denied" / "Reviewing"
-  referenceNumber: text("reference_number"), // Added referenceNumber for transaction ID
+  status: text("status").default("Pending"),
+  referenceNumber: text("reference_number"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// WATER TAXES
-// =====================================
+
+
+
 
 export const waterTaxes = pgTable("water_taxes", {
   id: serial("id").primaryKey(),
@@ -436,12 +436,12 @@ export const waterTaxes = pgTable("water_taxes", {
   referenceNumber: text("reference_number"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// ELECTRICITY BILLS
-// =====================================
+
+
+
 
 export const electricityBills = pgTable("electricity_bills", {
   id: serial("id").primaryKey(),
@@ -463,12 +463,12 @@ export const electricityBills = pgTable("electricity_bills", {
   referenceNumber: text("reference_number"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// COMPLAINTS
-// =====================================
+
+
+
 
 export const complaints = pgTable("complaints", {
   id: serial("id").primaryKey(),
@@ -486,15 +486,15 @@ export const complaints = pgTable("complaints", {
   citizenContact: text("citizen_contact"),
 
   priority: text("priority").default("Medium"),
-  status: text("status").default("Pending"), // "Pending" / "Progress" / "Complete"
+  status: text("status").default("Pending"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// PANCHAYAT MEMBERS
-// =====================================
+
+
+
 
 export const panchayatMembers = pgTable("panchayat_members", {
   id: serial("id").primaryKey(),
@@ -507,12 +507,12 @@ export const panchayatMembers = pgTable("panchayat_members", {
   phone: text("phone"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// SCHEMES
-// =====================================
+
+
+
 
 export const schemes = pgTable("schemes", {
   id: serial("id").primaryKey(),
@@ -528,12 +528,12 @@ export const schemes = pgTable("schemes", {
   eligible: text("eligible"),
   link: text("link"),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// SUGGESTIONS
-// =====================================
+
+
+
 
 export const suggestions = pgTable("suggestions", {
   id: serial("id").primaryKey(),
@@ -548,12 +548,12 @@ export const suggestions = pgTable("suggestions", {
   citizenName: text("citizen_name"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// NOTIFICATIONS
-// =====================================
+
+
+
 
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
@@ -566,12 +566,12 @@ export const notifications = pgTable("notifications", {
   audience: text("audience").default("All"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// =====================================
-// DEVELOPMENT WORKS
-// =====================================
+
+
+
 
 export const developmentWorks = pgTable("development_works", {
   id: serial("id").primaryKey(),
@@ -591,5 +591,5 @@ export const developmentWorks = pgTable("development_works", {
   expectedEndDate: date("expected_end_date"),
 
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });

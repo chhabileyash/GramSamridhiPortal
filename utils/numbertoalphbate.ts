@@ -10,7 +10,7 @@ export function numberToAlphabet(num: number | string): string {
 
   for (let i = 0; i < str.length; i++) {
     const digit = Number(str[i]);
-    if (digit === 0) continue; // skip 0 if needed
+    if (digit === 0) continue;
     result += String.fromCharCode(65 + digit - 1);
   }
 

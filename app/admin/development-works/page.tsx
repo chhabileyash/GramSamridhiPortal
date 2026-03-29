@@ -27,7 +27,7 @@ export default function DevelopmentWorksPage() {
     progress: 0,
     status: "Pending Start",
     startDate: "",
-    expectedEndDate: "",
+    expectedEndDate: ""
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -65,7 +65,7 @@ export default function DevelopmentWorksPage() {
         progress: work.progress || 0,
         status: work.status || "Pending Start",
         startDate: work.startDate || "",
-        expectedEndDate: work.expectedEndDate || "",
+        expectedEndDate: work.expectedEndDate || ""
       });
     } else {
       setEditingWork(null);
@@ -83,16 +83,16 @@ export default function DevelopmentWorksPage() {
     e.preventDefault();
     setIsSaving(true);
 
-    const finalStatus = Number(formData.progress) === 100 ? "Completed"
-      : (Number(formData.progress) > 0 && formData.status === "Pending Start") ? "Ongoing"
-        : formData.status;
+    const finalStatus = Number(formData.progress) === 100 ? "Completed" :
+    Number(formData.progress) > 0 && formData.status === "Pending Start" ? "Ongoing" :
+    formData.status;
 
     try {
       if (editingWork) {
         const res = await fetch("/api/development-works", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingWork.id, ...formData, progress: Number(formData.progress), status: finalStatus }),
+          body: JSON.stringify({ id: editingWork.id, ...formData, progress: Number(formData.progress), status: finalStatus })
         });
         if (res.ok) {
           toast.success("Project updated successfully");
@@ -104,7 +104,7 @@ export default function DevelopmentWorksPage() {
         const res = await fetch("/api/development-works", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ villageId, ...formData, progress: Number(formData.progress), status: finalStatus }),
+          body: JSON.stringify({ villageId, ...formData, progress: Number(formData.progress), status: finalStatus })
         });
         if (res.ok) {
           toast.success("Project registered successfully");
@@ -128,7 +128,7 @@ export default function DevelopmentWorksPage() {
       const res = await fetch(`/api/development-works?id=${id}`, { method: "DELETE" });
       if (res.ok) {
         toast.success("Project deleted");
-        setWorks(works.filter(w => w.id !== id));
+        setWorks(works.filter((w) => w.id !== id));
       } else {
         toast.error("Failed to delete");
       }
@@ -138,13 +138,13 @@ export default function DevelopmentWorksPage() {
   };
 
   const totalProjects = works.length;
-  const completedProjects = works.filter(w => w.status === "Completed" || w.progress === 100).length;
-  const ongoingProjects = works.filter(w => w.status === "Ongoing").length;
+  const completedProjects = works.filter((w) => w.status === "Completed" || w.progress === 100).length;
+  const ongoingProjects = works.filter((w) => w.status === "Ongoing").length;
 
-  const filteredWorks = works.filter(w => {
+  const filteredWorks = works.filter((w) => {
     const matchesSearch = (w.projectId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (w.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (w.contractor || "").toLowerCase().includes(searchQuery.toLowerCase());
+    (w.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (w.contractor || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "All" || w.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -164,14 +164,14 @@ export default function DevelopmentWorksPage() {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
-        >
+          className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+          
           <Plus size={18} />
           <span className="hidden sm:inline">New Project</span>
         </button>
       </section>
 
-      {/* Metrics Row */}
+      {}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-5 border border-gray-200 rounded-sm shadow-sm flex items-center gap-4">
           <div className="p-3 bg-blue-50 text-blue-600 rounded-full shrink-0">
@@ -202,7 +202,7 @@ export default function DevelopmentWorksPage() {
         </div>
       </section>
 
-      {/* Table Section */}
+      {}
       <section className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
           <div className="relative w-full sm:max-w-md md:max-w-lg lg:w-[450px]">
@@ -212,15 +212,15 @@ export default function DevelopmentWorksPage() {
               placeholder="Search by Project ID, Name or Contractor..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-            />
+              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
+            
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border border-gray-300 bg-white rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto cursor-pointer"
-            >
+              className="border border-gray-300 bg-white rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto cursor-pointer">
+              
               <option value="All">All Statuses</option>
               <option value="Pending Start">Pending Start</option>
               <option value="Ongoing">Ongoing</option>
@@ -244,9 +244,9 @@ export default function DevelopmentWorksPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {loading ? (
-                [...Array(5)].map((_, i) => (
-                  <tr key={i} className="border-b border-gray-50 animate-in fade-in duration-500">
+              {loading ?
+              [...Array(5)].map((_, i) =>
+              <tr key={i} className="border-b border-gray-50 animate-in fade-in duration-500">
                     <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
                     <td className="px-6 py-4"><Skeleton className="h-5 w-40" /></td>
                     <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
@@ -265,15 +265,15 @@ export default function DevelopmentWorksPage() {
                       </div>
                     </td>
                   </tr>
-                ))
-              ) : filteredWorks.length === 0 ? (
-                <tr>
+              ) :
+              filteredWorks.length === 0 ?
+              <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                     No infrastructure projects found.
                   </td>
-                </tr>
-              ) : filteredWorks.map((work) => (
-                <tr key={work.id} className="hover:bg-gray-50 transition-colors">
+                </tr> :
+              filteredWorks.map((work) =>
+              <tr key={work.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap text-xs">{work.projectId}</td>
                   <td className="px-6 py-4 font-bold text-[#2c5577]">{work.name}</td>
                   <td className="px-6 py-4 text-gray-600 font-medium text-xs">{work.contractor || "-"}</td>
@@ -282,19 +282,19 @@ export default function DevelopmentWorksPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                         <div
-                          className={`h-2 rounded-full ${work.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
-                          style={{ width: `${work.progress}%` }}
-                        ></div>
+                        className={`h-2 rounded-full ${work.progress === 100 ? 'bg-green-500' : 'bg-blue-500'}`}
+                        style={{ width: `${work.progress}%` }}>
+                      </div>
                       </div>
                       <span className="text-xs font-bold text-gray-700 w-8">{work.progress}%</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2 flex justify-center py-1 rounded-md text-[11px] font-bold uppercase tracking-wider max-w-[120px] mx-auto ${work.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                      work.status === 'Ongoing' ? 'bg-blue-100 text-blue-800' :
-                        work.status === 'Halted' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
-                      }`}>
+                  work.status === 'Ongoing' ? 'bg-blue-100 text-blue-800' :
+                  work.status === 'Halted' ? 'bg-red-100 text-red-800' :
+                  'bg-gray-100 text-gray-800'}`
+                  }>
                       {work.status === 'Completed' && <CheckCircle size={12} className="mr-1.5" />}
                       {work.status === 'Ongoing' && <TrendingUp size={12} className="mr-1.5" />}
                       {work.status === 'Halted' && <X size={12} className="mr-1.5" />}
@@ -305,29 +305,29 @@ export default function DevelopmentWorksPage() {
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={() => handleOpenModal(work)}
-                        className="flex items-center gap-1 bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1.5 rounded font-semibold text-xs transition-colors border border-blue-200"
-                      >
+                      onClick={() => handleOpenModal(work)}
+                      className="flex items-center gap-1 bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1.5 rounded font-semibold text-xs transition-colors border border-blue-200">
+                      
                         <Edit3 size={14} /> Update
                       </button>
                       <button
-                        onClick={() => handleDelete(work.id)}
-                        className="flex items-center gap-1 bg-red-50 text-red-600 hover:bg-red-100 px-2 py-1.5 rounded font-semibold text-xs transition-colors border border-red-200"
-                      >
+                      onClick={() => handleDelete(work.id)}
+                      className="flex items-center gap-1 bg-red-50 text-red-600 hover:bg-red-100 px-2 py-1.5 rounded font-semibold text-xs transition-colors border border-red-200">
+                      
                         <Trash2 size={14} />
                       </button>
                     </div>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
       </section>
 
-      {/* Add / Edit Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {}
+      {isModalOpen &&
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -335,9 +335,9 @@ export default function DevelopmentWorksPage() {
                 {editingWork ? "Update Project Phase" : "Register New Project"}
               </h2>
               <button
-                onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-full hover:bg-gray-200"
-              >
+              onClick={handleCloseModal}
+              className="text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-full hover:bg-gray-200">
+              
                 <X size={20} />
               </button>
             </div>
@@ -347,46 +347,46 @@ export default function DevelopmentWorksPage() {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Project Name <span className="text-red-500">*</span></label>
                   <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g. Village Main Road Repair"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-                  />
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g. Village Main Road Repair"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm" />
+                
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
                   <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Brief description of the project scope..."
-                    rows={2}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm resize-none"
-                  />
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Brief description of the project scope..."
+                  rows={2}
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm resize-none" />
+                
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Contractor/Agency</label>
                     <input
-                      type="text"
-                      value={formData.contractor}
-                      onChange={(e) => setFormData({ ...formData, contractor: e.target.value })}
-                      placeholder="e.g. ABC Infra"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-                    />
+                    type="text"
+                    value={formData.contractor}
+                    onChange={(e) => setFormData({ ...formData, contractor: e.target.value })}
+                    placeholder="e.g. ABC Infra"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm" />
+                  
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Budget Allocated (₹) <span className="text-red-500">*</span></label>
                     <input
-                      type="number"
-                      required
-                      value={formData.budget}
-                      onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                      placeholder="e.g. 500000"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-                    />
+                    type="number"
+                    required
+                    value={formData.budget}
+                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                    placeholder="e.g. 500000"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm" />
+                  
                   </div>
                 </div>
 
@@ -394,20 +394,20 @@ export default function DevelopmentWorksPage() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Start Date</label>
                     <input
-                      type="date"
-                      value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-                    />
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm" />
+                  
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Expected End Date</label>
                     <input
-                      type="date"
-                      value={formData.expectedEndDate}
-                      onChange={(e) => setFormData({ ...formData, expectedEndDate: e.target.value })}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-                    />
+                    type="date"
+                    value={formData.expectedEndDate}
+                    onChange={(e) => setFormData({ ...formData, expectedEndDate: e.target.value })}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm" />
+                  
                   </div>
                 </div>
 
@@ -420,22 +420,22 @@ export default function DevelopmentWorksPage() {
                         <span className="font-bold text-blue-700">{formData.progress}%</span>
                       </div>
                       <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        step="5"
-                        value={formData.progress}
-                        onChange={(e) => setFormData({ ...formData, progress: Number(e.target.value) })}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                      />
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      value={formData.progress}
+                      onChange={(e) => setFormData({ ...formData, progress: Number(e.target.value) })}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                    
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1.5">Override Status</label>
                       <select
-                        value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm cursor-pointer bg-white"
-                      >
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm cursor-pointer bg-white">
+                      
                         <option value="Pending Start">Pending Start</option>
                         <option value="Ongoing">Ongoing</option>
                         <option value="Halted">Halted (Blocked)</option>
@@ -450,25 +450,25 @@ export default function DevelopmentWorksPage() {
 
             <div className="px-6 py-4 border-t border-gray-200 bg-white flex justify-end gap-3 rounded-b-xl">
               <button
-                type="button"
-                onClick={handleCloseModal}
-                className="px-5 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-              >
+              type="button"
+              onClick={handleCloseModal}
+              className="px-5 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+              
                 Cancel
               </button>
               <button
-                type="submit"
-                form="project-form"
-                disabled={isSaving}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2"
-              >
+              type="submit"
+              form="project-form"
+              disabled={isSaving}
+              className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2">
+              
                 {isSaving && <Loader2 size={16} className="animate-spin" />}
                 {editingWork ? "Save Updates" : "Register Project"}
               </button>
             </div>
           </div>
         </div>
-      )}
-    </>
-  );
+      }
+    </>);
+
 }
