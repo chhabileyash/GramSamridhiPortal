@@ -36,9 +36,7 @@ const GOOGLE_TRANSLATE_CONFIG = {
   RETRY_DELAY: 300,
   INITIAL_DELAY: 100,
   PAGE_LANGUAGE: "en",
-  // Master (off-screen, always visible to Google Translate API)
   ELEMENT_ID: "google_translate_element",
-  // Display targets — populated by cloning the master select
   ELEMENT_DESKTOP_ID: "google_translate_desktop_display",
   ELEMENT_MOBILE_ID: "google_translate_element_mobile",
 } as const;
