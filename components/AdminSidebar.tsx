@@ -15,6 +15,7 @@ export function AdminSidebar() {
   { name: "Water Tax Approvals", href: "/admin/water-tax" },
   { name: "Electricity Bill Admin", href: "/admin/electricity-bill" },
   { name: "Complaints Management", href: "/admin/complaints" },
+  { name: "Certificate Approvals", href: "/admin/certificates" },
   { name: "Notifications / Alerts", href: "/admin/notifications" },
   { name: "Development Works", href: "/admin/development-works" },
   { name: "Suggestions", href: "/admin/suggestions" },

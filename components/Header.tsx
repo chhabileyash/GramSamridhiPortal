@@ -6,8 +6,9 @@ import React, {
   useCallback,
   useMemo,
   memo,
-  useRef } from
-"react";
+  useRef
+} from
+  "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
@@ -17,7 +18,7 @@ import Marquee from "react-fast-marquee";
 const CustomUserButton = dynamic(() => import("./CustomUserButton"), {
   ssr: false,
   loading: () =>
-  <div className="h-10 w-10 animate-pulse bg-white/20 rounded-full" />
+    <div className="h-10 w-10 animate-pulse bg-white/20 rounded-full" />
 
 });
 
@@ -42,42 +43,42 @@ const GT = {
 const ZOOM = { MIN: 0.8, MAX: 1.2, STEP: 0.1, DEFAULT: 1 } as const;
 
 const ADMIN_NAV = [
-{ path: "/admin/home", label: "Dashboard" },
-{ path: "/admin/schemes", label: "Schemes" },
-{ path: "/admin/complaints", label: "Complaints" }] as
-const;
+  { path: "/admin/home", label: "Dashboard" },
+  { path: "/admin/schemes", label: "Schemes" },
+  { path: "/admin/complaints", label: "Complaints" }] as
+  const;
 
 const USER_NAV_SIGNED_IN = [
-{ path: "/home", label: "Home" },
-{ path: "/about", label: "About Us" },
-{ path: "/schemes", label: "Schemes" },
-{ path: "/services", label: "Services" },
-{ path: "/gallery", label: "Gallery" },
-{ path: "/contact", label: "Contact Us" }] as
-const;
+  { path: "/home", label: "Home" },
+  { path: "/about", label: "About Us" },
+  { path: "/schemes", label: "Schemes" },
+  { path: "/services", label: "Services" },
+  { path: "/gallery", label: "Gallery" },
+  { path: "/contact", label: "Contact Us" }] as
+  const;
 
 const USER_NAV_SIGNED_OUT = [
-{ path: "/", label: "Home" },
-{ path: "/about", label: "About Us" },
-{ path: "/schemes", label: "Schemes" },
-{ path: "/services", label: "Services" },
-{ path: "/gallery", label: "Gallery" },
-{ path: "/contact", label: "Contact Us" }] as
-const;
+  { path: "/", label: "Home" },
+  { path: "/about", label: "About Us" },
+  { path: "/schemes", label: "Schemes" },
+  { path: "/services", label: "Services" },
+  { path: "/gallery", label: "Gallery" },
+  { path: "/contact", label: "Contact Us" }] as
+  const;
 
 
 const GlobeIcon = () =>
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="16"
-  height="16"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  strokeWidth="2"
-  strokeLinecap="round"
-  strokeLinejoin="round">
-  
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round">
+
     <circle cx="12" cy="12" r="10" />
     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     <path d="M2 12h20" />
@@ -92,9 +93,9 @@ declare global {
     google?: {
       translate?: {
         TranslateElement?: new (
-        options: {pageLanguage: string;autoDisplay: boolean;},
-        elementId: string)
-        => void;
+          options: { pageLanguage: string; autoDisplay: boolean; },
+          elementId: string)
+          => void;
       };
     };
   }
@@ -106,7 +107,7 @@ const MobileUserCard = memo(function MobileUserCard({
   onSignOut
 
 
-}: {onSignOut?: () => void;}) {
+}: { onSignOut?: () => void; }) {
   const { user } = useUser();
   const { signOut } = useClerk();
 
@@ -125,24 +126,24 @@ const MobileUserCard = memo(function MobileUserCard({
         <div
           className="shrink-0 w-11 h-11 rounded-full overflow-hidden flex items-center justify-center font-semibold text-white text-base"
           style={{ background: "linear-gradient(135deg, #1F4E79, #F28C28)" }}>
-          
-          {user?.imageUrl ?
-          <img src={user.imageUrl} alt={displayName} className="w-full h-full object-cover" /> :
 
-          <span>{displayInitials || "U"}</span>
+          {user?.imageUrl ?
+            <img src={user.imageUrl} alt={displayName} className="w-full h-full object-cover" /> :
+
+            <span>{displayInitials || "U"}</span>
           }
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-[#1F4E79] truncate leading-tight">{displayName}</p>
           {displayEmail &&
-          <p className="text-xs text-gray-500 truncate mt-0.5">{displayEmail}</p>
+            <p className="text-xs text-gray-500 truncate mt-0.5">{displayEmail}</p>
           }
         </div>
       </div>
       <button
         onClick={handleSignOut}
         className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors font-medium">
-        
+
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
           <path fillRule="evenodd" clipRule="evenodd" d="M2.6 2.604A2.045 2.045 0 0 1 4.052 2h3.417c.544 0 1.066.217 1.45.604.385.387.601.911.601 1.458v.69c0 .413-.334.75-.746.75a.748.748 0 0 1-.745-.75v-.69a.564.564 0 0 0-.56-.562H4.051a.558.558 0 0 0-.56.563v7.875a.564.564 0 0 0 .56.562h3.417a.558.558 0 0 0 .56-.563v-.671c0-.415.333-.75.745-.75s.746.335.746.75v.671c0 .548-.216 1.072-.6 1.459a2.045 2.045 0 0 1-1.45.604H4.05a2.045 2.045 0 0 1-1.45-.604A2.068 2.068 0 0 1 2 11.937V4.064c0-.548.216-1.072.6-1.459Zm8.386 3.116a.743.743 0 0 1 1.055 0l1.74 1.75a.753.753 0 0 1 0 1.06l-1.74 1.75a.743.743 0 0 1-1.055 0 .753.753 0 0 1 0-1.06l.467-.47H5.858A.748.748 0 0 1 5.112 8c0-.414.334-.75.746-.75h5.595l-.467-.47a.753.753 0 0 1 0-1.06Z" />
         </svg>
@@ -166,7 +167,7 @@ const ZoomControls = memo(function ZoomControls({
 
 
 
-}: {isMobile: boolean;onZoomOut: () => void;onZoomReset: () => void;onZoomIn: () => void;}) {
+}: { isMobile: boolean; onZoomOut: () => void; onZoomReset: () => void; onZoomIn: () => void; }) {
   if (isMobile) {
     return (
       <div className="flex items-center justify-between bg-gray-200 rounded-md px-3 py-1.5 h-10 w-full text-[#1F4E79]">
@@ -209,7 +210,7 @@ const AuthButton = memo(function AuthButton({
 
 
 
-}: {isMobile: boolean;isSignedIn: boolean | undefined;isLoaded: boolean;isAuthPage: boolean;onMobileClose: () => void;}) {
+}: { isMobile: boolean; isSignedIn: boolean | undefined; isLoaded: boolean; isAuthPage: boolean; onMobileClose: () => void; }) {
   if (isAuthPage) return null;
 
   if (!isLoaded) {
@@ -226,7 +227,7 @@ const AuthButton = memo(function AuthButton({
         href="/auth/sign-in"
         onClick={isMobile ? onMobileClose : undefined}
         className={`bg-[#F28C28] text-white px-6 py-2 h-10 flex items-center justify-center rounded-md font-bold shadow-sm${isMobile ? " w-full" : " hover:bg-[#e07b1e] hover:shadow-md transition-all"}`}>
-        
+
         Login / Register
       </Link>);
 
@@ -255,17 +256,7 @@ const HeaderContent = memo(function HeaderContent({
   pathname,
   isSignedIn,
   isLoaded
-
-
-
-
-
-
-
-
-
-
-}: {zoomLevel: number;onZoomOut: () => void;onZoomReset: () => void;onZoomIn: () => void;isMobileMenuOpen: boolean;setIsMobileMenuOpen: (value: boolean) => void;pathname: string;isSignedIn: boolean | undefined;isLoaded: boolean;}) {
+}: { zoomLevel: number; onZoomOut: () => void; onZoomReset: () => void; onZoomIn: () => void; isMobileMenuOpen: boolean; setIsMobileMenuOpen: (value: boolean) => void; pathname: string; isSignedIn: boolean | undefined; isLoaded: boolean; }) {
   const isRoot = pathname === "/";
   const { user } = useUser();
   const isAdmin = user?.unsafeMetadata?.role === "admin";
@@ -278,10 +269,10 @@ const HeaderContent = memo(function HeaderContent({
 
 
   const navLinks = isAdmin ?
-  ADMIN_NAV :
-  isSignedIn ?
-  USER_NAV_SIGNED_IN :
-  USER_NAV_SIGNED_OUT;
+    ADMIN_NAV :
+    isSignedIn ?
+      USER_NAV_SIGNED_IN :
+      USER_NAV_SIGNED_OUT;
 
 
   useEffect(() => {
@@ -289,27 +280,25 @@ const HeaderContent = memo(function HeaderContent({
   }, [zoomLevel]);
 
   const renderNavLink = (
-  link: {path: string;label: string;},
-  isDesktop: boolean) =>
-  {
+    link: { path: string; label: string; },
+    isDesktop: boolean) => {
     const isActive =
-    pathname === link.path ||
-    link.path !== "/" && pathname?.startsWith(link.path);
+      pathname === link.path ||
+      link.path !== "/" && pathname?.startsWith(link.path);
 
     return (
       <li
         key={link.path}
-        className={`transition-colors cursor-pointer ${
-        isActive ?
-        "bg-[#1F4E79] text-white font-semibold" :
-        "hover:bg-gray-50 text-[#1F4E79] font-medium"}`
+        className={`transition-colors cursor-pointer ${isActive ?
+          "bg-[#1F4E79] text-white font-semibold" :
+          "hover:bg-gray-50 text-[#1F4E79] font-medium"}`
         }>
-        
+
         <Link
           href={link.path}
           className={`block flex items-center gap-1 ${isDesktop ? "px-5 py-3" : "px-6 py-4"} ${isActive ? "hover:bg-[#153a5c]" : ""}`}
           onClick={isDesktop ? undefined : closeMobileMenu}>
-          
+
           {link.label}
         </Link>
       </li>);
@@ -320,7 +309,7 @@ const HeaderContent = memo(function HeaderContent({
 
   return (
     <>
-      {}
+      { }
       <div
         id={GT.ELEMENT_ID}
         aria-hidden="true"
@@ -333,23 +322,21 @@ const HeaderContent = memo(function HeaderContent({
           overflow: "hidden",
           pointerEvents: "none"
         }} />
-      
 
-      {}
+
+      { }
       <div
-        className={`fixed inset-0 bg-black/50 z-[60] lg:hidden transition-opacity duration-300 ${
-        isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`
+        className={`fixed inset-0 bg-black/50 z-[60] lg:hidden transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`
         }
         onClick={closeMobileMenu} />
-      
 
-      {}
+
+      { }
       <div
-        className={`fixed top-0 left-0 h-full w-70 bg-white z-[70] transform transition-transform duration-300 ease-in-out lg:hidden ${
-        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} overflow-y-auto flex flex-col shadow-2xl`
+        className={`fixed top-0 left-0 h-full w-70 bg-white z-[70] transform transition-transform duration-300 ease-in-out lg:hidden ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} overflow-y-auto flex flex-col shadow-2xl`
         }>
-        
-        {}
+
+        { }
         <div className="bg-[#1F4E79] p-4 flex justify-between items-center text-white">
           <span className="font-bold text-lg">Menu</span>
           <button onClick={closeMobileMenu} className="text-white focus:outline-none p-1">
@@ -359,7 +346,7 @@ const HeaderContent = memo(function HeaderContent({
           </button>
         </div>
 
-        {}
+        { }
         <div className="p-4 flex flex-col gap-3 border-b border-gray-100 bg-[#f8fafc]">
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-1">Language</span>
@@ -374,28 +361,28 @@ const HeaderContent = memo(function HeaderContent({
           <AuthButton isMobile={true} isSignedIn={isSignedIn} isLoaded={isLoaded} isAuthPage={isAuthPage} onMobileClose={closeMobileMenu} />
         </div>
 
-        {}
+        { }
         <ul className="flex flex-col m-0 p-0 list-none divide-y divide-gray-100">
           {navLinks.map((link) => renderNavLink(link, false))}
         </ul>
       </div>
 
-      {}
+      { }
       <div className="sticky top-0 z-50 w-full flex flex-col">
-        {}
+        { }
         <header
           className={`bg-[#1F4E79] text-white shadow-md relative z-40 transition-all duration-300 ${isRoot ? "py-4" : "py-2"}`}
           data-purpose="main-header">
-          
+
           <div className={`${containerClass} flex flex-row justify-between items-center px-4 gap-4 md:gap-6`}>
             <Link
               href={isSignedIn ? "/home" : "/"}
               className="flex flex-row items-center space-x-3 w-auto hover:opacity-90 transition-opacity">
-              
+
               <div
                 className={`${isRoot ? "w-12 h-12 p-2" : "w-10 h-10 p-1"} flex items-center justify-center shrink-0 bg-white/10 rounded-full transition-all duration-300`}
                 data-purpose="logo-placeholder">
-                
+
                 <img src="/logo.svg" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
@@ -408,7 +395,7 @@ const HeaderContent = memo(function HeaderContent({
               </div>
             </Link>
 
-            {}
+            { }
             <div className="hidden lg:flex flex-wrap justify-end items-center gap-3 sm:gap-5 w-auto text-sm">
               <div className="flex items-center bg-black/20 rounded-md border border-white/10 px-3 py-1.5 h-10 hover:bg-black/30 transition-colors">
                 <span className="text-white opacity-90 mr-2 shrink-0">
@@ -420,13 +407,13 @@ const HeaderContent = memo(function HeaderContent({
               <AuthButton isMobile={false} isSignedIn={isSignedIn} isLoaded={isLoaded} isAuthPage={isAuthPage} onMobileClose={closeMobileMenu} />
             </div>
 
-            {}
+            { }
             <div className="flex lg:hidden justify-end">
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className="text-white focus:outline-none p-2 bg-black/20 rounded-md hover:bg-black/30 transition-colors"
                 aria-label="Open Navigation Directory">
-                
+
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -435,11 +422,11 @@ const HeaderContent = memo(function HeaderContent({
           </div>
         </header>
 
-        {}
+        { }
         <nav
           className="hidden lg:block bg-white border-b border-gray-200 shadow-sm transition-all duration-300 relative z-30"
           data-purpose="primary-navigation">
-          
+
           <div className={`${containerClass} flex items-center justify-between px-4 py-0 w-full relative`}>
             <ul className="flex items-center m-0 p-0 list-none divide-x divide-gray-200 w-auto">
               {navLinks.map((link) => renderNavLink(link, true))}
@@ -449,19 +436,19 @@ const HeaderContent = memo(function HeaderContent({
               method="GET"
               target="_blank"
               className="relative w-64 max-w-sm mb-0 mt-0">
-              
+
               <input
                 className="w-full border border-gray-200 bg-gray-50 rounded-full py-2 px-4 text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-colors"
                 placeholder="Search with Google..."
                 name="q"
                 type="text"
                 suppressHydrationWarning />
-              
+
               <button
                 type="submit"
                 className="absolute right-4 top-2 text-gray-400 font-bold hover:text-blue-500 transition-colors"
                 suppressHydrationWarning>
-                
+
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -471,20 +458,6 @@ const HeaderContent = memo(function HeaderContent({
           </div>
         </nav>
       </div>
-
-      {}
-      {!isAuthPage &&
-      <div className="bg-[#FFF8F0] border-b border-orange-100 py-2 relative z-20" data-purpose="alert-information">
-          <div className={`${isRoot ? "max-w-300" : "w-full max-w-full lg:px-8"} mx-auto px-4 flex flex-col sm:flex-row justify-center sm:justify-start items-center space-y-2 sm:space-y-0 sm:space-x-3 text-sm text-center sm:text-left transition-all duration-300`}>
-            <span className="text-[#F28C28] text-lg" />
-            <Marquee className="m-0 text-gray-700">
-              <strong>Covid-19 Information:</strong> Latest guidelines and vaccination details here.{" "}
-              <span className="mx-2 text-gray-300">|</span>
-              <span className="text-[#F28C28] font-semibold cursor-pointer hover:underline">Read More</span>
-            </Marquee>
-          </div>
-        </div>
-      }
     </>);
 
 });
@@ -517,8 +490,8 @@ const Header = () => {
     if (banner) {
       try {
         const bannerDoc =
-        (banner as HTMLIFrameElement).contentDocument ||
-        (banner as HTMLIFrameElement).contentWindow?.document;
+          (banner as HTMLIFrameElement).contentDocument ||
+          (banner as HTMLIFrameElement).contentWindow?.document;
         bannerDoc?.querySelector<HTMLElement>(".goog-te-banner-restore, [id*='restore']")?.click();
         return;
       } catch {
@@ -558,7 +531,7 @@ const Header = () => {
       clone.value = master.value || "en";
 
       clone.addEventListener("change", () => {
-        if (clone.value === "en") {restoreToEnglish();return;}
+        if (clone.value === "en") { restoreToEnglish(); return; }
         master.value = clone.value;
         master.dispatchEvent(new Event("change"));
       });
@@ -626,7 +599,7 @@ const Header = () => {
     window.googleTranslateElementInit = initTranslate;
     setTimeout(initTranslate, GT.INITIAL_DELAY);
 
-    return () => {delete (window as any).googleTranslateElementInit;};
+    return () => { delete (window as any).googleTranslateElementInit; };
   }, [refreshClones]);
 
   useEffect(() => {

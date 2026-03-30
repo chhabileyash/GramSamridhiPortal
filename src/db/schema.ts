@@ -593,3 +593,22 @@ export const developmentWorks = pgTable("development_works", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
+
+export const certificates = pgTable("certificates", {
+  id: serial("id").primaryKey(),
+
+  villageId: text("village_id"),
+  userId: text("user_id"),
+
+  certificateId: text("certificate_id").unique(),
+  certificateType: text("certificate_type").notNull(),
+  
+  applicantName: text("applicant_name"),
+  applicantContact: text("applicant_contact"),
+
+  status: text("status").default("Pending"),
+  formData: jsonb("form_data"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});

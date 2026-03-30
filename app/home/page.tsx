@@ -315,7 +315,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                { }
                 <div className="bg-white p-6 border border-gray-200 shadow-sm">
                   <h3 className="text-sm font-bold text-gray-900 mb-8 uppercase tracking-wide">
                     Development Status Overview

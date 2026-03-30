@@ -1,6 +1,7 @@
 "use client";
 import { Sidebar } from "@/components/Sidebar";
 import React from "react";
+import Link from "next/link";
 
 export default function ServicesPage() {
   return (
@@ -17,15 +18,17 @@ export default function ServicesPage() {
               to empower and support our rural communities.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white rounded shadow p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
-                  Certificate Issuance
-                </h2>
-                <p className="text-gray-700">
-                  Apply online for birth, death, and other essential
-                  certificates.
-                </p>
-              </div>
+              <Link href="/certificates" className="block transition-transform hover:-translate-y-1">
+                <div className="bg-white rounded shadow p-6 border border-gray-100 h-full">
+                  <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
+                    Certificate Issuance
+                  </h2>
+                  <p className="text-gray-700">
+                    Apply online for birth, death, and other essential
+                    certificates.
+                  </p>
+                </div>
+              </Link>
               <div className="bg-white rounded shadow p-6 border border-gray-100">
                 <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
                   Pension & Welfare Schemes
