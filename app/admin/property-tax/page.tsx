@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Search, Eye, CheckCircle, XCircle, X, Filter } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function PropertyTaxPage() {
   const { user, isLoaded } = useUser();

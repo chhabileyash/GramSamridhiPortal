@@ -176,7 +176,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-white/20 pt-6 text-center text-[13px] text-[#A7F3D0] opacity-80">
+        <div className="border-t border-white/20 pt-6 text-center text-[13px] text-[#A7F3D0] opacity-80" suppressHydrationWarning>
           {new Date().getFullYear()} Gram Samridhi Portal. All rights reserved.
         </div>
       </div>

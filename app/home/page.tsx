@@ -16,9 +16,9 @@ import {
   "lucide-react";
 import Image from "next/image";
 
-import Footer from "@/components/Footer";
-import { Sidebar } from "@/components/Sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+import Footer from "@/shared/components/layout/Footer";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 const chartData = [
   { name: "Ongoing", value: 45, color: "#FF9933" },

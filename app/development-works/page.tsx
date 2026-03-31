@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Search, Map, TrendingUp, CheckCircle, Clock, X, ChevronRight, Calendar, Info } from "lucide-react";
-import { Sidebar } from "@/components/Sidebar";
-import Footer from "@/components/Footer";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
+import Footer from "@/shared/components/layout/Footer";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 type Work = {
   id: number;
@@ -48,7 +48,6 @@ export default function DevelopmentWorks() {
     };
     const meta = user?.unsafeMetadata as any;
     const villageId = meta?.village_id;
-    console.log();
 
     fetchWorks(villageId);
   }, [user, isLoaded]);

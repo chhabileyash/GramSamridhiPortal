@@ -1,9 +1,9 @@
-import { db } from "@/src";
-import { certificates } from "@/src/db/schema";
+import { db } from "@/core/db/client";
+import { certificates } from "@/core/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { getPostHogClient } from "@/lib/posthog-server";
+import { getPostHogClient } from "@/core/analytics/posthog";
 
 export async function GET(req: Request) {
   const { userId, sessionClaims } = await auth();

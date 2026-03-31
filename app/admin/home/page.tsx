@@ -8,7 +8,7 @@ import {
   Loader2 } from
 "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function AdminHomePage() {
   const { user, isLoaded } = useUser();

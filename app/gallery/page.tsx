@@ -10,9 +10,9 @@ import {
   Trash2,
   Image as ImageIcon } from
 "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sidebar } from "@/components/Sidebar";
-import Footer from "@/components/Footer";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
+import Footer from "@/shared/components/layout/Footer";
 
 type GalleryImage = {
   url: string;

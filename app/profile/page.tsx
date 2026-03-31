@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 import { User, CheckCircle, MapPin } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Sidebar } from "@/components/Sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+import Header from "@/shared/components/layout/Header";
+import Footer from "@/shared/components/layout/Footer";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function Profile() {
   const { user, isLoaded } = useUser();

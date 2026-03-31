@@ -1,5 +1,5 @@
-import { db } from "@/src";
-import { schemes } from "@/src/db/schema";
+import { db } from "@/core/db/client";
+import { schemes } from "@/core/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";

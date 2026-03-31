@@ -23,9 +23,9 @@ import {
   BadgeHelpIcon } from
 "lucide-react";
 import data from "../data.json";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import AnimatedCounter from "@/components/AnimatedCounter";
+import Header from "@/shared/components/layout/Header";
+import Footer from "@/shared/components/layout/Footer";
+import AnimatedCounter from "@/shared/components/ui/animated-counter";
 interface District {
   district: string;
   subDistricts: SubDistrict[];

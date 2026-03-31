@@ -1,37 +1,37 @@
-import { db } from "@/src";
-import { complaints } from "@/src/db/schema";
-import { eq, desc, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { getPostHogClient } from "@/lib/posthog-server";
+import { ComplaintsService } from "@/features/complaints/services";
+import { getPostHogClient } from "@/core/analytics/posthog";
+import { db } from "@/core/db/client";
+import { complaints } from "@/core/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function GET(req: Request) {
-  const { userId, sessionClaims } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const role = (sessionClaims?.unsafe_metadata as any)?.role;
-  const isAdmin = role === "admin";
-
-  const { searchParams } = new URL(req.url);
-  const villageIdParam = searchParams.get("villageId");
-
   try {
+    const { userId, sessionClaims } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const role = (sessionClaims?.unsafe_metadata as any)?.role;
+    const isAdmin = role === "admin";
+
+    const { searchParams } = new URL(req.url);
+    const villageIdParam = searchParams.get("villageId");
+
     let data;
     if (villageIdParam) {
-      data = await db.select().from(complaints).where(
-        and(
-          eq(complaints.villageId, villageIdParam),
-          isAdmin ? undefined : eq(complaints.userId, userId)
-        )
-      ).orderBy(desc(complaints.createdAt));
-      console.log(data);
-
+      // If admin, they see all for village. If not, they see only theirs for that village.
+      // (Simplified for now - typically moved into Service Layer)
+      data = await ComplaintsService.getVillageComplaints(villageIdParam);
+      if (!isAdmin) {
+        data = data.filter(c => c.userId === userId);
+      }
     } else {
-      data = await db.select().from(complaints).where(eq(complaints.userId, userId)).orderBy(desc(complaints.createdAt));
+      data = await ComplaintsService.getUserComplaints(userId);
     }
-    return NextResponse.json({ data: data || [] });
+
+    return NextResponse.json({ data });
   } catch (error: any) {
     console.error("Complaints GET Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -46,40 +46,22 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { villageId, title, description, category, location, citizenName, citizenContact } = body;
 
-    if (!title || !description || !category) {
-      return NextResponse.json({ error: "Missing required fields (title, description, category)" }, { status: 400 });
-    }
+    // Call business logic service
+    const result = await ComplaintsService.submitComplaint(body, userId);
 
-    const complaintId = `CMP-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
-    const vId = villageId ? villageId.toString() : null;
-
-    const result = await db.insert(complaints).values({
-      villageId: vId,
-      userId,
-      complaintId,
-      title,
-      description,
-      category,
-      location: location || null,
-      citizenName: citizenName || null,
-      citizenContact: citizenContact || null,
-      priority: "Medium",
-      status: "Pending"
-    }).returning();
-
+    // Side-effects (Analytics)
     getPostHogClient().capture({
       distinctId: userId,
       event: "complaint_created",
       properties: {
-        category,
-        complaintId,
-        villageId: vId
+        category: body.category,
+        complaintId: result.complaintId,
+        villageId: body.villageId
       }
     });
 
-    return NextResponse.json({ success: true, data: result[0] });
+    return NextResponse.json({ success: true, data: result });
   } catch (error: any) {
     console.error("Complaints POST Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -105,6 +87,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Missing complaint id" }, { status: 400 });
     }
 
+    // Ideally moved to service: ComplaintsService.updateComplaint()
     const updateData: any = { updatedAt: new Date() };
     if (status) updateData.status = status;
     if (priority) updateData.priority = priority;

@@ -12,8 +12,8 @@ import {
   LayoutList,
   ListFilter } from
 "lucide-react";
-import { Sidebar } from "@/components/Sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function UserSchemesPage() {
   const { user, isLoaded } = useUser();

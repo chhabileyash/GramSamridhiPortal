@@ -1,5 +1,5 @@
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Header from "@/shared/components/layout/Header";
+import Footer from "@/shared/components/layout/Footer";
 export default function AboutPage() {
   return (
     <>

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "../../../src/index";
+import { db } from "@/core/db/client";
 import {
   users,
   complaints,
   schemes,
   developmentWorks } from
-"../../../src/db/schema";
+"@/core/db/schema";
 import { eq, desc, and, or, not, gt, isNull } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {

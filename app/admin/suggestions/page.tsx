@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { MessageSquare, Calendar, User, Search, Trash2, Filter } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function SuggestionsPage() {
   const { user, isLoaded } = useUser();

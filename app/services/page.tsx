@@ -1,5 +1,5 @@
 "use client";
-import { Sidebar } from "@/components/Sidebar";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
 import React from "react";
 import Link from "next/link";
 

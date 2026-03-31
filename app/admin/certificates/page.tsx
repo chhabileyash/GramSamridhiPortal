@@ -13,7 +13,7 @@ import {
   Save,
   AlertCircle
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function CertificatesAdminPage() {
   const { user, isLoaded } = useUser();
@@ -277,44 +277,46 @@ export default function CertificatesAdminPage() {
 
       {/* Review Modal */}
       {isModalOpen && selectedCert && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[95vh]">
-            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <FileBadge className="text-blue-500" size={20} />
-                  Certificate Application Review
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[98vh] sm:max-h-[95vh]">
+            <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 flex items-start sm:items-center justify-between bg-gray-50 gap-3">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex flex-wrap items-center gap-2">
+                  <FileBadge className="text-blue-500 shrink-0" size={20} />
+                  <span>Certificate Application Review</span>
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-500 mt-1 sm:mt-0.5 truncate">
                   ID: {selectedCert.certificateId} | Type: {selectedCert.certificateType}
                 </p>
               </div>
               <button
                 onClick={closeDetailsModal}
-                className="text-gray-400 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-200"
+                className="text-gray-400 hover:text-gray-700 transition-colors p-1.5 rounded-full hover:bg-gray-200 shrink-0"
               >
-                <X size={24} />
+                <X size={20} className="sm:w-6 sm:h-6" />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto bg-white flex-1 flex flex-col gap-6">
+            <div className="p-4 sm:p-6 overflow-y-auto bg-white flex-1 flex flex-col gap-6">
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                  {/* Basic Summary */}
-                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                    <h3 className="font-bold text-blue-900 mb-2">Applicant Snapshot</h3>
-                    <p className="text-sm"><strong>Name:</strong> {selectedCert.applicantName}</p>
-                    <p className="text-sm"><strong>Phone:</strong> {selectedCert.applicantContact}</p>
-                    <p className="text-sm"><strong>Date Applied:</strong> {new Date(selectedCert.createdAt).toLocaleDateString()}</p>
+                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex flex-col">
+                    <h3 className="font-bold text-blue-900 mb-3 text-sm sm:text-base">Applicant Snapshot</h3>
+                    <div className="space-y-1">
+                      <p className="text-sm break-words"><strong className="text-blue-800">Name:</strong> {selectedCert.applicantName}</p>
+                      <p className="text-sm break-words"><strong className="text-blue-800">Phone:</strong> {selectedCert.applicantContact}</p>
+                      <p className="text-sm break-words"><strong className="text-blue-800">Date Applied:</strong> {new Date(selectedCert.createdAt).toLocaleDateString()}</p>
+                    </div>
                  </div>
 
                  {/* Admin Action */}
                  <div className="bg-amber-50 p-4 rounded-lg border border-amber-200 flex flex-col justify-center">
-                    <label className="block text-sm font-bold text-gray-900 mb-2">Update Application Status</label>
+                    <label className="block text-sm sm:text-base font-bold text-gray-900 mb-3">Update Application Status</label>
                     <select
                       value={editStatus}
                       onChange={(e) => setEditStatus(e.target.value)}
-                      className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      className="border border-gray-300 rounded-md px-3 py-2.5 sm:py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full bg-white shadow-sm"
                     >
                       <option value="Pending">Pending (Under Review)</option>
                       <option value="Approved">Approved (Ready for Issuance)</option>
@@ -323,29 +325,102 @@ export default function CertificatesAdminPage() {
                  </div>
               </div>
 
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2 border-b pb-2">Complete Application Payload</h3>
-                <p className="text-sm text-gray-600 mb-3">
-                  To ensure accuracy, the complete submitted form is provided below containing all nested addresses, persons, and event variables:
-                </p>
-                <pre className="bg-gray-900 text-green-400 p-4 rounded-lg text-xs leading-relaxed overflow-x-auto max-h-[400px]">
-                  {JSON.stringify(selectedCert.formData, null, 2)}
-                </pre>
+              <div className="flex flex-col gap-4 sm:gap-5 mt-2">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 border-b pb-2">Complete Application Details</h3>
+                
+                {/* Applicant Details */}
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                  <div className="bg-gray-50 border-b border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3">
+                    <h4 className="font-bold text-gray-800 text-sm sm:text-base">Applicant / Informant Details</h4>
+                  </div>
+                  <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Full Name</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.applicant?.fullName || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Phone</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.applicant?.phone || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Email</span><span className="text-sm font-medium break-all text-gray-900">{selectedCert.formData?.applicant?.email || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Address</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.applicant?.address || "-"}</span></div>
+                  </div>
+                </div>
+
+                {/* Event Details */}
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                  <div className="bg-gray-50 border-b border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3">
+                    <h4 className="font-bold text-gray-800 text-sm sm:text-base">Event Details</h4>
+                  </div>
+                  <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Date</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.event?.date || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Time</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.event?.time || "-"}</span></div>
+                    <div className="sm:col-span-2"><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Place of Event</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.event?.placeDetail || "-"}</span></div>
+                    {selectedCert.formData?.event?.eventTypeData && Object.entries(selectedCert.formData.event.eventTypeData).map(([k, v]) => (
+                      <div key={k}><span className="text-xs sm:text-sm text-gray-500 block capitalize mb-0.5">{k.replace(/([A-Z])/g, ' $1').trim()}</span><span className="text-sm font-medium break-words text-gray-900">{String(v || "-")}</span></div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Primary Person */}
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                  <div className="bg-gray-50 border-b border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3">
+                    <h4 className="font-bold text-gray-800 text-sm sm:text-base">Primary Person Details</h4>
+                  </div>
+                  <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Full Name</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.persons?.primary?.fullName || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Gender</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.persons?.primary?.gender || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">DOB / Age</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.persons?.primary?.dobOrAge || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Aadhaar</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.persons?.primary?.aadhaar || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Nationality</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.persons?.primary?.nationality || "-"}</span></div>
+                    <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Occupation</span><span className="text-sm font-medium break-words text-gray-900">{selectedCert.formData?.persons?.primary?.occupation || "-"}</span></div>
+                  </div>
+                </div>
+
+                {/* Related Persons */}
+                {selectedCert.formData?.persons?.related?.some((p: any) => p.fullName) && (
+                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <div className="bg-gray-50 border-b border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3">
+                      <h4 className="font-bold text-gray-800 text-sm sm:text-base">Related Persons</h4>
+                    </div>
+                    <div className="p-3 sm:p-4 flex flex-col gap-4">
+                      {selectedCert.formData.persons.related.filter((p: any) => p.fullName).map((person: any, idx: number) => (
+                        <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                          <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Full Name</span><span className="text-sm font-medium break-words text-gray-900">{person.fullName || "-"}</span></div>
+                          <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Gender</span><span className="text-sm font-medium break-words text-gray-900">{person.gender || "-"}</span></div>
+                          <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Aadhaar</span><span className="text-sm font-medium break-words text-gray-900">{person.aadhaar || "-"}</span></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Witnesses */}
+                {selectedCert.formData?.persons?.witnesses?.some((p: any) => p.fullName) && (
+                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <div className="bg-gray-50 border-b border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3">
+                      <h4 className="font-bold text-gray-800 text-sm sm:text-base">Witnesses</h4>
+                    </div>
+                    <div className="p-3 sm:p-4 flex flex-col gap-4">
+                      {selectedCert.formData.persons.witnesses.filter((p: any) => p.fullName).map((person: any, idx: number) => (
+                        <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                          <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Full Name</span><span className="text-sm font-medium break-words text-gray-900">{person.fullName || "-"}</span></div>
+                          <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Gender</span><span className="text-sm font-medium break-words text-gray-900">{person.gender || "-"}</span></div>
+                          <div><span className="text-xs sm:text-sm text-gray-500 block mb-0.5">Aadhaar</span><span className="text-sm font-medium break-words text-gray-900">{person.aadhaar || "-"}</span></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
             </div>
 
-            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+            <div className="px-4 py-3 sm:px-6 sm:py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-end gap-3">
               <button
                 onClick={closeDetailsModal}
-                className="px-5 py-2 border border-gray-300 rounded-md font-medium text-sm hover:bg-white transition-colors"
+                className="w-full sm:w-auto px-5 py-2.5 sm:py-2 border border-gray-300 rounded-md font-medium text-sm hover:bg-white transition-colors order-2 sm:order-1"
                 title="Discard Changes"
               >
                 Close
               </button>
               <button
                 onClick={handleSaveChanges}
-                className="px-5 py-2 bg-blue-600 text-white rounded-md font-bold text-sm hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm"
+                className="w-full sm:w-auto px-5 py-2.5 sm:py-2 bg-blue-600 text-white rounded-md font-bold text-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-sm order-1 sm:order-2"
               >
                 <Save size={16} />
                 Confirm Assessment

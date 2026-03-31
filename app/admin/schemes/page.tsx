@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Plus, Search, Edit2, Trash2, Calendar, FileText, CheckCircle, Clock, X, Loader2, Filter, Layers } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function SchemesPage() {
   const { user } = useUser();

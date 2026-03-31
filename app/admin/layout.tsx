@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { AdminSidebar } from "@/components/AdminSidebar";
+import { AdminSidebar } from "@/shared/components/layout/AdminSidebar";
 import { usePathname } from "next/navigation";
 
 export default function AdminLayout({

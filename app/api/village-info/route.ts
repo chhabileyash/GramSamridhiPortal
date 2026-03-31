@@ -1,5 +1,5 @@
-import { db } from "@/src";
-import { customVillageInfo } from "@/src/db/schema";
+import { db } from "@/core/db/client";
+import { customVillageInfo } from "@/core/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
@@ -109,7 +109,6 @@ export async function GET(req: Request) {
 
   try {
     const data = await db.select().from(customVillageInfo).where(eq(customVillageInfo.villageIdString, villageId));
-    console.log(data);
     return NextResponse.json({ data: data[0] || null });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

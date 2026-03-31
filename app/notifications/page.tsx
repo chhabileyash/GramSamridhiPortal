@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Bell, Info, Search, Calendar, Clock, X, Eye, ChevronRight } from "lucide-react";
-import { Sidebar } from "@/components/Sidebar";
-import Footer from "@/components/Footer";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
+import Footer from "@/shared/components/layout/Footer";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 type Notification = {
   id: number;

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Send, Bell, Trash2, Loader2, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 type Notification = {
   id: number;

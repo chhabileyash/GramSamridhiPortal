@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Users, Plus, Trash2, X, Save, Phone, Image as ImageIcon } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 import { toast } from "react-hot-toast";
 
 export default function PanchayatMembersAdmin() {

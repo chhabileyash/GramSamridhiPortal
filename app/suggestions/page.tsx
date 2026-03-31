@@ -6,9 +6,9 @@ import { toast } from "react-hot-toast";
 import posthog from "posthog-js";
 import { MessageSquare, ThumbsUp, Lightbulb, CheckCircle, Send, Info } from "lucide-react";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Sidebar } from "@/components/Sidebar";
+import Header from "@/shared/components/layout/Header";
+import Footer from "@/shared/components/layout/Footer";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
 
 export default function Suggestions() {
   const { user } = useUser();

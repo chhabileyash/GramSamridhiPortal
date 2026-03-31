@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Sidebar } from "@/components/Sidebar";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
 import CivilRegistrationForm from "@/components/certificates/CivilRegistrationForm";
 
 export default function CertificatesPage() {

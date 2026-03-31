@@ -11,9 +11,9 @@ import {
   ChevronRight } from
 "lucide-react";
 
-import Footer from "@/components/Footer";
-import { Sidebar } from "@/components/Sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+import Footer from "@/shared/components/layout/Footer";
+import { Sidebar } from "@/shared/components/layout/Sidebar";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function ContactPage() {
   const { user, isLoaded } = useUser();

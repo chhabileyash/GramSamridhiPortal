@@ -14,7 +14,7 @@ import {
   Clock,
   Loader2 } from
 "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function ElectricityBillAdminPage() {
   const { user, isLoaded } = useUser();

@@ -1,13 +1,12 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
-import { db } from '@/src/index';
-import { users } from '@/src/db/schema';
+import { db } from '@/core/db/client';
+import { users } from '@/core/db/schema';
 import { eq } from 'drizzle-orm';
-import { getPostHogClient } from '@/lib/posthog-server';
+import { getPostHogClient } from '@/core/analytics/posthog';
 
 export async function POST(req: Request) {
-  console.log("webhook hit");
 
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 

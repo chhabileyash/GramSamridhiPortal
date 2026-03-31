@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Search, Plus, Map, CheckCircle, TrendingUp, Edit3, Trash2, X, RefreshCw, Loader2, Clock } from "lucide-react";
 import toast from "react-hot-toast";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function DevelopmentWorksPage() {
   const { user, isLoaded } = useUser();

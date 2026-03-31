@@ -25,8 +25,8 @@ import toast, { Toaster } from "react-hot-toast";
 import locationData from "@/output.json";
 import { useSignUp, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
-import { numberToAlphabet } from "@/utils/numbertoalphbate";
+import Header from "@/shared/components/layout/Header";
+import { numberToAlphabet } from "@/shared/utils/number-to-alphabet";
 
 
 const MemoizedHeader = memo(Header);

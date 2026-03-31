@@ -1,6 +1,6 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import AnimatedCounter from "@/components/AnimatedCounter";
+import Footer from "@/shared/components/layout/Footer";
+import Header from "@/shared/components/layout/Header";
+import AnimatedCounter from "@/shared/components/ui/animated-counter";
 import VillageGlimpses from "@/components/VillageGlimpses";
 import PopulationCharts from "@/components/PopulationCharts";
 import {

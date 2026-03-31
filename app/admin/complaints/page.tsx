@@ -17,7 +17,7 @@ import {
   Calendar,
   MapPin } from
 "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function ComplaintsPage() {
   const { user, isLoaded } = useUser();

@@ -15,7 +15,7 @@ import { useUser, useClerk } from "@clerk/nextjs";
 import dynamic from "next/dynamic";
 import Marquee from "react-fast-marquee";
 
-const CustomUserButton = dynamic(() => import("./CustomUserButton"), {
+const CustomUserButton = dynamic(() => import("@/shared/components/ui/custom-user-button"), {
   ssr: false,
   loading: () =>
     <div className="h-10 w-10 animate-pulse bg-white/20 rounded-full" />

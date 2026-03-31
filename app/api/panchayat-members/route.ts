@@ -1,5 +1,5 @@
-import { db } from "@/src";
-import { panchayatMembers } from "@/src/db/schema";
+import { db } from "@/core/db/client";
+import { panchayatMembers } from "@/core/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";

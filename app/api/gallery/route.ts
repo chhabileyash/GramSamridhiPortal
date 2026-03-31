@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { customVillageInfo } from "@/src/db/schema";
-import { db } from "@/src";
+import { customVillageInfo } from "@/core/db/schema";
+import { db } from "@/core/db/client";
 import { auth } from "@clerk/nextjs/server";
 
 
