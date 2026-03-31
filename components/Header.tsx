@@ -255,8 +255,9 @@ const HeaderContent = memo(function HeaderContent({
   setIsMobileMenuOpen,
   pathname,
   isSignedIn,
-  isLoaded
-}: { zoomLevel: number; onZoomOut: () => void; onZoomReset: () => void; onZoomIn: () => void; isMobileMenuOpen: boolean; setIsMobileMenuOpen: (value: boolean) => void; pathname: string; isSignedIn: boolean | undefined; isLoaded: boolean; }) {
+  isLoaded,
+  restoreToEnglish
+}: { zoomLevel: number; onZoomOut: () => void; onZoomReset: () => void; onZoomIn: () => void; isMobileMenuOpen: boolean; setIsMobileMenuOpen: (value: boolean) => void; pathname: string; isSignedIn: boolean | undefined; isLoaded: boolean; restoreToEnglish: () => void; }) {
   const isRoot = pathname === "/";
   const { user } = useUser();
   const isAdmin = user?.unsafeMetadata?.role === "admin";
@@ -354,7 +355,13 @@ const HeaderContent = memo(function HeaderContent({
               <span className="text-[#1F4E79] opacity-70 mr-2 shrink-0">
                 <GlobeIcon />
               </span>
-              <div id={GT.ELEMENT_MOBILE_ID} className="flex-1 overflow-visible" />
+              <div id={GT.ELEMENT_MOBILE_ID} className="flex-1 overflow-visible min-w-0" />
+              <button
+                onClick={restoreToEnglish}
+                className="ml-2 bg-[#1F4E79] text-white text-xs px-2.5 py-1 rounded shadow-sm hover:bg-[#153a5c] transition-colors shrink-0 whitespace-nowrap"
+              >
+                Reset EN
+              </button>
             </div>
           </div>
           <ZoomControls isMobile={true} onZoomOut={onZoomOut} onZoomReset={onZoomReset} onZoomIn={onZoomIn} />
@@ -401,7 +408,14 @@ const HeaderContent = memo(function HeaderContent({
                 <span className="text-white opacity-90 mr-2 shrink-0">
                   <GlobeIcon />
                 </span>
-                <div id={GT.ELEMENT_DESKTOP_ID} className="min-w-[120px]" />
+                <div id={GT.ELEMENT_DESKTOP_ID} className="min-w-[100px]" />
+                <button
+                  onClick={restoreToEnglish}
+                  className="ml-1 bg-white/10 hover:bg-white/20 text-white text-xs px-2 py-1 rounded transition-colors whitespace-nowrap"
+                  title="Reset to English"
+                >
+                  Reset EN
+                </button>
               </div>
               <ZoomControls isMobile={false} onZoomOut={onZoomOut} onZoomReset={onZoomReset} onZoomIn={onZoomIn} />
               <AuthButton isMobile={false} isSignedIn={isSignedIn} isLoaded={isLoaded} isAuthPage={isAuthPage} onMobileClose={closeMobileMenu} />
@@ -492,14 +506,18 @@ const Header = () => {
         const bannerDoc =
           (banner as HTMLIFrameElement).contentDocument ||
           (banner as HTMLIFrameElement).contentWindow?.document;
-        bannerDoc?.querySelector<HTMLElement>(".goog-te-banner-restore, [id*='restore']")?.click();
-        return;
+        const restoreBtn = bannerDoc?.querySelector<HTMLElement>(".goog-te-banner-restore, [id*='restore']");
+        if (restoreBtn) {
+          restoreBtn.click();
+          return;
+        }
       } catch {
-
+        // Ignore cross-origin errors
       }
     }
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${location.hostname};`;
+    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${location.hostname};`;
     window.location.reload();
   }, []);
 
@@ -533,7 +551,7 @@ const Header = () => {
       clone.addEventListener("change", () => {
         if (clone.value === "en") { restoreToEnglish(); return; }
         master.value = clone.value;
-        master.dispatchEvent(new Event("change"));
+        master.dispatchEvent(new Event("change", { bubbles: true }));
       });
 
       master.addEventListener("change", () => {
@@ -617,7 +635,8 @@ const Header = () => {
       setIsMobileMenuOpen={setIsMobileMenuOpen}
       pathname={pathname}
       isSignedIn={isSignedIn}
-      isLoaded={isLoaded} />);
+      isLoaded={isLoaded}
+      restoreToEnglish={restoreToEnglish} />);
 
 
 };

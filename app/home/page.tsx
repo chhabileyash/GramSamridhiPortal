@@ -63,9 +63,23 @@ export default function HomePage() {
     }
   }, [isLoaded, user]);
 
-  const mapQuery = user?.unsafeMetadata ?
-    `${(user.unsafeMetadata as any).village} ${(user.unsafeMetadata as any).taluka} ${(user.unsafeMetadata as any).district} Maharashtra India` :
-    "Takarkhed Nandura Buldhana Maharashtra India";
+  type LocationMetadata = {
+    village?: string;
+    taluka?: string;
+    district?: string;
+  };
+
+  const metadata = user?.unsafeMetadata as LocationMetadata | undefined;
+
+  const query = metadata
+    ? [
+      metadata.village,
+      metadata.taluka,
+      metadata.district,
+      "Maharashtra"
+    ].filter(Boolean).join(" ")
+    : "Takarkhed Nandura Buldhana Maharashtra";
+
 
   const primaryBannerRaw =
     dbData?.images?.find((img: any) => img.isPrimary)?.url ||
@@ -203,7 +217,7 @@ export default function HomePage() {
                     className="h-full object-cover"
                     style={{ border: 0, width: "100%", height: "100%" }}
                     loading="lazy"
-                    src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}>
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`}>
                   </iframe>
                 </div>
               </section>
