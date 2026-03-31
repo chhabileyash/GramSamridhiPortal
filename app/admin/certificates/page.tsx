@@ -406,6 +406,32 @@ export default function CertificatesAdminPage() {
                     </div>
                   </div>
                 )}
+
+                {/* Supporting Documents */}
+                {selectedCert.formData?.documents && selectedCert.formData.documents.length > 0 && (
+                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <div className="bg-gray-50 border-b border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3">
+                      <h4 className="font-bold text-gray-800 text-sm sm:text-base">Supporting Documents</h4>
+                    </div>
+                    <div className="p-3 sm:p-4 flex flex-col gap-3">
+                      {selectedCert.formData.documents.map((doc: any, idx: number) => (
+                        <div key={idx} className="flex items-center justify-between border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                          <span className="text-sm font-medium text-gray-900 truncate pr-4">
+                            {doc.name || `Document ${idx + 1}`}
+                          </span>
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded text-xs font-bold transition-colors whitespace-nowrap inline-flex items-center gap-1.5 shrink-0"
+                          >
+                            <Eye size={14} /> View
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
             </div>

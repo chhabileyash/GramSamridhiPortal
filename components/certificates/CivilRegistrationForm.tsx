@@ -58,7 +58,7 @@ export interface UnifiedFormData {
     related: Person[];
     witnesses: Person[];
   };
-  documents: File[];
+  documents: { file: File; title: string }[];
 }
 
 // --- Initial States ---
@@ -297,7 +297,7 @@ const AddressForm = ({ address, pathPrefix, onChange, errors }: any) => {
   );
 };
 
-const PersonForm = ({ title, person, pathPrefix, onChange, errors }: any) => {
+const PersonForm = ({ title, person, pathPrefix, onChange, errors, hideAadhaar, hideOccupation }: any) => {
   const handleField = (field: keyof Person, val: string) => {
     onChange({ ...person, [field]: val });
   };
@@ -356,24 +356,28 @@ const PersonForm = ({ title, person, pathPrefix, onChange, errors }: any) => {
             onChange={(e) => handleField("nationality", e.target.value)}
           />
         </div>
-        <div className="space-y-1">
-          <label className={labelClass}>Aadhaar Number</label>
-          <input
-            className={inputClass}
-            value={person.aadhaar}
-            onChange={(e) => handleField("aadhaar", e.target.value)}
-            placeholder="12-digit number"
-          />
-          <ErrorMsg errors={errors} path={`${pathPrefix}.aadhaar`} />
-        </div>
-        <div className="space-y-1">
-          <label className={labelClass}>Occupation</label>
-          <input
-            className={inputClass}
-            value={person.occupation}
-            onChange={(e) => handleField("occupation", e.target.value)}
-          />
-        </div>
+        {!hideAadhaar && (
+          <div className="space-y-1">
+            <label className={labelClass}>Aadhaar Number</label>
+            <input
+              className={inputClass}
+              value={person.aadhaar}
+              onChange={(e) => handleField("aadhaar", e.target.value)}
+              placeholder="12-digit number"
+            />
+            <ErrorMsg errors={errors} path={`${pathPrefix}.aadhaar`} />
+          </div>
+        )}
+        {!hideOccupation && (
+          <div className="space-y-1">
+            <label className={labelClass}>Occupation</label>
+            <input
+              className={inputClass}
+              value={person.occupation}
+              onChange={(e) => handleField("occupation", e.target.value)}
+            />
+          </div>
+        )}
       </div>
       <AddressForm
         address={person.address}
@@ -385,26 +389,140 @@ const PersonForm = ({ title, person, pathPrefix, onChange, errors }: any) => {
   );
 };
 
-const DocumentUpload = ({ onChange }: any) => {
+const DOCUMENT_OPTIONS: Record<string, { required: string[]; additional: string[] }> = {
+  Birth: {
+    required: [
+      "Proof of birth (hospital discharge summary or birth report)",
+      "Certificate from local authority (for home birth, if applicable)",
+      "Parents' identity proof (Aadhaar, PAN, Passport, Voter ID)",
+      "Address proof (Aadhaar, electricity bill, bank passbook)",
+      "Proof of place of birth",
+      "Filled application form"
+    ],
+    additional: [
+      "Parents' marriage certificate (if required)",
+      "Affidavit (for delayed registration)"
+    ]
+  },
+  Death: {
+    required: [
+      "Medical certificate of cause of death (from hospital/doctor)",
+      "Identity proof of deceased (Aadhaar, Passport, Voter ID)",
+      "Applicant's identity proof (family member)",
+      "Proof of place of death (hospital record or local authority letter)",
+      "Filled application form"
+    ],
+    additional: [
+      "Affidavit with death details",
+      "Address proof of applicant"
+    ]
+  },
+  Marriage: {
+    required: [
+      "Application form signed by both parties",
+      "Age proof (birth certificate, school certificate, passport)",
+      "Identity proof (Aadhaar, PAN, Passport, Voter ID)",
+      "Address proof (Aadhaar, electricity bill, ration card)",
+      "Marriage proof (wedding invitation card, photos, priest certificate)"
+    ],
+    additional: [
+      "Passport-size photographs",
+      "Affidavit (marital status, date and place of marriage)",
+      "Witnesses (2-3 persons with ID proof)"
+    ]
+  }
+};
+
+const DocumentUpload = ({ documents, onChange, certificateType }: any) => {
+  const options = DOCUMENT_OPTIONS[certificateType] || { required: [], additional: [] };
+  const allOptions = [...options.required, ...options.additional];
+
+  const handleAdd = (e: React.ChangeEvent<HTMLInputElement>, title: string) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const newDocs = Array.from(e.target.files).map((f) => ({ file: f, title }));
+      onChange([...documents, ...newDocs]);
+    }
+    // reset input
+    e.target.value = '';
+  };
+
+  const removeDoc = (index: number) => {
+    onChange(documents.filter((_: any, i: number) => i !== index));
+  };
+
   return (
-    <div className="bg-slate-50 border-2 border-dashed border-gray-300 shadow-sm p-8 rounded-sm mb-6 text-center">
-      <UploadCloud className="w-8 h-8 text-slate-400 mx-auto mb-3" />
-      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 mb-2">
-        Supporting Documents
-      </h3>
+    <div className={containerClass}>
+      <div className={dividerClass}>
+        <div className={iconWrapClass}>
+          <UploadCloud className="w-5 h-5" />
+        </div>
+        <h3 className={sectionTitleClass}>Supporting Documents</h3>
+      </div>
       <p className="text-xs text-slate-500 mb-6">
-        Upload ID proofs, residential proofs, doctor certificates, etc.
+        Please upload the required documents for your {certificateType} certificate. 
       </p>
-      <input
-        type="file"
-        multiple
-        className="block w-full max-w-sm mx-auto text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-bold file:bg-[#FF9933]/10 file:text-[#FF9933] hover:file:bg-[#FF9933]/20 transition cursor-pointer"
-        onChange={(e) => {
-          if (e.target.files) {
-            onChange(Array.from(e.target.files));
-          }
-        }}
-      />
+
+      <div className="grid grid-cols-1 gap-4 mb-6">
+        {allOptions.map((opt, idx) => {
+          const isRequired = options.required.includes(opt);
+          const existingDocs = documents.filter((d: any) => d.title === opt);
+          
+          return (
+            <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 pb-4 gap-4 last:border-0 last:pb-0">
+              <div className="flex-1 w-full">
+                <p className="text-sm font-bold text-slate-700">{opt}{isRequired && <span className="text-red-500 ml-1">*</span>}</p>
+                {existingDocs.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-2">
+                    {documents.map((d: any, docIdx: number) => {
+                      if (d.title !== opt) return null;
+                      return (
+                        <div key={docIdx} className="flex items-center gap-2 bg-slate-50 p-2 rounded-sm border border-slate-200">
+                          <FileText className="w-4 h-4 text-slate-400 shrink-0" />
+                          <span className="text-xs text-slate-700 truncate max-w-[200px] sm:max-w-xs">{d.file.name}</span>
+                          <button type="button" onClick={() => removeDoc(docIdx)} className="ml-auto text-red-500 hover:text-red-700 shrink-0">
+                            <XCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className="cursor-pointer bg-[#FF9933]/10 text-[#FF9933] hover:bg-[#FF9933]/20 border border-[#FF9933]/30 text-xs font-bold px-4 py-2 rounded-sm transition whitespace-nowrap inline-flex">
+                  Upload file
+                  <input type="file" className="hidden" onChange={(e) => handleAdd(e, opt)} />
+                </label>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Other uploads if needed */}
+      <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-sm font-bold text-slate-700">Any other document (Optional)</p>
+        <label className="cursor-pointer bg-slate-100 text-slate-700 text-xs font-bold px-4 py-2 rounded-sm hover:bg-slate-200 transition whitespace-nowrap inline-flex">
+          Upload other
+          <input type="file" className="hidden" onChange={(e) => handleAdd(e, "Other Reference Document")} />
+        </label>
+      </div>
+      {documents.filter((d: any) => d.title === "Other Reference Document").length > 0 && (
+        <div className="mt-4 flex flex-col gap-2">
+          {documents.map((d: any, docIdx: number) => {
+            if (d.title !== "Other Reference Document") return null;
+            return (
+              <div key={docIdx} className="flex items-center gap-2 bg-slate-50 p-2 rounded-sm border border-slate-200 w-full sm:max-w-md">
+                <FileText className="w-4 h-4 text-slate-400 shrink-0" />
+                <span className="text-xs text-slate-700 truncate flex-1">{d.file.name}</span>
+                <button type="button" onClick={() => removeDoc(docIdx)} className="ml-auto text-red-500 hover:text-red-700 shrink-0">
+                  <XCircle className="w-4 h-4" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -444,12 +562,12 @@ export default function CivilRegistrationForm() {
         related:
           type === "Birth"
             ? [
-                { ...emptyPerson, gender: "Male" },
-                { ...emptyPerson, gender: "Female" },
-              ]
+              { ...emptyPerson, gender: "Male" },
+              { ...emptyPerson, gender: "Female" },
+            ]
             : type === "Marriage"
-            ? [{ ...emptyPerson, gender: "Female" }]
-            : [],
+              ? [{ ...emptyPerson, gender: "Female" }]
+              : [],
         witnesses:
           type === "Marriage" ? [{ ...emptyPerson }, { ...emptyPerson }] : [],
       },
@@ -513,15 +631,25 @@ export default function CivilRegistrationForm() {
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       const meta = user?.unsafeMetadata as any;
-      const payload = {
-        formData: formData,
-        villageId: meta?.village_id || null,
-      };
+      
+      const cleanFormData = { ...formData, documents: [] };
+      const formDataToSend = new FormData();
+      formDataToSend.append("payload", JSON.stringify(cleanFormData));
+      
+      if (meta?.village_id) {
+         formDataToSend.append("villageId", meta.village_id.toString());
+      }
+
+      if (formData.documents && formData.documents.length > 0) {
+        formData.documents.forEach((doc, index) => {
+          formDataToSend.append(`document_${index}`, doc.file);
+          formDataToSend.append(`documentMetadata_${index}`, JSON.stringify({ title: doc.title }));
+        });
+      }
 
       const res = await fetch("/api/certificates", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: formDataToSend,
       });
 
       let referenceId = `REF-${Math.floor(Math.random() * 1000000)
@@ -568,11 +696,10 @@ export default function CivilRegistrationForm() {
           <button
             key={type}
             type="button"
-            className={`font-bold py-2.5 px-6 rounded-sm text-sm transition-colors ${
-              formData.certificateType === type
-                ? "bg-[#FF9933] text-white shadow-sm ring-2 ring-offset-2 ring-[#FF9933]"
-                : "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50"
-            }`}
+            className={`font-bold py-2.5 px-6 rounded-sm text-sm transition-colors ${formData.certificateType === type
+              ? "bg-[#FF9933] text-white shadow-sm ring-2 ring-offset-2 ring-[#FF9933]"
+              : "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50"
+              }`}
             onClick={() => handleTypeChange(type as CertificateType)}
           >
             {type} Application
@@ -759,6 +886,8 @@ export default function CivilRegistrationForm() {
               person={formData.persons.primary}
               pathPrefix="persons.primary"
               errors={errors}
+              hideAadhaar={true}
+              hideOccupation={true}
               onChange={(p: Person) => updateNested(["persons", "primary"], p)}
             />
             <PersonForm
@@ -861,6 +990,8 @@ export default function CivilRegistrationForm() {
         )}
 
         <DocumentUpload
+          documents={formData.documents}
+          certificateType={formData.certificateType}
           onChange={(files: File[]) => updateNested(["documents"], files)}
         />
 

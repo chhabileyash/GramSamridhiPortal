@@ -4,6 +4,13 @@ import { eq, desc, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getPostHogClient } from "@/core/analytics/posthog";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 export async function GET(req: Request) {
   const { userId, sessionClaims } = await auth();
@@ -43,10 +50,56 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { formData, villageId } = await req.json();
+    const fd = await req.formData();
+    const payloadRaw = fd.get("payload");
+    const villageId = fd.get("villageId");
+
+    if (!payloadRaw) {
+      return NextResponse.json({ error: "Missing required form data payload" }, { status: 400 });
+    }
+
+    const formData = JSON.parse(payloadRaw as string);
 
     if (!formData || !formData.certificateType || !formData.applicant?.fullName) {
       return NextResponse.json({ error: "Missing required form data" }, { status: 400 });
+    }
+
+    const documents = [];
+    for (const [key, value] of Array.from(fd.entries())) {
+      if (key.startsWith("document_") && typeof value === "object" && value !== null && "arrayBuffer" in value) {
+        const index = key.split("_")[1];
+        const file = value as unknown as File;
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const uploadResult: any = await new Promise((resolve, reject) => {
+          cloudinary.uploader.upload_stream(
+            { resource_type: "auto", folder: "grampanchayat/certificates" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          ).end(buffer);
+        });
+
+        let docName: string = file.name || `Document_${documents.length + 1}`;
+        const metaStr = fd.get(`documentMetadata_${index}`);
+        if (typeof metaStr === 'string') {
+          try {
+            const meta = JSON.parse(metaStr);
+            if (meta.title) docName = meta.title;
+          } catch (e) {}
+        }
+
+        documents.push({
+          url: uploadResult.secure_url,
+          name: docName
+        });
+      }
+    }
+
+    if (documents.length > 0) {
+      formData.documents = documents;
+    } else {
+      formData.documents = []; // Ensure empty structure if nothing is uploaded
     }
 
     const certificateId = `CERT-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
