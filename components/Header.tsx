@@ -500,24 +500,11 @@ const Header = () => {
 
 
   const restoreToEnglish = useCallback(() => {
-    const banner = document.querySelector<HTMLElement>(".goog-te-banner-frame");
-    if (banner) {
-      try {
-        const bannerDoc =
-          (banner as HTMLIFrameElement).contentDocument ||
-          (banner as HTMLIFrameElement).contentWindow?.document;
-        const restoreBtn = bannerDoc?.querySelector<HTMLElement>(".goog-te-banner-restore, [id*='restore']");
-        if (restoreBtn) {
-          restoreBtn.click();
-          return;
-        }
-      } catch {
-        // Ignore cross-origin errors
-      }
-    }
+   
     document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${location.hostname};`;
-    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${location.hostname};`;
+    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
+    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname};`;
+    
     window.location.reload();
   }, []);
 
