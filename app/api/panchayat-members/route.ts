@@ -3,6 +3,13 @@ import { panchayatMembers } from "@/core/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -43,14 +50,39 @@ export async function POST(req: Request) {
       );
     }
 
-    const body = await req.json();
-    const { villageId, name, position, imageUrl, phone } = body;
+    const formData = await req.formData();
+    const villageId = formData.get("villageId") as string;
+    const name = formData.get("name") as string;
+    const position = formData.get("position") as string;
+    const phone = formData.get("phone") as string;
+    const email = formData.get("email") as string;
+    const address = formData.get("address") as string;
 
     if (!name || !position) {
       return NextResponse.json(
         { error: "Name and position are required" },
         { status: 400 }
       );
+    }
+
+    let imageUrl = formData.get("imageUrl") as string | null;
+
+    const file = formData.get("imageFile") as File | null;
+    if (file && file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+
+      const uploadResult = (await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "panchayat-members" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        uploadStream.end(buffer);
+      })) as any;
+
+      imageUrl = uploadResult.secure_url;
     }
 
     const vId = villageId ? villageId.toString() : null;
@@ -62,7 +94,9 @@ export async function POST(req: Request) {
       name,
       position,
       imageUrl: imageUrl || null,
-      phone: phone || null
+      phone: phone || null,
+      email: email || null,
+      address: address || null
     }).
     returning();
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Users, Info, Phone } from "lucide-react";
+import { Users, Info, Phone, Mail, MapPin } from "lucide-react";
 
 import Header from "@/shared/components/layout/Header";
 import Footer from "@/shared/components/layout/Footer";
@@ -20,7 +20,9 @@ export default function PanchayatMembers() {
       try {
         const meta = user?.unsafeMetadata as any;
         const villageId = meta?.village_id;
-        const res = await fetch(`/api/panchayat-members${villageId ? `?villageId=${villageId}` : ''}`);
+        const res = await fetch(
+          `/api/panchayat-members${villageId ? `?villageId=${villageId}` : ""}`,
+        );
         if (res.ok) {
           const json = await res.json();
           setMembers(json.data || []);
@@ -66,54 +68,88 @@ export default function PanchayatMembers() {
                     </h3>
                   </div>
 
-                  {isLoading ?
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-500">
-                      {[...Array(4)].map((_, i) =>
-                    <div key={i} className="p-4 border border-slate-200 rounded-sm flex items-center gap-4">
-                          <Skeleton className="w-14 h-14 rounded-full flex-shrink-0" />
-                          <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-3 w-1/2" />
-                            <Skeleton className="h-2 w-1/3" />
+                  {isLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-500">
+                      {[...Array(4)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="p-5 border border-slate-200 rounded-sm flex items-center gap-5"
+                        >
+                          <Skeleton className="w-20 h-20 rounded-full flex-shrink-0" />
+                          <div className="flex-1 space-y-2.5">
+                            <Skeleton className="h-5 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                            <Skeleton className="h-3 w-1/3 mt-2" />
                           </div>
                         </div>
-                    )}
-                    </div> :
-                  members.length === 0 ?
-                  <div className="text-center py-8">
+                      ))}
+                    </div>
+                  ) : members.length === 0 ? (
+                    <div className="text-center py-8">
                       <Users className="w-10 h-10 text-slate-200 mx-auto mb-2" />
-                      <p className="text-slate-500 font-medium">No members listed yet.</p>
-                    </div> :
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {members.map((member) =>
-                    <div key={member.id} className="p-4 border border-slate-200 rounded-sm flex items-center gap-4 hover:border-slate-300 transition-colors">
-                          <div className="w-14 h-14 rounded-full overflow-hidden bg-slate-100 flex-shrink-0 flex items-center justify-center">
-                            {member.imageUrl ?
-                        <img
-                          src={member.imageUrl}
-                          alt={member.name}
-                          className="w-full h-full object-cover" /> :
-
-
-                        <Users className="w-6 h-6 text-slate-400" />
-                        }
+                      <p className="text-slate-500 font-medium">
+                        No members listed yet.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {members.map((member) => (
+                        <div
+                          key={member.id}
+                          className="p-5 border border-slate-200 rounded-sm flex items-center gap-5 hover:border-slate-300 transition-colors bg-white shadow-sm"
+                        >
+                          <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-100 flex-shrink-0 flex items-center justify-center border border-slate-200">
+                            {member.imageUrl ? (
+                              <img
+                                src={member.imageUrl}
+                                alt={member.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <Users className="w-8 h-8 text-slate-400" />
+                            )}
                           </div>
-                          <div>
-                            <h4 className="font-bold text-slate-800">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-base font-bold text-slate-800 truncate">
                               {member.name}
                             </h4>
-                            <p className="text-xs text-[#FF9933] font-semibold">{member.position}</p>
-                            {member.phone &&
-                        <p className="text-[10px] text-slate-500 flex items-center gap-1 mt-1">
-                                <Phone size={10} /> {member.phone}
-                              </p>
-                        }
+                            <p className="text-sm text-[#FF9933] font-bold mt-0.5 truncate">
+                              {member.position}
+                            </p>
+                            <div className="mt-2.5 space-y-1.5">
+                              {member.phone && (
+                                <p className="text-xs text-slate-500 flex items-center gap-2 truncate">
+                                  <Phone
+                                    size={12}
+                                    className="text-slate-400 shrink-0"
+                                  />{" "}
+                                  {member.phone}
+                                </p>
+                              )}
+                              {member.email && (
+                                <p className="text-xs text-slate-500 flex items-center gap-2 truncate">
+                                  <Mail
+                                    size={12}
+                                    className="text-slate-400 shrink-0"
+                                  />{" "}
+                                  {member.email}
+                                </p>
+                              )}
+                              {member.address && (
+                                <p className="text-xs text-slate-500 flex items-start gap-2 line-clamp-2">
+                                  <MapPin
+                                    size={12}
+                                    className="text-slate-400 shrink-0 mt-0.5"
+                                  />{" "}
+                                  {member.address}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
-                    )}
+                      ))}
                     </div>
-                  }
+                  )}
                 </div>
               </div>
 
@@ -139,6 +175,6 @@ export default function PanchayatMembers() {
         </main>
       </div>
       <Footer />
-    </div>);
-
+    </div>
+  );
 }

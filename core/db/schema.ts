@@ -505,6 +505,8 @@ export const panchayatMembers = pgTable("panchayat_members", {
   position: text("position").notNull(),
   imageUrl: text("image_url"),
   phone: text("phone"),
+  email: text("email"),
+  address: text("address"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
