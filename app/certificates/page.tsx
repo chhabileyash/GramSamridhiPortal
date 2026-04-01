@@ -2,6 +2,7 @@
 import React from "react";
 import { Sidebar } from "@/shared/components/layout/Sidebar";
 import CivilRegistrationForm from "@/components/certificates/CivilRegistrationForm";
+import Footer from "@/shared/components/layout/Footer";
 
 export default function CertificatesPage() {
   return (
@@ -14,6 +15,7 @@ export default function CertificatesPage() {
           </div>
         </main>
       </div>
+        <Footer />
     </div>
   );
 }

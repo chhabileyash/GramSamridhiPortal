@@ -1,5 +1,6 @@
 import { db } from "@/core/db/client";
-import { certificates } from "@/core/db/schema";
+import { certificates, users } from "@/core/db/schema";
+import { sendUserEventEmail } from "@/shared/utils/email";
 import { eq, desc, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
@@ -9,7 +10,7 @@ import { v2 as cloudinary } from "cloudinary";
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export async function GET(req: Request) {
@@ -27,14 +28,22 @@ export async function GET(req: Request) {
   try {
     let data;
     if (villageIdParam) {
-      data = await db.select().from(certificates).where(
-        and(
-          eq(certificates.villageId, villageIdParam),
-          isAdmin ? undefined : eq(certificates.userId, userId)
+      data = await db
+        .select()
+        .from(certificates)
+        .where(
+          and(
+            eq(certificates.villageId, villageIdParam),
+            isAdmin ? undefined : eq(certificates.userId, userId),
+          ),
         )
-      ).orderBy(desc(certificates.createdAt));
+        .orderBy(desc(certificates.createdAt));
     } else {
-      data = await db.select().from(certificates).where(eq(certificates.userId, userId)).orderBy(desc(certificates.createdAt));
+      data = await db
+        .select()
+        .from(certificates)
+        .where(eq(certificates.userId, userId))
+        .orderBy(desc(certificates.createdAt));
     }
     return NextResponse.json({ data: data || [] });
   } catch (error: any) {
@@ -55,34 +64,51 @@ export async function POST(req: Request) {
     const villageId = fd.get("villageId");
 
     if (!payloadRaw) {
-      return NextResponse.json({ error: "Missing required form data payload" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required form data payload" },
+        { status: 400 },
+      );
     }
 
     const formData = JSON.parse(payloadRaw as string);
 
-    if (!formData || !formData.certificateType || !formData.applicant?.fullName) {
-      return NextResponse.json({ error: "Missing required form data" }, { status: 400 });
+    if (
+      !formData ||
+      !formData.certificateType ||
+      !formData.applicant?.fullName
+    ) {
+      return NextResponse.json(
+        { error: "Missing required form data" },
+        { status: 400 },
+      );
     }
 
     const documents = [];
     for (const [key, value] of Array.from(fd.entries())) {
-      if (key.startsWith("document_") && typeof value === "object" && value !== null && "arrayBuffer" in value) {
+      if (
+        key.startsWith("document_") &&
+        typeof value === "object" &&
+        value !== null &&
+        "arrayBuffer" in value
+      ) {
         const index = key.split("_")[1];
         const file = value as unknown as File;
         const buffer = Buffer.from(await file.arrayBuffer());
         const uploadResult: any = await new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream(
-            { resource_type: "auto", folder: "grampanchayat/certificates" },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          ).end(buffer);
+          cloudinary.uploader
+            .upload_stream(
+              { resource_type: "auto", folder: "grampanchayat/certificates" },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+              },
+            )
+            .end(buffer);
         });
 
         let docName: string = file.name || `Document_${documents.length + 1}`;
         const metaStr = fd.get(`documentMetadata_${index}`);
-        if (typeof metaStr === 'string') {
+        if (typeof metaStr === "string") {
           try {
             const meta = JSON.parse(metaStr);
             if (meta.title) docName = meta.title;
@@ -91,7 +117,7 @@ export async function POST(req: Request) {
 
         documents.push({
           url: uploadResult.secure_url,
-          name: docName
+          name: docName,
         });
       }
     }
@@ -102,19 +128,26 @@ export async function POST(req: Request) {
       formData.documents = []; // Ensure empty structure if nothing is uploaded
     }
 
-    const certificateId = `CERT-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
+    const certificateId = `CERT-${new Date().getFullYear()}-${Math.floor(
+      Math.random() * 10000,
+    )
+      .toString()
+      .padStart(4, "0")}`;
     const vId = villageId ? villageId.toString() : null;
 
-    const result = await db.insert(certificates).values({
-      villageId: vId,
-      userId,
-      certificateId,
-      certificateType: formData.certificateType,
-      applicantName: formData.applicant.fullName,
-      applicantContact: formData.applicant.phone,
-      status: "Pending",
-      formData: formData
-    }).returning();
+    const result = await db
+      .insert(certificates)
+      .values({
+        villageId: vId,
+        userId,
+        certificateId,
+        certificateType: formData.certificateType,
+        applicantName: formData.applicant.fullName,
+        applicantContact: formData.applicant.phone,
+        status: "Pending",
+        formData: formData,
+      })
+      .returning();
 
     getPostHogClient().capture({
       distinctId: userId,
@@ -122,9 +155,29 @@ export async function POST(req: Request) {
       properties: {
         certificateType: formData.certificateType,
         certificateId,
-        villageId: vId
-      }
+        villageId: vId,
+      },
     });
+
+    try {
+      const userRow = await db
+        .select()
+        .from(users)
+        .where(eq(users.clerkId, userId))
+        .limit(1);
+
+      if (userRow[0]?.email) {
+        await sendUserEventEmail({
+          userEmail: userRow[0].email,
+          formName: "Certificate Request",
+          status: "submitted",
+          message: `Your certificate request (${formData.certificateType}) has been successfully submitted and is currently Pending. Reference ID: ${certificateId}`,
+          eventId: `certificate-create-${result[0].id}-${Date.now()}`,
+        });
+      }
+    } catch (emailError) {
+      console.error("Failed to send submission email: ", emailError);
+    }
 
     return NextResponse.json({ success: true, data: result[0] });
   } catch (error: any) {
@@ -149,17 +202,52 @@ export async function PUT(req: Request) {
     const { id, status } = body;
 
     if (!id || !status) {
-      return NextResponse.json({ error: "Missing id or status" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing id or status" },
+        { status: 400 },
+      );
     }
 
     const updateData: any = { updatedAt: new Date(), status };
 
-    const result = await db.update(certificates)
+    const result = await db
+      .update(certificates)
       .set(updateData)
       .where(eq(certificates.id, parseInt(id, 10)))
       .returning();
 
-    return NextResponse.json({ success: true, data: result[0] });
+    const updatedCertificate = result[0];
+    if (
+      updatedCertificate &&
+      status &&
+      ["Approved", "Rejected"].includes(status)
+    ) {
+      if (updatedCertificate.userId) {
+
+        const userRow = await db
+          .select()
+          .from(users)
+          .where(eq(users.clerkId, updatedCertificate.userId))
+          .limit(1);
+
+        console.log(userRow);
+        
+
+
+        if (userRow[0]?.email) {
+          const actionWord = status === "Rejected" ? "rejected" : "approved";
+          await sendUserEventEmail({
+            userEmail: userRow[0].email,
+            formName: "Certificate Request",
+            status: actionWord,
+            message: `Your certificate request (${updatedCertificate.certificateType}) has been ${actionWord}. Reference ID: ${updatedCertificate.certificateId}`,
+            eventId: `certificate-status-${updatedCertificate.id}-${Date.now()}`,
+          });
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true, data: updatedCertificate });
   } catch (error: any) {
     console.error("Certificates PUT Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

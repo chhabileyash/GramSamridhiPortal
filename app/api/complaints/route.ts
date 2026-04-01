@@ -3,8 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import { ComplaintsService } from "@/features/complaints/services";
 import { getPostHogClient } from "@/core/analytics/posthog";
 import { db } from "@/core/db/client";
-import { complaints } from "@/core/db/schema";
+import { complaints, users } from "@/core/db/schema";
 import { eq } from "drizzle-orm";
+import { sendUserEventEmail } from "@/shared/utils/email";
 
 export async function GET(req: Request) {
   try {
@@ -25,7 +26,7 @@ export async function GET(req: Request) {
       // (Simplified for now - typically moved into Service Layer)
       data = await ComplaintsService.getVillageComplaints(villageIdParam);
       if (!isAdmin) {
-        data = data.filter(c => c.userId === userId);
+        data = data.filter((c) => c.userId === userId);
       }
     } else {
       data = await ComplaintsService.getUserComplaints(userId);
@@ -57,8 +58,8 @@ export async function POST(req: Request) {
       properties: {
         category: body.category,
         complaintId: result.complaintId,
-        villageId: body.villageId
-      }
+        villageId: body.villageId,
+      },
     });
 
     return NextResponse.json({ success: true, data: result });
@@ -84,7 +85,10 @@ export async function PUT(req: Request) {
     const { id, status, priority } = body;
 
     if (!id) {
-      return NextResponse.json({ error: "Missing complaint id" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing complaint id" },
+        { status: 400 },
+      );
     }
 
     // Ideally moved to service: ComplaintsService.updateComplaint()
@@ -92,12 +96,39 @@ export async function PUT(req: Request) {
     if (status) updateData.status = status;
     if (priority) updateData.priority = priority;
 
-    const result = await db.update(complaints).
-    set(updateData).
-    where(eq(complaints.id, parseInt(id, 10))).
-    returning();
+    const result = await db
+      .update(complaints)
+      .set(updateData)
+      .where(eq(complaints.id, parseInt(id, 10)))
+      .returning();
 
-    return NextResponse.json({ success: true, data: result[0] });
+    const updatedComplaint = result[0];
+    if (
+      updatedComplaint &&
+      status &&
+      ["Resolved", "Rejected"].includes(status)
+    ) {
+      if (updatedComplaint.userId) {
+        const userRow = await db
+          .select()
+          .from(users)
+          .where(eq(users.clerkId, updatedComplaint.userId))
+          .limit(1);
+        if (userRow[0]?.email) {
+          const actionWord =
+            status === "Rejected" ? "rejected" : "accepted/resolved";
+          await sendUserEventEmail({
+            userEmail: userRow[0].email,
+            formName: "Complaint",
+            status: actionWord,
+            message: `Your complaint has been ${actionWord}. Complaint ID: ${updatedComplaint.id}`,
+            eventId: `complaint-status-${updatedComplaint.id}-${Date.now()}`,
+          });
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true, data: updatedComplaint });
   } catch (error: any) {
     console.error("Complaints PUT Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

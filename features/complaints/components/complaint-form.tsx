@@ -29,7 +29,6 @@ export function ComplaintForm() {
       });
 
       if (res.ok) {
-        // Assume routing to a dashboard listing complaints once success
         router.push("/complaints");
       } else {
         const error = await res.json();

@@ -13,6 +13,8 @@
     "@hookform/resolvers": "^5.2.2",
     "@neondatabase/serverless": "^1.0.2",
     "@next/bundle-analyzer": "^16.2.1",
+    "@react-email/components": "^1.0.11",
+    "@react-email/render": "^2.0.5",
     "@vercel/analytics": "^2.0.1",
     "chart.js": "^4.5.1",
     "cloudinary": "^2.9.0",
@@ -30,6 +32,7 @@
     "react-hook-form": "^7.72.0",
     "react-hot-toast": "^2.6.0",
     "recharts": "^3.8.0",
+    "resend": "^6.10.0",
     "svix": "^1.89.0",
     "zod": "^4.3.6"
   },

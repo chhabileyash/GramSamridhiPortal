@@ -1,5 +1,6 @@
 import { db } from "@/core/db/client";
-import { waterTaxes } from "@/core/db/schema";
+import { waterTaxes, users } from "@/core/db/schema";
+import { sendUserEventEmail } from "@/shared/utils/email";
 import { eq, desc, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
@@ -20,14 +21,22 @@ export async function GET(req: Request) {
   try {
     let data;
     if (villageIdParam) {
-      data = await db.select().from(waterTaxes).where(
-        and(
-          eq(waterTaxes.villageId, villageIdParam),
-          !isAdmin ? eq(waterTaxes.userId, userId) : undefined
+      data = await db
+        .select()
+        .from(waterTaxes)
+        .where(
+          and(
+            eq(waterTaxes.villageId, villageIdParam),
+            !isAdmin ? eq(waterTaxes.userId, userId) : undefined,
+          ),
         )
-      ).orderBy(desc(waterTaxes.createdAt));
+        .orderBy(desc(waterTaxes.createdAt));
     } else {
-      data = await db.select().from(waterTaxes).where(eq(waterTaxes.userId, userId)).orderBy(desc(waterTaxes.createdAt));
+      data = await db
+        .select()
+        .from(waterTaxes)
+        .where(eq(waterTaxes.userId, userId))
+        .orderBy(desc(waterTaxes.createdAt));
     }
 
     return NextResponse.json({ data: data || [] });
@@ -45,28 +54,49 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { villageId, connectionId, connectionType, ownerName, financialYear, amount, paymentDate, referenceNumber } = body;
+    const {
+      villageId,
+      connectionId,
+      connectionType,
+      ownerName,
+      financialYear,
+      amount,
+      paymentDate,
+      referenceNumber,
+    } = body;
 
     if (!connectionId || !ownerName || !amount || !referenceNumber) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
     }
 
-    const invoiceId = body.invoiceId || `WT-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
+    const invoiceId =
+      body.invoiceId ||
+      `WT-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)
+        .toString()
+        .padStart(4, "0")}`;
     const vId = villageId ? villageId.toString() : null;
 
-    const result = await db.insert(waterTaxes).values({
-      villageId: vId,
-      userId,
-      invoiceId,
-      connectionId,
-      connectionType: connectionType || "Domestic",
-      ownerName,
-      financialYear: financialYear || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
-      amount: amount.toString(),
-      paymentDate: paymentDate || new Date().toISOString().split('T')[0],
-      referenceNumber,
-      status: "Pending"
-    }).returning();
+    const result = await db
+      .insert(waterTaxes)
+      .values({
+        villageId: vId,
+        userId,
+        invoiceId,
+        connectionId,
+        connectionType: connectionType || "Domestic",
+        ownerName,
+        financialYear:
+          financialYear ||
+          `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
+        amount: amount.toString(),
+        paymentDate: paymentDate || new Date().toISOString().split("T")[0],
+        referenceNumber,
+        status: "Pending",
+      })
+      .returning();
 
     getPostHogClient().capture({
       distinctId: userId,
@@ -75,8 +105,8 @@ export async function POST(req: Request) {
         invoiceId,
         connectionType: connectionType || "Domestic",
         amount,
-        villageId: vId
-      }
+        villageId: vId,
+      },
     });
 
     return NextResponse.json({ success: true, data: result[0] });
@@ -102,16 +132,42 @@ export async function PUT(req: Request) {
     const { id, status } = body;
 
     if (!id || !status) {
-      return NextResponse.json({ error: "Missing id or status" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing id or status" },
+        { status: 400 },
+      );
     }
 
-    const result = await db.update(waterTaxes).
-    set({
-      status,
-      updatedAt: new Date()
-    }).
-    where(eq(waterTaxes.id, parseInt(id, 10))).
-    returning();
+    const result = await db
+      .update(waterTaxes)
+      .set({
+        status,
+        updatedAt: new Date(),
+      })
+      .where(eq(waterTaxes.id, parseInt(id, 10)))
+      .returning();
+
+    const updatedRecord = result[0];
+    if (updatedRecord && status && ["Paid", "Rejected"].includes(status)) {
+      if (updatedRecord.userId) {
+        const userRow = await db
+          .select()
+          .from(users)
+          .where(eq(users.clerkId, updatedRecord.userId))
+          .limit(1);
+        if (userRow[0]?.email) {
+          const actionWord =
+            status === "Rejected" ? "rejected" : "marked as paid";
+          await sendUserEventEmail({
+            userEmail: userRow[0].email,
+            formName: "Water Tax Payment",
+            status: actionWord,
+            message: `Your water tax payment (Invoice ID: ${updatedRecord.invoiceId}) has been ${actionWord}.`,
+            eventId: `water-tax-status-${updatedRecord.id}-${Date.now()}`,
+          });
+        }
+      }
+    }
 
     return NextResponse.json({ success: true, data: result[0] });
   } catch (error: any) {
