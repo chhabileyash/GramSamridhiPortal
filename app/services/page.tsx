@@ -29,49 +29,64 @@ export default function ServicesPage() {
                   </p>
                 </div>
               </Link>
-              <div className="bg-white rounded shadow p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
-                  Pension & Welfare Schemes
-                </h2>
-                <p className="text-gray-700">
-                  Access and apply for government pension and welfare schemes.
-                </p>
-              </div>
-              <div className="bg-white rounded shadow p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
-                  Property & Water Tax
-                </h2>
-                <p className="text-gray-700">
-                  Pay your property and water taxes online securely and
-                  conveniently.
-                </p>
-              </div>
-              <div className="bg-white rounded shadow p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
-                  Grievance Redressal
-                </h2>
-                <p className="text-gray-700">
-                  Raise complaints and track their resolution with transparency.
-                </p>
-              </div>
-              <div className="bg-white rounded shadow p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
-                  Development Works
-                </h2>
-                <p className="text-gray-700">
-                  View ongoing and completed development projects in your
-                  village.
-                </p>
-              </div>
-              <div className="bg-white rounded shadow p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
-                  Notifications & Updates
-                </h2>
-                <p className="text-gray-700">
-                  Stay informed with the latest news, events, and government
-                  notifications.
-                </p>
-              </div>
+              <Link href="/schemes" className="block transition-transform hover:-translate-y-1">
+
+                <div className="bg-white rounded shadow p-6 border border-gray-100">
+                  <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
+                    Pension & Welfare Schemes
+                  </h2>
+                  <p className="text-gray-700">
+                    Access and apply for government pension and welfare schemes.
+                  </p>
+                </div>
+              </Link>
+              <Link href="/water-tax" className="block transition-transform hover:-translate-y-1">
+
+                <div className="bg-white rounded shadow p-6 border border-gray-100">
+                  <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
+                    Property & Water Tax
+                  </h2>
+                  <p className="text-gray-700">
+                    Pay your property and water taxes online securely and
+                    conveniently.
+                  </p>
+                </div>
+              </Link>
+              <Link href="/my-complaints" className="block transition-transform hover:-translate-y-1">
+
+                <div className="bg-white rounded shadow p-6 border border-gray-100">
+                  <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
+                    Grievance Redressal
+                  </h2>
+                  <p className="text-gray-700">
+                    Raise complaints and track their resolution with transparency.
+                  </p>
+                </div>
+              </Link>
+              <Link href="/development-works" className="block transition-transform hover:-translate-y-1">
+
+                <div className="bg-white rounded shadow p-6 border border-gray-100">
+                  <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
+                    Development Works
+                  </h2>
+                  <p className="text-gray-700">
+                    View ongoing and completed development projects in your
+                    village.
+                  </p>
+                </div>
+              </Link>
+              <Link href="/notifications" className="block transition-transform hover:-translate-y-1">
+
+                <div className="bg-white rounded shadow p-6 border border-gray-100">
+                  <h2 className="text-xl font-semibold text-[#F28C28] mb-2">
+                    Notifications & Updates
+                  </h2>
+                  <p className="text-gray-700">
+                    Stay informed with the latest news, events, and government
+                    notifications.
+                  </p>
+                </div>
+              </Link>
             </div>
           </div>
         </main>
