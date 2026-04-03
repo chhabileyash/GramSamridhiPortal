@@ -63,7 +63,7 @@ export default function PopulationCharts({
   const CustomLegend = (props: any) => {
     const { payload } = props;
     return (
-      <ul className="flex items-center justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-[#082b57] pt-6">
+      <ul className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[#082b57] pt-4">
         {payload.map((entry: any, index: number) =>
         <li key={`item-${index}`} className="flex items-center gap-2">
             <span
@@ -91,11 +91,11 @@ export default function PopulationCharts({
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {}
-          <div className="flex flex-col items-center border border-green-100 bg-white p-8 shadow-sm">
-            <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-green-950">
+          <div className="flex flex-col items-center border border-green-100 bg-white p-4 sm:p-8 shadow-sm">
+            <h3 className="mb-4 sm:mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-green-950">
               <Users className="size-4 text-[#f58320]" /> Gender Distribution
             </h3>
-            <div className="h-64 w-full">
+            <div className="h-56 sm:h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -103,7 +103,7 @@ export default function PopulationCharts({
                     cx="50%"
                     cy="50%"
                     innerRadius={0}
-                    outerRadius={90}
+                    outerRadius="38%"
                     paddingAngle={0}
                     dataKey="value">
                     
@@ -135,19 +135,19 @@ export default function PopulationCharts({
           </div>
 
           {}
-          <div className="flex flex-col items-center border border-green-100 bg-white p-8 shadow-sm">
-            <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-green-950">
+          <div className="flex flex-col items-center border border-green-100 bg-white p-4 sm:p-8 shadow-sm">
+            <h3 className="mb-4 sm:mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-green-950">
               <BookOpen className="size-4 text-[#f58320]" /> Literacy Rate
             </h3>
-            <div className="relative h-64 w-full">
+            <div className="relative h-56 sm:h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={literacyData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={65}
-                    outerRadius={90}
+                    innerRadius="27%"
+                    outerRadius="38%"
                     paddingAngle={0}
                     dataKey="value"
                     startAngle={90}
@@ -181,11 +181,11 @@ export default function PopulationCharts({
           </div>
 
           {}
-          <div className="flex flex-col items-center border border-green-100 bg-white p-8 shadow-sm">
-            <h3 className="mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#082b57]">
+          <div className="flex flex-col items-center border border-green-100 bg-white p-4 sm:p-8 shadow-sm">
+            <h3 className="mb-4 sm:mb-8 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#082b57]">
               <Layers className="size-4 text-[#f58320]" /> Population Categories
             </h3>
-            <div className="h-64 w-full">
+            <div className="h-56 sm:h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={categoryData}
