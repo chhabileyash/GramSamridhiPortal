@@ -47,5 +47,6 @@ next-env.d.ts
 .env.local
 
 # local repo metadata
+.github/
 .claude/
 .posthog-events.json
