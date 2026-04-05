@@ -333,8 +333,8 @@ export default function HomePage() {
                   <h3 className="text-sm font-bold text-gray-900 mb-8 uppercase tracking-wide">
                     Development Status Overview
                   </h3>
-                  <div className="flex items-center justify-evenly space-x-12">
-                    <div className="w-48 h-48">
+                  <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-evenly sm:gap-0 sm:space-x-12">
+                    <div className="w-40 h-40 sm:w-48 sm:h-48 shrink-0">
                       {hasData ? (
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
@@ -342,8 +342,8 @@ export default function HomePage() {
                               data={displayChartData}
                               cx="50%"
                               cy="50%"
-                              innerRadius={60}
-                              outerRadius={90}
+                              innerRadius="37%"
+                              outerRadius="47%"
                               paddingAngle={5}
                               dataKey="value"
                               stroke="none">
@@ -356,7 +356,7 @@ export default function HomePage() {
                           </PieChart>
                         </ResponsiveContainer>
                       ) : (
-                        <div className="w-48 h-48 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-full p-4 bg-gray-50/50">
+                        <div className="w-40 h-40 sm:w-48 sm:h-48 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-full p-4 bg-gray-50/50">
                           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
                             Data Not<br />Available
                           </p>
