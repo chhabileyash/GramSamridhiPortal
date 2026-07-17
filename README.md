@@ -178,7 +178,7 @@ This project is licensed under the **MIT License**. See the `LICENSE` file for m
 
 ## ✍️ Author
 
-**Mahesh** - [GitHub](https://github.com/mahesh2-lab)
+**yash** - [GitHub](https://github.com/chhabileyash)
 
 ---
 *Built with ❤️ for a digital rural future.*
